@@ -17,12 +17,32 @@ type Props = {
     graph: Graph;
 };
 
+type ViewTransform = {
+    offsetX: number;
+    offsetY: number;
+    scale: number;
+};
+
+type PanState = {
+    startX: number;
+    startY: number;
+    startOffsetX: number;
+    startOffsetY: number;
+} | null;
+
+type CanvasPointerLikeEvent = {
+    clientX: number;
+    clientY: number;
+};
+
 export default function GraphCanvas({ backgroundColor, layout, graph }: Props) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const dragStateRef = useRef<DragState>(null);
     const nodesRef = useRef<GraphNode[]>(layout.getNodes());
+    const viewRef = useRef<ViewTransform>({ offsetX: 0, offsetY: 0, scale: 1 });
     const animationFrameRef = useRef<number | null>(null);
     const isSimulatingRef = useRef(false);
+    const panStateRef = useRef<PanState>(null);
 
     const [nodes, setNodes] = useState<GraphNode[]>(layout.getNodes());
     const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
@@ -121,8 +141,10 @@ export default function GraphCanvas({ backgroundColor, layout, graph }: Props) {
         if (!fromNode || !toNode) return;
 
         context.beginPath();
-        context.moveTo(fromNode.position.x, fromNode.position.y);
-        context.lineTo(toNode.position.x, toNode.position.y);
+        const fromScreen = graphToScreen(fromNode.position.x, fromNode.position.y);
+        const toScreen = graphToScreen(toNode.position.x, toNode.position.y);
+        context.moveTo(fromScreen.x, fromScreen.y);
+        context.lineTo(toScreen.x, toScreen.y);
         context.strokeStyle = "rgb(120, 120, 120)";
         context.lineWidth = 2;
         context.stroke();
@@ -140,7 +162,8 @@ export default function GraphCanvas({ backgroundColor, layout, graph }: Props) {
 
 
         context.beginPath();
-        context.arc(node.position.x, node.position.y, radius, 0, Math.PI * 2);
+        const screen = graphToScreen(node.position.x, node.position.y);
+        context.arc(screen.x, screen.y, radius * viewRef.current.scale, 0, Math.PI * 2);
 
         context.fillStyle = isSelected
             ? "#f59e0b"
@@ -173,8 +196,9 @@ export default function GraphCanvas({ backgroundColor, layout, graph }: Props) {
         const textWidth = context.measureText(node.title).width;
         const textHeight = 12;
 
-        const x = node.position.x + offsetX;
-        const y = node.position.y - offsetY;
+        const screen = graphToScreen(node.position.x, node.position.y);
+        const x = screen.x + offsetX;
+        const y = screen.y - offsetY;
 
         // Background
         context.fillStyle = "rgba(255, 250, 231, 0.7)";
@@ -200,9 +224,7 @@ export default function GraphCanvas({ backgroundColor, layout, graph }: Props) {
         };
     }, [backgroundColor, nodes, selectedNodeId, hoveredNodeId]);
 
-    const getCanvasCoordinates = (
-        event: React.PointerEvent<HTMLCanvasElement>
-    ) => {
+    const getCanvasCoordinates = (event: CanvasPointerLikeEvent) => {
         const canvas = canvasRef.current;
         if (!canvas) return null;
 
@@ -213,6 +235,19 @@ export default function GraphCanvas({ backgroundColor, layout, graph }: Props) {
             y: event.clientY - rect.top,
         };
     };
+    /*    const getCanvasCoordinates = (
+            event: React.PointerEvent<HTMLCanvasElement>
+        ) => {
+            const canvas = canvasRef.current;
+            if (!canvas) return null;
+    
+            const rect = canvas.getBoundingClientRect();
+    
+            return {
+                x: event.clientX - rect.left,
+                y: event.clientY - rect.top,
+            };
+        };*/
 
     const hitTestNode = (x: number, y: number): GraphNode | null => {
         for (let i = nodes.length - 1; i >= 0; i--) {
@@ -238,67 +273,105 @@ export default function GraphCanvas({ backgroundColor, layout, graph }: Props) {
         const point = getCanvasCoordinates(event);
         if (!point) return;
 
-        const hitNode = hitTestNode(point.x, point.y);
+        const graphPoint = screenToGraph(point.x, point.y);
+        const hitNode = hitTestNode(graphPoint.x, graphPoint.y);
 
         if (hitNode) {
-            setSelectedNodeId(hitNode.id);
             dragStateRef.current = {
                 nodeId: hitNode.id,
-                offsetX: point.x - hitNode.position.x,
-                offsetY: point.y - hitNode.position.y,
+                offsetX: graphPoint.x - hitNode.position.x,
+                offsetY: graphPoint.y - hitNode.position.y,
             };
-            event.currentTarget.setPointerCapture(event.pointerId);
+
+            panStateRef.current = null;
+            setSelectedNodeId(hitNode.id);
         } else {
-            setSelectedNodeId(null);
             dragStateRef.current = null;
+            panStateRef.current = {
+                startX: point.x,
+                startY: point.y,
+                startOffsetX: viewRef.current.offsetX,
+                startOffsetY: viewRef.current.offsetY,
+            };
+            setSelectedNodeId(null);
         }
         draw();
     };
 
-    const handlePointerMove = (
-        event: React.PointerEvent<HTMLCanvasElement>
-    ) => {
+    const handlePointerMove = (event: React.PointerEvent<HTMLCanvasElement>) => {
         const point = getCanvasCoordinates(event);
         if (!point) return;
 
-        // 🔹 Hover detection (unchanged)
-        const hovered = hitTestNode(point.x, point.y);
-        setHoveredNodeId(hovered ? hovered.id : null);
-        stopSimulation();
+        // Convert once
+        const graphPoint = screenToGraph(point.x, point.y);
 
-
+        // --- Node drag ---
         const dragState = dragStateRef.current;
-        if (!dragState) return;
-
-        const nodes = nodesRef.current;
-
-        for (let node of nodes) {
-            if (node.id === dragState.nodeId) {
-                node.position.x = point.x - dragState.offsetX;
-                node.position.y = point.y - dragState.offsetY;
+        if (dragState) {
+            const node = graph.getNode(dragState.nodeId);
+            if (node) {
+                node.position.x = graphPoint.x - dragState.offsetX;
+                node.position.y = graphPoint.y - dragState.offsetY;
             }
+
+            draw();
+            return;
         }
 
-        // 🔹 Redraw immediately
-        draw();
+        // --- Pan drag ---
+        const panState = panStateRef.current;
+        if (panState) {
+            viewRef.current.offsetX =
+                panState.startOffsetX + (point.x - panState.startX);
 
-        // 🔹 (Optional for now) run simulation
-        runSimulation();
+            viewRef.current.offsetY =
+                panState.startOffsetY + (point.y - panState.startY);
+
+            draw();
+            return;
+        }
+
+        // --- Hover only ---
+        const hovered = hitTestNode(graphPoint.x, graphPoint.y);
+        setHoveredNodeId(hovered ? hovered.id : null);
+
+        draw();
     };
 
     const handlePointerUp = (event: React.PointerEvent<HTMLCanvasElement>) => {
-        const dragState = dragStateRef.current;
-        if (dragState) {
-            event.currentTarget.releasePointerCapture(event.pointerId);
-        }
-
         dragStateRef.current = null;
-        runSimulation();
+        panStateRef.current = null;
+
+        event.currentTarget.releasePointerCapture(event.pointerId);
+
+        runSimulation(); // optional: settle after drag
     };
 
     const handlePointerLeave = () => {
         dragStateRef.current = null;
         runSimulation();
+    };
+
+    const handleWheel = (event: React.WheelEvent<HTMLCanvasElement>) => {
+        event.preventDefault();
+
+        const point = getCanvasCoordinates(event);
+        if (!point) return;
+
+        const beforeZoom = screenToGraph(point.x, point.y);
+
+        const zoomFactor = event.deltaY < 0 ? 1.1 : 0.9;
+        const view = viewRef.current;
+
+        view.scale = Math.max(0.2, Math.min(4, view.scale * zoomFactor));
+
+        const afterZoomScreenX = beforeZoom.x * view.scale + view.offsetX;
+        const afterZoomScreenY = beforeZoom.y * view.scale + view.offsetY;
+
+        view.offsetX += point.x - afterZoomScreenX;
+        view.offsetY += point.y - afterZoomScreenY;
+
+        draw();
     };
 
     return (
@@ -308,6 +381,7 @@ export default function GraphCanvas({ backgroundColor, layout, graph }: Props) {
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}
             onPointerLeave={handlePointerLeave}
+            onWheel={handleWheel}
             style={{
                 width: "100vw",
                 height: "100vh",
@@ -316,4 +390,22 @@ export default function GraphCanvas({ backgroundColor, layout, graph }: Props) {
             }}
         />
     );
+
+    function graphToScreen(x: number, y: number) {
+        const view = viewRef.current;
+
+        return {
+            x: x * view.scale + view.offsetX,
+            y: y * view.scale + view.offsetY,
+        };
+    }
+
+    function screenToGraph(x: number, y: number) {
+        const view = viewRef.current;
+
+        return {
+            x: (x - view.offsetX) / view.scale,
+            y: (y - view.offsetY) / view.scale,
+        };
+    }
 }
