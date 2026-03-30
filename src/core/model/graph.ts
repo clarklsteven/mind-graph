@@ -1,0 +1,100 @@
+import { GraphNode } from "./node";
+import { Edge } from "./edge";
+import { GraphData } from "./graph-data";
+
+export class Graph {
+  private nodes: Map<string, GraphNode> = new Map();
+  private edges: Map<string, Edge> = new Map();
+
+  addNode(node: GraphNode) {
+    this.nodes.set(node.id, node);
+    this.calculateNodeWeights();
+  }
+
+  addEdge(edge: Edge) {
+    this.edges.set(edge.id, edge);
+    this.calculateNodeWeights();
+
+  }
+
+  getNode(id: string): GraphNode | undefined {
+    return this.nodes.get(id);
+  }
+
+  getNodes(): GraphNode[] {
+    return Array.from(this.nodes.values());
+  }
+
+  getConnectedNodes(nodeId: string): GraphNode[] {
+    const connections: GraphNode[] = [];
+
+    for (const edge of this.edges.values()) {
+      if (edge.from === nodeId) {
+        const node = this.nodes.get(edge.to);
+        if (node) connections.push(node);
+      }
+    }
+
+    return connections;
+  }
+
+  getConnectionCount = (nodeId: string): number => {
+    return Array.from(this.edges.values()).filter((edge) => edge.from === nodeId || edge.to === nodeId).length;
+  };
+
+
+  getNodeWeight(nodeId: string): number {
+    const node = this.nodes.get(nodeId);
+    let connectedNodes = this.getConnectedNodes(nodeId);
+    if (node) {
+      let weight = 1; // Default weight
+      if (connectedNodes.length === 0) {
+        // No connections, weight is 1
+        weight = 1;
+      }
+      else {
+        // Weight is 1 + sqr root number of connections
+        weight = 1 + Math.sqrt(connectedNodes.length);
+      }
+      return weight;
+    }
+    return 0; // Node not found
+  }
+
+  calculateNodeWeights() {
+    for (const node of this.nodes.values()) {
+      const weight = this.getNodeWeight(node.id);
+      node.weight = weight;
+    }
+  }
+
+  export(): GraphData {
+    return {
+      nodes: Array.from(this.nodes.values()),
+      edges: Array.from(this.edges.values())
+    };
+  }
+
+  static import(data: GraphData): Graph {
+    const graph = new Graph();
+
+    for (const node of data.nodes) {
+      if (graph.getNode(node.id)) {
+        throw new Error(`Duplicate node id: ${node.id}`);
+      }
+      graph.addNode(node);
+    }
+
+    for (const edge of data.edges) {
+      if (!graph.getNode(edge.from)) {
+        throw new Error(`Edge ${edge.id} refers to missing from node: ${edge.from}`);
+      }
+      if (!graph.getNode(edge.to)) {
+        throw new Error(`Edge ${edge.id} refers to missing to node: ${edge.to}`);
+      }
+      graph.addEdge(edge);
+    }
+
+    return graph;
+  }
+}

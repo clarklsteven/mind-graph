@@ -1,0 +1,76 @@
+{
+  "nodes": [
+    {
+        "id": "1",
+        "title": "Quality",
+        "weight": 1,
+        "position": {
+            "x": 100,
+            "y": 100
+        }
+    },
+    {
+        "id": "2",
+        "title": "Process",
+        "weight": 1,
+        "position": {
+            "x": 200,
+            "y": 100
+        }
+    },
+    {
+        "id": "3",
+        "title": "Improvement",
+        "weight": 1,
+        "position": {
+            "x": 100,
+            "y": 200
+        }
+    },
+    {
+        "id": "4",
+        "title": "Flowchart",
+        "weight": 1,
+        "position": {
+            "x": 300,
+            "y": 100
+        }
+    },
+    {
+        "id": "5",
+        "title": "Feedback",
+        "weight": 1,
+        "position": {
+            "x": 100,
+            "y": 300
+        }
+    }
+  ],
+  "edges": [
+    {
+        "id": "e1",
+        "from": "1",
+        "to": "2"
+    },
+    {
+        "id": "e2",
+        "from": "2",
+        "to": "3"
+    },
+    {
+        "id": "e3",
+        "from": "2",
+        "to": "4"
+    },
+    {
+        "id": "e4",
+        "from": "2",
+        "to": "5"
+    },
+    {
+        "id": "e5",
+        "from": "4",
+        "to": "5"
+    }
+  ]
+}
