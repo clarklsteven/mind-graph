@@ -5,6 +5,8 @@ import { Layout } from "../core/layout/layout";
 import { Edge } from "../core/model/edge";
 import { GraphNode } from "../core/model/node";
 
+type Mode = "select" | "add" | "link";
+
 type DragState = {
     nodeId: string;
     offsetX: number;
@@ -15,6 +17,8 @@ type Props = {
     backgroundColor: string;
     layout: Layout;
     graph: Graph;
+    mode: Mode;
+    graphVersion: number;
 };
 
 type ViewTransform = {
@@ -35,18 +39,17 @@ type CanvasPointerLikeEvent = {
     clientY: number;
 };
 
-export default function GraphCanvas({ backgroundColor, layout, graph }: Props) {
+export default function GraphCanvas({ backgroundColor, layout, graph, mode, graphVersion }: Props) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const dragStateRef = useRef<DragState>(null);
-    const nodesRef = useRef<GraphNode[]>(layout.getNodes());
     const viewRef = useRef<ViewTransform>({ offsetX: 0, offsetY: 0, scale: 1 });
     const animationFrameRef = useRef<number | null>(null);
     const isSimulatingRef = useRef(false);
     const panStateRef = useRef<PanState>(null);
 
-    const [nodes, setNodes] = useState<GraphNode[]>(layout.getNodes());
     const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
     const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
+    const [linkStartNodeId, setLinkStartNodeId] = useState<string | null>(null);
 
     const getNodeHitRadius = (nodeId: string): number => {
         return Math.max(layout.getNodeRadius(nodeId), 10);
@@ -116,6 +119,8 @@ export default function GraphCanvas({ backgroundColor, layout, graph }: Props) {
             drawEdge(edge);
         }
 
+        drawPreviewEdge();
+
         for (const node of layout.getNodes()) {
             drawNode(node);
         }
@@ -126,7 +131,7 @@ export default function GraphCanvas({ backgroundColor, layout, graph }: Props) {
     };
 
     const getNodeById = (id: string) => {
-        return nodes.find((node) => node.id === id);
+        return graph.getNodes().find((node) => node.id === id);
     };
 
     const drawEdge = (edge: Edge) => {
@@ -158,6 +163,7 @@ export default function GraphCanvas({ backgroundColor, layout, graph }: Props) {
         if (!context) return;
         const isSelected = node.id === selectedNodeId;
         const isHovered = node.id === hoveredNodeId;
+        const isLinkStart = node.id === linkStartNodeId;
         const radius = layout.getNodeRadius(node.id);
 
 
@@ -165,11 +171,12 @@ export default function GraphCanvas({ backgroundColor, layout, graph }: Props) {
         const screen = graphToScreen(node.position.x, node.position.y);
         context.arc(screen.x, screen.y, radius * viewRef.current.scale, 0, Math.PI * 2);
 
-        context.fillStyle = isSelected
-            ? "#f59e0b"
-            : isHovered
-                ? "#60a5fa"
-                : Colours.getColourForNode(graph.getConnectionCount(node.id) / 10);
+        context.fillStyle = isLinkStart
+            ? "#34d399" : isSelected
+                ? "#f59e0b"
+                : isHovered
+                    ? "#60a5fa"
+                    : Colours.getColourForNode(graph.getConnectionCount(node.id) / 10);
 
         context.fill();
 
@@ -214,15 +221,94 @@ export default function GraphCanvas({ backgroundColor, layout, graph }: Props) {
         context.fillText(node.title, x, y);
     };
 
+    const drawPreviewEdge = () => {
+        if (mode !== "link") return;
+        if (!linkStartNodeId) return;
+        if (!hoveredNodeId) return;
+        if (linkStartNodeId === hoveredNodeId) return;
+
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+
+        const context = canvas.getContext("2d");
+        if (!context) return;
+
+        const fromNode = graph.getNode(linkStartNodeId);
+        const toNode = graph.getNode(hoveredNodeId);
+
+        if (!fromNode || !toNode) return;
+
+        const fromScreen = graphToScreen(fromNode.position.x, fromNode.position.y);
+        const toScreen = graphToScreen(toNode.position.x, toNode.position.y);
+
+        const edgeExists = graph.getEdges().some(
+            (edge) =>
+                (edge.from === linkStartNodeId && edge.to === hoveredNodeId) ||
+                (edge.from === hoveredNodeId && edge.to === linkStartNodeId)
+        );
+
+        if (edgeExists) return;
+
+        context.beginPath();
+        context.moveTo(fromScreen.x, fromScreen.y);
+        context.lineTo(toScreen.x, toScreen.y);
+        context.strokeStyle = "rgba(141, 66, 84, 0.45)";
+        context.lineWidth = 2;
+        context.stroke();
+    };
+
     useEffect(() => {
         draw();
         runSimulation();
+    }, [graphVersion]);
+
+    useEffect(() => {
+        const handleResize = () => {
+            draw();
+        };
+
         window.addEventListener("resize", draw);
 
         return () => {
             window.removeEventListener("resize", draw);
         };
-    }, [backgroundColor, nodes, selectedNodeId, hoveredNodeId]);
+    }, []);
+
+    useEffect(() => {
+        draw();
+    }, [backgroundColor, selectedNodeId, hoveredNodeId, linkStartNodeId, graphVersion]);
+
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+
+        const wheelHandler = (event: WheelEvent) => {
+            event.preventDefault();
+
+            const point = getCanvasCoordinates(event);
+            if (!point) return;
+
+            const beforeZoom = screenToGraph(point.x, point.y);
+            const view = viewRef.current;
+
+            const zoomFactor = event.deltaY < 0 ? 1.03 : 0.97;
+            view.scale = Math.max(0.2, Math.min(4, view.scale * zoomFactor));
+
+            const afterZoomScreenX = beforeZoom.x * view.scale + view.offsetX;
+            const afterZoomScreenY = beforeZoom.y * view.scale + view.offsetY;
+
+            view.offsetX += point.x - afterZoomScreenX;
+            view.offsetY += point.y - afterZoomScreenY;
+
+            draw();
+        };
+
+        canvas.addEventListener("wheel", wheelHandler, { passive: false });
+
+        return () => {
+            canvas.removeEventListener("wheel", wheelHandler);
+        };
+    }, []);
 
     const getCanvasCoordinates = (event: CanvasPointerLikeEvent) => {
         const canvas = canvasRef.current;
@@ -235,21 +321,9 @@ export default function GraphCanvas({ backgroundColor, layout, graph }: Props) {
             y: event.clientY - rect.top,
         };
     };
-    /*    const getCanvasCoordinates = (
-            event: React.PointerEvent<HTMLCanvasElement>
-        ) => {
-            const canvas = canvasRef.current;
-            if (!canvas) return null;
-    
-            const rect = canvas.getBoundingClientRect();
-    
-            return {
-                x: event.clientX - rect.left,
-                y: event.clientY - rect.top,
-            };
-        };*/
 
     const hitTestNode = (x: number, y: number): GraphNode | null => {
+        const nodes = graph.getNodes();
         for (let i = nodes.length - 1; i >= 0; i--) {
             const node = nodes[i];
             const dx = x - node.position.x;
@@ -268,6 +342,7 @@ export default function GraphCanvas({ backgroundColor, layout, graph }: Props) {
     const handlePointerDown = (
         event: React.PointerEvent<HTMLCanvasElement>
     ) => {
+        console.log(graph.getNodes());
         stopSimulation();
 
         const point = getCanvasCoordinates(event);
@@ -275,6 +350,37 @@ export default function GraphCanvas({ backgroundColor, layout, graph }: Props) {
 
         const graphPoint = screenToGraph(point.x, point.y);
         const hitNode = hitTestNode(graphPoint.x, graphPoint.y);
+
+        if (mode === "link") {
+            stopSimulation();
+
+            if (!hitNode) {
+                setLinkStartNodeId(null);
+                draw();
+                setSelectedNodeId(null);
+                return;
+            }
+
+            if (!linkStartNodeId) {
+                setLinkStartNodeId(hitNode.id);
+                draw();
+                return;
+            }
+
+            if (linkStartNodeId === hitNode.id) {
+                setLinkStartNodeId(null);
+                draw();
+                return;
+            }
+
+            graph.addEdge({
+                id: crypto.randomUUID(),
+                from: linkStartNodeId,
+                to: hitNode.id,
+                type: "default",
+            });
+            setLinkStartNodeId(null);
+        }
 
         if (hitNode) {
             dragStateRef.current = {
@@ -294,6 +400,22 @@ export default function GraphCanvas({ backgroundColor, layout, graph }: Props) {
                 startOffsetY: viewRef.current.offsetY,
             };
             setSelectedNodeId(null);
+
+            if (mode === "add" && !hitNode) {
+                graph.addNode({
+                    id: crypto.randomUUID(),
+                    title: "New Node",
+                    weight: 1,
+                    position: {
+                        x: graphPoint.x,
+                        y: graphPoint.y,
+                    },
+                    velocity: {
+                        vx: 0,
+                        vy: 0,
+                    },
+                });
+            }
         }
         draw();
     };
@@ -352,26 +474,19 @@ export default function GraphCanvas({ backgroundColor, layout, graph }: Props) {
         runSimulation();
     };
 
-    const handleWheel = (event: React.WheelEvent<HTMLCanvasElement>) => {
-        event.preventDefault();
+    const handleSaveGraph = () => {
+        const graphData = graph.export();
+        const json = JSON.stringify(graphData, null, 2);
 
-        const point = getCanvasCoordinates(event);
-        if (!point) return;
+        const blob = new Blob([json], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
 
-        const beforeZoom = screenToGraph(point.x, point.y);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "mind-graph.json";
+        link.click();
 
-        const zoomFactor = event.deltaY < 0 ? 1.1 : 0.9;
-        const view = viewRef.current;
-
-        view.scale = Math.max(0.2, Math.min(4, view.scale * zoomFactor));
-
-        const afterZoomScreenX = beforeZoom.x * view.scale + view.offsetX;
-        const afterZoomScreenY = beforeZoom.y * view.scale + view.offsetY;
-
-        view.offsetX += point.x - afterZoomScreenX;
-        view.offsetY += point.y - afterZoomScreenY;
-
-        draw();
+        URL.revokeObjectURL(url);
     };
 
     return (
@@ -381,7 +496,7 @@ export default function GraphCanvas({ backgroundColor, layout, graph }: Props) {
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}
             onPointerLeave={handlePointerLeave}
-            onWheel={handleWheel}
+
             style={{
                 width: "100vw",
                 height: "100vh",

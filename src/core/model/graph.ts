@@ -25,6 +25,10 @@ export class Graph {
     return Array.from(this.nodes.values());
   }
 
+  getEdges(): Edge[] {
+    return Array.from(this.edges.values());
+  }
+
   getConnectedNodes(nodeId: string): GraphNode[] {
     const connections: GraphNode[] = [];
 
@@ -75,7 +79,7 @@ export class Graph {
     };
   }
 
-  static import(data: GraphData): Graph {
+  import(data: GraphData): Graph {
     const graph = new Graph();
 
     for (const node of data.nodes) {
