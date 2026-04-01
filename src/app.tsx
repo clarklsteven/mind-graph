@@ -1,20 +1,17 @@
 import GraphCanvas from "./ui/graph-canvas";
 import ControlPanel from "./ui/control-panel";
+import PropertiesPanel from "./ui/properties-panel";
 import { Graph } from "./core/model/graph";
 import { Layout } from "./core/layout/layout";
-import savedGraphData from "../test-graph.json";
 import { useRef, useState } from "react";
 
-type Mode = "select" | "add" | "link";
+export type Mode = "select" | "add" | "link" | "delete";
 
 export default function App() {
     const [mode, setMode] = useState<Mode>("select");
 
-    let graph: Graph;
-    if (savedGraphData) {
-        graph = new Graph().import(savedGraphData);
-    }
-    let layout: Layout;
+    let graph: Graph = new Graph();
+    let layout: Layout = new Layout(graph, 1000, 1000);
     if (graph) {
         layout = new Layout(graph, 1000, 1000);
     }
@@ -23,17 +20,34 @@ export default function App() {
     const layoutRef = useRef<Layout>(layout);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [graphVersion, setGraphVersion] = useState(0);
+    const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+
+    const notifyGraphChanged = () => {
+        setGraphVersion((v) => v + 1);
+    };
 
     const handleSaveGraph = () => {
         const graphData = graphRef.current.export();
         const json = JSON.stringify(graphData, null, 2);
+
+        const now = new Date();
+        const timestamp = [
+            now.getFullYear(),
+            String(now.getMonth() + 1).padStart(2, "0"),
+            String(now.getDate()).padStart(2, "0"),
+        ].join("-") + "-" + [
+            String(now.getHours()).padStart(2, "0"),
+            String(now.getMinutes()).padStart(2, "0"),
+        ].join("");
+
+        const filename = `mind-graph-${timestamp}.json`;
 
         const blob = new Blob([json], { type: "application/json" });
         const url = URL.createObjectURL(blob);
 
         const link = document.createElement("a");
         link.href = url;
-        link.download = "mind-graph.json";
+        link.download = filename;
         link.click();
 
         URL.revokeObjectURL(url);
@@ -61,11 +75,19 @@ export default function App() {
         event.target.value = "";
     };
 
+    const handleDeleteSelectedNode = () => {
+        if (!selectedNodeId) return;
+
+        graphRef.current.deleteNode(selectedNodeId);
+        setSelectedNodeId(null);
+        notifyGraphChanged();
+    };
+
     return (
         <div
             style={{
                 display: "grid",
-                gridTemplateColumns: "220px 1fr",
+                gridTemplateColumns: "220px 1fr 260px",
                 width: "100vw",
                 height: "100vh",
             }}
@@ -84,8 +106,17 @@ export default function App() {
                     graph={graphRef.current}
                     layout={layoutRef.current}
                     graphVersion={graphVersion}
+                    selectedNodeId={selectedNodeId}
+                    setSelectedNodeId={setSelectedNodeId}
                 />
             </main>
+
+            <PropertiesPanel
+                graph={graphRef.current}
+                selectedNodeId={selectedNodeId}
+                onGraphChanged={notifyGraphChanged}
+                onDeleteSelectedNode={handleDeleteSelectedNode}
+            />
 
             <input
                 ref={fileInputRef}
@@ -96,35 +127,4 @@ export default function App() {
             />
         </div>
     );
-}
-
-function getButtonStyle(isActive: boolean): React.CSSProperties {
-    return {
-        padding: "10px 12px",
-        textAlign: "center",
-        border: "1px solid rgb(160, 150, 140)",
-        borderRadius: "8px",
-        backgroundColor: isActive
-            ? "rgb(101, 26, 44)"
-            : "rgb(255, 250, 231)",
-        color: isActive ? "rgb(255, 250, 231)" : "rgb(70, 50, 60)",
-        cursor: "pointer",
-        fontSize: "14px",
-        fontWeight: 500,
-    };
-}
-
-function getSecondaryButtonStyle(): React.CSSProperties {
-    return {
-        width: "100%",
-        padding: "10px 12px",
-        textAlign: "center",
-        border: "1px solid rgb(160, 150, 140)",
-        borderRadius: "8px",
-        backgroundColor: "rgb(255, 250, 231)",
-        color: "rgb(70, 50, 60)",
-        cursor: "pointer",
-        fontSize: "14px",
-        fontWeight: 500,
-    };
 }

@@ -11,6 +11,16 @@ export class Graph {
     this.calculateNodeWeights();
   }
 
+  deleteNode(nodeId: string) {
+    this.nodes.delete(nodeId);
+    for (const edge of this.edges.values()) {
+      if (edge.from === nodeId || edge.to === nodeId) {
+        this.edges.delete(edge.id);
+      }
+    }
+    this.calculateNodeWeights();
+  }
+
   addEdge(edge: Edge) {
     this.edges.set(edge.id, edge);
     this.calculateNodeWeights();

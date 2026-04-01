@@ -1,6 +1,6 @@
-import React from "react";
+import { Mode } from "../app";
+import { getButtonStyle, getSecondaryButtonStyle } from "./styles";
 
-type Mode = "select" | "add" | "link";
 
 type ControlPanelProps = {
     mode: Mode;
@@ -88,36 +88,4 @@ export default function ControlPanel({
             </div>
         </aside>
     );
-}
-
-function getButtonStyle(isActive: boolean): React.CSSProperties {
-    return {
-        width: "100%",
-        padding: "10px 12px",
-        textAlign: "center",
-        border: "1px solid rgb(160, 150, 140)",
-        borderRadius: "8px",
-        backgroundColor: isActive
-            ? "rgb(101, 26, 44)"
-            : "rgb(255, 250, 231)",
-        color: isActive ? "rgb(255, 250, 231)" : "rgb(70, 50, 60)",
-        cursor: "pointer",
-        fontSize: "14px",
-        fontWeight: 500,
-    };
-}
-
-function getSecondaryButtonStyle(): React.CSSProperties {
-    return {
-        width: "100%",
-        padding: "10px 12px",
-        textAlign: "center",
-        border: "1px solid rgb(160, 150, 140)",
-        borderRadius: "8px",
-        backgroundColor: "rgb(255, 250, 231)",
-        color: "rgb(70, 50, 60)",
-        cursor: "pointer",
-        fontSize: "14px",
-        fontWeight: 500,
-    };
 }

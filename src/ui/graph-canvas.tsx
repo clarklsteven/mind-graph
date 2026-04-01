@@ -4,8 +4,7 @@ import { Graph } from "../core/model/graph";
 import { Layout } from "../core/layout/layout";
 import { Edge } from "../core/model/edge";
 import { GraphNode } from "../core/model/node";
-
-type Mode = "select" | "add" | "link";
+import { Mode } from "../app";
 
 type DragState = {
     nodeId: string;
@@ -19,6 +18,8 @@ type Props = {
     graph: Graph;
     mode: Mode;
     graphVersion: number;
+    selectedNodeId: string | null;
+    setSelectedNodeId: (id: string | null) => void;
 };
 
 type ViewTransform = {
@@ -39,7 +40,7 @@ type CanvasPointerLikeEvent = {
     clientY: number;
 };
 
-export default function GraphCanvas({ backgroundColor, layout, graph, mode, graphVersion }: Props) {
+export default function GraphCanvas({ backgroundColor, layout, graph, mode, graphVersion, selectedNodeId, setSelectedNodeId }: Props) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const dragStateRef = useRef<DragState>(null);
     const viewRef = useRef<ViewTransform>({ offsetX: 0, offsetY: 0, scale: 1 });
@@ -47,7 +48,6 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
     const isSimulatingRef = useRef(false);
     const panStateRef = useRef<PanState>(null);
 
-    const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
     const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
     const [linkStartNodeId, setLinkStartNodeId] = useState<string | null>(null);
 
@@ -342,7 +342,6 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
     const handlePointerDown = (
         event: React.PointerEvent<HTMLCanvasElement>
     ) => {
-        console.log(graph.getNodes());
         stopSimulation();
 
         const point = getCanvasCoordinates(event);
