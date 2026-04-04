@@ -30,7 +30,6 @@ export class Layout {
     getNodeRadius(nodeId: string): number {
         const node = this.graph.getNode(nodeId);
         if (!node) return 8;
-        //console.log(`Node ${nodeId} has weight ${node.weight}`);
         return Math.sqrt(node.weight) * 8;
     }
 

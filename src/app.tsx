@@ -21,6 +21,7 @@ export default function App() {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [graphVersion, setGraphVersion] = useState(0);
     const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+    const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
 
     const notifyGraphChanged = () => {
         setGraphVersion((v) => v + 1);
@@ -83,6 +84,15 @@ export default function App() {
         notifyGraphChanged();
     };
 
+    const handleDeleteSelectedEdge = () => {
+        console.log("Deleting edge", selectedEdgeId);
+        if (!selectedEdgeId) return;
+
+        graphRef.current.deleteEdge(selectedEdgeId);
+        setSelectedEdgeId(null);
+        notifyGraphChanged();
+    };
+
     return (
         <div
             style={{
@@ -108,14 +118,18 @@ export default function App() {
                     graphVersion={graphVersion}
                     selectedNodeId={selectedNodeId}
                     setSelectedNodeId={setSelectedNodeId}
+                    selectedEdgeId={selectedEdgeId}
+                    setSelectedEdgeId={setSelectedEdgeId}
                 />
             </main>
 
             <PropertiesPanel
                 graph={graphRef.current}
                 selectedNodeId={selectedNodeId}
+                selectedEdgeId={selectedEdgeId}
                 onGraphChanged={notifyGraphChanged}
                 onDeleteSelectedNode={handleDeleteSelectedNode}
+                onDeleteSelectedEdge={handleDeleteSelectedEdge}
             />
 
             <input

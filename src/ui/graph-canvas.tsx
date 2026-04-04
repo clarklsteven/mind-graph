@@ -20,6 +20,8 @@ type Props = {
     graphVersion: number;
     selectedNodeId: string | null;
     setSelectedNodeId: (id: string | null) => void;
+    selectedEdgeId: string | null;
+    setSelectedEdgeId: (id: string | null) => void;
 };
 
 type ViewTransform = {
@@ -40,7 +42,8 @@ type CanvasPointerLikeEvent = {
     clientY: number;
 };
 
-export default function GraphCanvas({ backgroundColor, layout, graph, mode, graphVersion, selectedNodeId, setSelectedNodeId }: Props) {
+export default function GraphCanvas({ backgroundColor, layout, graph, mode, graphVersion,
+    selectedNodeId, setSelectedNodeId, selectedEdgeId, setSelectedEdgeId }: Props) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const dragStateRef = useRef<DragState>(null);
     const viewRef = useRef<ViewTransform>({ offsetX: 0, offsetY: 0, scale: 1 });
@@ -140,19 +143,95 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
 
         const context = canvas.getContext("2d");
         if (!context) return;
+
         const fromNode = getNodeById(edge.from);
         const toNode = getNodeById(edge.to);
 
         if (!fromNode || !toNode) return;
 
-        context.beginPath();
+        const fromRadius = layout.getNodeRadius(fromNode.id) * viewRef.current.scale;
+        const toRadius = layout.getNodeRadius(toNode.id) * viewRef.current.scale;
+
         const fromScreen = graphToScreen(fromNode.position.x, fromNode.position.y);
         const toScreen = graphToScreen(toNode.position.x, toNode.position.y);
-        context.moveTo(fromScreen.x, fromScreen.y);
-        context.lineTo(toScreen.x, toScreen.y);
-        context.strokeStyle = "rgb(120, 120, 120)";
-        context.lineWidth = 2;
+
+        const dx = toScreen.x - fromScreen.x;
+        const dy = toScreen.y - fromScreen.y;
+        const length = Math.sqrt(dx * dx + dy * dy);
+
+        if (length === 0) return;
+
+        const ux = dx / length;
+        const uy = dy / length;
+
+        const startX = fromScreen.x + ux * fromRadius;
+        const startY = fromScreen.y + uy * fromRadius;
+
+        const endX = toScreen.x - ux * toRadius;
+        const endY = toScreen.y - uy * toRadius;
+
+        const isSelected = edge.id === selectedEdgeId;
+        const isDirectional = edge.type !== "Relates To";
+
+        context.beginPath();
+        context.moveTo(startX, startY);
+        context.lineTo(endX, endY);
+        context.strokeStyle = isSelected
+            ? "rgb(101, 26, 44)"
+            : "rgb(120, 120, 120)";
+        context.lineWidth = isSelected ? 4 : 2;
         context.stroke();
+
+        if (isDirectional) {
+            const arrowLength = 10;
+            const arrowWidth = 5;
+
+            const px = -uy;
+            const py = ux;
+
+            const baseX = endX - ux * arrowLength;
+            const baseY = endY - uy * arrowLength;
+
+            const leftX = baseX + px * arrowWidth;
+            const leftY = baseY + py * arrowWidth;
+
+            const rightX = baseX - px * arrowWidth;
+            const rightY = baseY - py * arrowWidth;
+
+            context.beginPath();
+            context.moveTo(endX, endY);
+            context.lineTo(leftX, leftY);
+            context.lineTo(rightX, rightY);
+            context.closePath();
+            context.fillStyle = isSelected
+                ? "rgb(101, 26, 44)"
+                : "rgb(120, 120, 120)";
+            context.fill();
+        }
+
+        const label = getEdgeLabel(edge);
+        const { x, y, angle } = getEdgeLabelPlacement(fromScreen.x, fromScreen.y, toScreen.x, toScreen.y, 12);
+
+        context.save();
+        context.font = "12px sans-serif";
+        context.textAlign = "center";
+        context.textBaseline = "middle";
+        context.translate(x, y);
+        context.rotate(angle);
+
+        // optional background so text is readable
+        const metrics = context.measureText(label);
+        const paddingX = 4;
+        const paddingY = 2;
+        const boxWidth = metrics.width + paddingX * 2;
+        const boxHeight = 16;
+
+        context.fillStyle = "rgba(128, 128, 128, 0.0)";
+        context.fillRect(x - boxWidth / 2, y - boxHeight / 2, boxWidth, boxHeight);
+
+        context.fillStyle = "#88af94";
+        context.fillText(label, 0, 0);
+        context.restore();
     };
 
     const drawNode = (node: GraphNode) => {
@@ -162,21 +241,22 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
         const context = canvas.getContext("2d");
         if (!context) return;
         const isSelected = node.id === selectedNodeId;
+        const isBeingDragged = dragStateRef.current?.nodeId === node.id;
         const isHovered = node.id === hoveredNodeId;
         const isLinkStart = node.id === linkStartNodeId;
         const radius = layout.getNodeRadius(node.id);
-
 
         context.beginPath();
         const screen = graphToScreen(node.position.x, node.position.y);
         context.arc(screen.x, screen.y, radius * viewRef.current.scale, 0, Math.PI * 2);
 
-        context.fillStyle = isLinkStart
-            ? "#34d399" : isSelected
-                ? "#f59e0b"
-                : isHovered
-                    ? "#60a5fa"
-                    : Colours.getColourForNode(graph.getConnectionCount(node.id) / 10);
+        context.fillStyle = isBeingDragged
+            ? "#f59e0b" : isLinkStart
+                ? "#34d399" : isSelected
+                    ? "#f59e0b"
+                    : isHovered
+                        ? "#60a5fa"
+                        : Colours.getColourForNode((node.weight - 1) / 10);
 
         context.fill();
 
@@ -208,7 +288,7 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
         const y = screen.y - offsetY;
 
         // Background
-        context.fillStyle = "rgba(255, 250, 231, 0.7)";
+        context.fillStyle = "rgba(255, 250, 231, 0.0)";
         context.fillRect(
             x - padding,
             y - textHeight,
@@ -339,6 +419,33 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
         return null;
     };
 
+    const hitTestEdge = (x: number, y: number): Edge | null => {
+        const edges = graph.getEdges();
+
+        for (let i = edges.length - 1; i >= 0; i--) {
+            const edge = edges[i];
+            const fromNode = graph.getNode(edge.from);
+            const toNode = graph.getNode(edge.to);
+
+            if (!fromNode || !toNode) continue;
+
+            const distance = distanceToSegment(
+                x,
+                y,
+                fromNode.position.x,
+                fromNode.position.y,
+                toNode.position.x,
+                toNode.position.y
+            );
+
+            if (distance <= 8 / viewRef.current.scale) {
+                return edge;
+            }
+        }
+
+        return null;
+    };
+
     const handlePointerDown = (
         event: React.PointerEvent<HTMLCanvasElement>
     ) => {
@@ -349,6 +456,14 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
 
         const graphPoint = screenToGraph(point.x, point.y);
         const hitNode = hitTestNode(graphPoint.x, graphPoint.y);
+        const hitEdge = hitNode ? null : hitTestEdge(graphPoint.x, graphPoint.y);
+
+        if (hitEdge) {
+            setSelectedEdgeId(hitEdge.id);
+            setSelectedNodeId(null);
+            draw();
+            return;
+        }
 
         if (mode === "link") {
             stopSimulation();
@@ -357,6 +472,7 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
                 setLinkStartNodeId(null);
                 draw();
                 setSelectedNodeId(null);
+                setSelectedEdgeId(null);
                 return;
             }
 
@@ -376,7 +492,7 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
                 id: crypto.randomUUID(),
                 from: linkStartNodeId,
                 to: hitNode.id,
-                type: "default",
+                type: "Relates To",
             });
             setLinkStartNodeId(null);
         }
@@ -390,6 +506,10 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
 
             panStateRef.current = null;
             setSelectedNodeId(hitNode.id);
+            setSelectedEdgeId(null);
+        } else if (hitEdge) {
+            setSelectedEdgeId(hitEdge.id);
+            setSelectedNodeId(null);
         } else {
             dragStateRef.current = null;
             panStateRef.current = {
@@ -399,10 +519,12 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
                 startOffsetY: viewRef.current.offsetY,
             };
             setSelectedNodeId(null);
+            setSelectedEdgeId(null);
 
             if (mode === "add" && !hitNode) {
+                let id = crypto.randomUUID();
                 graph.addNode({
-                    id: crypto.randomUUID(),
+                    id: id,
                     title: "New Node",
                     weight: 1,
                     position: {
@@ -414,8 +536,10 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
                         vy: 0,
                     },
                 });
+                setSelectedNodeId(id);
             }
         }
+        runSimulation();
         draw();
     };
 
@@ -487,6 +611,87 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
 
         URL.revokeObjectURL(url);
     };
+
+    function distanceToSegment(
+        px: number,
+        py: number,
+        x1: number,
+        y1: number,
+        x2: number,
+        y2: number
+    ): number {
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+
+        if (dx === 0 && dy === 0) {
+            const ddx = px - x1;
+            const ddy = py - y1;
+            return Math.sqrt(ddx * ddx + ddy * ddy);
+        }
+
+        const t = Math.max(
+            0,
+            Math.min(1, ((px - x1) * dx + (py - y1) * dy) / (dx * dx + dy * dy))
+        );
+
+        const cx = x1 + t * dx;
+        const cy = y1 + t * dy;
+
+        const ddx = px - cx;
+        const ddy = py - cy;
+
+        return Math.sqrt(ddx * ddx + ddy * ddy);
+    }
+
+    function getEdgeLabel(edge: Edge): string {
+        switch (edge.type) {
+            case "Theme Of":
+                return "Theme Of";
+            case "Relates To":
+            default:
+                return "Relates To";
+        }
+    }
+
+    interface EdgeLabelPlacement {
+        x: number;
+        y: number;
+        angle: number;
+    }
+
+    function getEdgeLabelPlacement(
+        x1: number,
+        y1: number,
+        x2: number,
+        y2: number,
+        offset = 12
+    ): EdgeLabelPlacement {
+        const mx = (x1 + x2) / 2;
+        const my = (y1 + y2) / 2;
+
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+        const length = Math.hypot(dx, dy);
+
+        if (length === 0) {
+            return { x: mx, y: my, angle: 0 };
+        }
+
+        const nx = -dy / length;
+        const ny = dx / length;
+
+        let angle = Math.atan2(dy, dx);
+
+        if (angle > Math.PI / 2 || angle < -Math.PI / 2) {
+            angle += Math.PI;
+        }
+
+        return {
+            x: mx + nx * offset,
+            y: my + ny * offset,
+            angle,
+        };
+    }
 
     return (
         <canvas

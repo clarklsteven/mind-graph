@@ -44,3 +44,39 @@ export function getDangerButtonStyle(): React.CSSProperties {
         fontWeight: 600,
     };
 }
+
+export function getPropertyLabelStyle(): React.CSSProperties {
+    return {
+        fontSize: "12px",
+        fontWeight: 600,
+        color: "rgb(120, 110, 100)",
+        marginBottom: "4px",
+        textTransform: "uppercase",
+        letterSpacing: "0.04em",
+    };
+}
+
+export function getPropertyInputStyle(): React.CSSProperties {
+    return {
+        width: "100%",
+        padding: "8px 10px",
+        border: "1px solid rgb(210, 205, 190)",
+        borderRadius: "8px",
+        backgroundColor: "rgb(255, 250, 231)",
+        color: "rgb(70, 50, 60)",
+        fontSize: "14px",
+        boxSizing: "border-box",
+    };
+}
+
+export function getPropertyDisplayStyle(): React.CSSProperties {
+    return {
+        padding: "8px 10px",
+        border: "1px solid rgb(210, 205, 190)",
+        borderRadius: "8px",
+        backgroundColor: "rgb(236, 231, 214)",
+        color: "rgb(140, 135, 130)",
+        fontFamily: "monospace",
+        fontSize: "13px",
+    };
+}

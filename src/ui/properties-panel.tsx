@@ -1,24 +1,48 @@
 import React from "react";
 import { Graph } from "../core/model/graph";
 import { GraphNode } from "../core/model/node";
-import { getDangerButtonStyle, getSecondaryButtonStyle } from "./styles";
+import { getDangerButtonStyle, getPropertyLabelStyle, getPropertyDisplayStyle, getPropertyInputStyle } from "./styles";
+import { useEffect, useRef } from "react";
+import { EdgeType } from "../core/model/edge";
 
 type PropertiesPanelProps = {
     graph: Graph;
     selectedNodeId: string | null;
+    selectedEdgeId: string | null;
     onGraphChanged: () => void;
     onDeleteSelectedNode: () => void;
+    onDeleteSelectedEdge: () => void;
 };
 
 export default function PropertiesPanel({
     graph,
     selectedNodeId,
+    selectedEdgeId,
     onGraphChanged,
     onDeleteSelectedNode,
+    onDeleteSelectedEdge,
 }: PropertiesPanelProps) {
     const selectedNode: GraphNode | undefined = selectedNodeId
         ? graph.getNode(selectedNodeId)
         : undefined;
+
+    const selectedEdge = selectedEdgeId
+        ? graph.getEdge(selectedEdgeId)
+        : undefined;
+
+    const titleInputRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        if (!selectedNodeId) return;
+
+        const input = titleInputRef.current;
+        if (!input) return;
+
+        input.focus();
+        requestAnimationFrame(() => {
+            input.select();
+        });
+    }, [selectedNodeId]);
 
     const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (!selectedNode) return;
@@ -51,16 +75,7 @@ export default function PropertiesPanel({
                 Properties
             </h2>
 
-            {!selectedNode ? (
-                <div
-                    style={{
-                        color: "rgb(130, 120, 110)",
-                        fontStyle: "italic",
-                    }}
-                >
-                    No node selected
-                </div>
-            ) : (
+            {selectedNode ? (
                 <div
                     style={{
                         display: "flex",
@@ -71,59 +86,28 @@ export default function PropertiesPanel({
                 >
                     <div>
                         <div
-                            style={{
-                                fontSize: "12px",
-                                fontWeight: 600,
-                                color: "rgb(120, 110, 100)",
-                                marginBottom: "4px",
-                                textTransform: "uppercase",
-                                letterSpacing: "0.04em",
-                            }}
+                            style={getPropertyLabelStyle()}
                         >
                             Node ID
                         </div>
                         <div
-                            style={{
-                                padding: "8px 10px",
-                                border: "1px solid rgb(210, 205, 190)",
-                                borderRadius: "8px",
-                                backgroundColor: "rgb(236, 231, 214)",
-                                color: "rgb(140, 135, 130)",
-                                fontFamily: "monospace",
-                                fontSize: "13px",
-                            }}
+                            style={getPropertyDisplayStyle()}
                         >
                             {selectedNode.id}
                         </div>
                     </div>
-
                     <div>
                         <div
-                            style={{
-                                fontSize: "12px",
-                                fontWeight: 600,
-                                color: "rgb(120, 110, 100)",
-                                marginBottom: "4px",
-                                textTransform: "uppercase",
-                                letterSpacing: "0.04em",
-                            }}
+                            style={getPropertyLabelStyle()}
                         >
                             Title
                         </div>
                         <input
+                            ref={titleInputRef}
                             type="text"
                             value={selectedNode.title}
                             onChange={handleTitleChange}
-                            style={{
-                                width: "100%",
-                                padding: "8px 10px",
-                                border: "1px solid rgb(210, 205, 190)",
-                                borderRadius: "8px",
-                                backgroundColor: "rgb(255, 250, 231)",
-                                color: "rgb(70, 50, 60)",
-                                fontSize: "14px",
-                                boxSizing: "border-box",
-                            }}
+                            style={getPropertyInputStyle()}
                         />
                     </div>
                     <div style={{ marginTop: "auto", paddingTop: "16px" }}>
@@ -134,6 +118,63 @@ export default function PropertiesPanel({
                             Delete Node
                         </button>
                     </div>
+                </div>
+            ) : selectedEdge ? (
+                <div
+                    style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "16px",
+                        height: "100%",
+                    }}
+                >
+                    <div
+                        style={getPropertyLabelStyle()}
+                    >
+                        <div>Edge ID</div>
+                        <div style={getPropertyDisplayStyle()}>
+                            {selectedEdge.id}
+                        </div>
+                    </div>
+                    <div>
+                        <div style={getPropertyLabelStyle()}>Type</div>
+                        <select
+                            value={selectedEdge.type}
+                            onChange={(event) => {
+                                selectedEdge.type = event.target.value as "Relates To" | "Theme Of";
+                                onGraphChanged();
+                            }}
+                            style={{
+                                width: "100%",
+                                padding: "8px 10px",
+                                border: "1px solid rgb(210, 205, 190)",
+                                borderRadius: "8px",
+                                backgroundColor: "rgb(255, 250, 231)",
+                                color: "rgb(70, 50, 60)",
+                                fontSize: "14px",
+                                boxSizing: "border-box",
+                            }}
+                        >
+                            <option value="Relates To">Relates To</option>
+                            <option value="Theme Of">Theme Of</option>
+                        </select>                    </div>
+                    <div style={{ marginTop: "auto", paddingTop: "16px" }}>
+                        <button
+                            onClick={onDeleteSelectedEdge}
+                            style={getDangerButtonStyle()}
+                        >
+                            Delete Edge
+                        </button>
+                    </div>
+                </div>
+            ) : (
+                <div
+                    style={{
+                        color: "rgb(130, 120, 110)",
+                        fontStyle: "italic",
+                    }}
+                >
+                    No node selected
                 </div>
             )}
         </aside>

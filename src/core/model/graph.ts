@@ -27,12 +27,21 @@ export class Graph {
 
   }
 
+  deleteEdge(edgeId: string) {
+    this.edges.delete(edgeId);
+    this.calculateNodeWeights();
+  }
+
   getNode(id: string): GraphNode | undefined {
     return this.nodes.get(id);
   }
 
   getNodes(): GraphNode[] {
     return Array.from(this.nodes.values());
+  }
+
+  getEdge(id: string): Edge | undefined {
+    return this.edges.get(id);
   }
 
   getEdges(): Edge[] {
@@ -43,8 +52,8 @@ export class Graph {
     const connections: GraphNode[] = [];
 
     for (const edge of this.edges.values()) {
-      if (edge.from === nodeId) {
-        const node = this.nodes.get(edge.to);
+      if (edge.from === nodeId || edge.to === nodeId) {
+        const node = this.nodes.get(edge.to === nodeId ? edge.from : edge.to);
         if (node) connections.push(node);
       }
     }
@@ -79,6 +88,10 @@ export class Graph {
     for (const node of this.nodes.values()) {
       const weight = this.getNodeWeight(node.id);
       node.weight = weight;
+      if (node.id === "d388bba6-25a7-4b65-8df3-1829fb773959") {
+        console.log(`Node ${node.id} has weight ${node.weight}`);
+        console.log(`Connection count: ${this.getConnectionCount(node.id)}`);
+      }
     }
   }
 
