@@ -1,9 +1,10 @@
 {
+    "id": "concept-graph",
     "interpretation_type": "concept-graph",
     "relationship_definitions": [
         {
-            "id": "related-to",
-            "label": "Related To",
+            "id": "relates-to",
+            "label": "Relates To",
             "directed": false,
             "hierarchical": false,
             "parentEnd": null,

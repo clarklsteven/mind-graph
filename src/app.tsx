@@ -4,6 +4,11 @@ import PropertiesPanel from "./ui/properties-panel";
 import { Graph } from "./core/model/graph";
 import { Layout } from "./core/layout/layout";
 import { useRef, useState } from "react";
+import { GraphInterpretation } from "./core/model/graph-interpretation";
+import conceptGraph from "../config/concept-graph.json";
+import narrativeStrategyGraph from "../config/narrative-strategy-graph.json";
+import releaseAssuranceGraph from "../config/release-assurance-graph.json";
+import rootCauseAnalysisGraph from "../config/root-cause-analysis-graph.json";
 
 export type Mode = "select" | "add" | "link" | "delete";
 
@@ -18,10 +23,17 @@ export default function App() {
 
     const graphRef = useRef<Graph>(graph);
     const layoutRef = useRef<Layout>(layout);
+    const interpretationRef = useRef<GraphInterpretation>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [graphVersion, setGraphVersion] = useState(0);
     const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
     const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
+
+    const interpretationRegistry: Record<string, GraphInterpretation> = {};
+    interpretationRegistry[conceptGraph.interpretation_type] = conceptGraph as GraphInterpretation;
+    interpretationRegistry[narrativeStrategyGraph.interpretation_type] = narrativeStrategyGraph as GraphInterpretation;
+    interpretationRegistry[releaseAssuranceGraph.interpretation_type] = releaseAssuranceGraph as GraphInterpretation;
+    interpretationRegistry[rootCauseAnalysisGraph.interpretation_type] = rootCauseAnalysisGraph as GraphInterpretation;
 
     const notifyGraphChanged = () => {
         setGraphVersion((v) => v + 1);
@@ -73,11 +85,10 @@ export default function App() {
 
         // Import the graph interpretation if it exists
         if (data.interpretationType) {
-            // Load any specific interpretation data from the appropriate configuration file.
-            let interpretationConfig = null;
-            try {
-                interpretationConfig = await import(`../config/${data.interpretationType}.json`);
-            } catch (error) {
+            const interpretation: GraphInterpretation | undefined = interpretationRegistry[data.interpretationType];
+            if (interpretation) {
+                interpretationRef.current = interpretation;
+            } else {
                 console.warn(`No specific configuration found for interpretation type: ${data.interpretationType}`);
             }
         }
@@ -130,6 +141,7 @@ export default function App() {
                     setSelectedNodeId={setSelectedNodeId}
                     selectedEdgeId={selectedEdgeId}
                     setSelectedEdgeId={setSelectedEdgeId}
+                    interpretation={interpretationRef.current}
                 />
             </main>
 
@@ -140,6 +152,7 @@ export default function App() {
                 onGraphChanged={notifyGraphChanged}
                 onDeleteSelectedNode={handleDeleteSelectedNode}
                 onDeleteSelectedEdge={handleDeleteSelectedEdge}
+                interpretation={interpretationRef.current}
             />
 
             <input

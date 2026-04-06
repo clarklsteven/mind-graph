@@ -4,6 +4,7 @@ import { GraphNode } from "../core/model/node";
 import { getDangerButtonStyle, getPropertyLabelStyle, getPropertyDisplayStyle, getPropertyInputStyle } from "./styles";
 import { useEffect, useRef } from "react";
 import { EdgeType } from "../core/model/edge";
+import { GraphInterpretation } from "../core/model/graph-interpretation";
 
 type PropertiesPanelProps = {
     graph: Graph;
@@ -12,6 +13,7 @@ type PropertiesPanelProps = {
     onGraphChanged: () => void;
     onDeleteSelectedNode: () => void;
     onDeleteSelectedEdge: () => void;
+    interpretation: GraphInterpretation | null;
 };
 
 export default function PropertiesPanel({
@@ -21,6 +23,7 @@ export default function PropertiesPanel({
     onGraphChanged,
     onDeleteSelectedNode,
     onDeleteSelectedEdge,
+    interpretation
 }: PropertiesPanelProps) {
     const selectedNode: GraphNode | undefined = selectedNodeId
         ? graph.getNode(selectedNodeId)
@@ -50,6 +53,8 @@ export default function PropertiesPanel({
         selectedNode.title = event.target.value;
         onGraphChanged();
     };
+
+    console.log("Interpretation in PropertiesPanel:", interpretation);
 
     return (
         <aside

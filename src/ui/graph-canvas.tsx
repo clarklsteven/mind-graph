@@ -5,6 +5,7 @@ import { Layout } from "../core/layout/layout";
 import { Edge } from "../core/model/edge";
 import { GraphNode } from "../core/model/node";
 import { Mode } from "../app";
+import { GraphInterpretation } from "../core/model/graph-interpretation";
 
 type DragState = {
     nodeId: string;
@@ -22,7 +23,8 @@ type Props = {
     setSelectedNodeId: (id: string | null) => void;
     selectedEdgeId: string | null;
     setSelectedEdgeId: (id: string | null) => void;
-};
+    interpretation: GraphInterpretation | null;
+}
 
 type ViewTransform = {
     offsetX: number;
@@ -43,7 +45,7 @@ type CanvasPointerLikeEvent = {
 };
 
 export default function GraphCanvas({ backgroundColor, layout, graph, mode, graphVersion,
-    selectedNodeId, setSelectedNodeId, selectedEdgeId, setSelectedEdgeId }: Props) {
+    selectedNodeId, setSelectedNodeId, selectedEdgeId, setSelectedEdgeId, interpretation }: Props) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const dragStateRef = useRef<DragState>(null);
     const viewRef = useRef<ViewTransform>({ offsetX: 0, offsetY: 0, scale: 1 });
@@ -53,6 +55,7 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
 
     const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
     const [linkStartNodeId, setLinkStartNodeId] = useState<string | null>(null);
+
 
     const getNodeHitRadius = (nodeId: string): number => {
         return Math.max(layout.getNodeRadius(nodeId), 10);
@@ -137,6 +140,25 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
         return graph.getNodes().find((node) => node.id === id);
     };
 
+    const getRelationshipDefinition = (edge: Edge) => {
+        if (!interpretation) return null;
+
+        return interpretation.relationship_definitions.find(
+            def => def.id === edge.type
+        ) || null;
+    };
+
+    /*    const getEdgeLabel = (edge: Edge, interpretation: GraphInterpretation | null): string => {
+            if (!interpretation) console.warn("No interpretation provided for edge label retrieval");
+            if (!interpretation) return edge.type;
+    
+            const relationship = interpretation.relationship_definitions.find(
+                def => def.id === edge.type
+            );
+    
+            return relationship?.label ?? edge.type;
+        }*/
+
     const drawEdge = (edge: Edge) => {
         const canvas = canvasRef.current;
         if (!canvas) return;
@@ -171,7 +193,7 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
         const endY = toScreen.y - uy * toRadius;
 
         const isSelected = edge.id === selectedEdgeId;
-        const isDirectional = edge.type !== "Relates To";
+        const isDirectional = getRelationshipDefinition(edge)?.directed ?? false;
 
         context.beginPath();
         context.moveTo(startX, startY);
@@ -209,7 +231,7 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
             context.fill();
         }
 
-        const label = getEdgeLabel(edge);
+        const label = getRelationshipDefinition(edge)?.label ?? edge.type;
         const { x, y, angle } = getEdgeLabelPlacement(fromScreen.x, fromScreen.y, toScreen.x, toScreen.y, 12);
 
         context.save();
@@ -639,16 +661,6 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
         const ddy = py - cy;
 
         return Math.sqrt(ddx * ddx + ddy * ddy);
-    }
-
-    function getEdgeLabel(edge: Edge): string {
-        switch (edge.type) {
-            case "Theme Of":
-                return "Theme Of";
-            case "Relates To":
-            default:
-                return "Relates To";
-        }
     }
 
     interface EdgeLabelPlacement {

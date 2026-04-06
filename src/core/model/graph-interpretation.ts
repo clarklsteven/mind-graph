@@ -3,7 +3,7 @@ import { RelationshipDefinition } from './relationship-definition';
 
 export interface GraphInterpretation {
     id: string;
-    label: string;
-    relationshipDefinitions: RelationshipDefinition[];
-    nodeDefinitions?: NodeDefinition[];
+    interpretation_type: string;
+    relationship_definitions: RelationshipDefinition[];
+    node_definitions?: NodeDefinition[];
 }
