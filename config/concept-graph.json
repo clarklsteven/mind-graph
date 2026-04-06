@@ -1,0 +1,67 @@
+{
+    "interpretation_type": "concept-graph",
+    "relationship_definitions": [
+        {
+            "id": "related-to",
+            "label": "Related To",
+            "directed": false,
+            "hierarchical": false,
+            "parentEnd": null,
+            "childEnd": null,
+            "singleParent": null,
+            "allowsCycles": null
+        },
+        {
+            "id": "theme-of",
+            "label": "Theme Of",
+            "directed": true,
+            "hierarchical": true,
+            "parentEnd": "target",
+            "childEnd": "source",
+            "singleParent": false,
+            "allowsCycles": false
+        }
+    ],
+    "node_definitions": [
+        {
+            "id": "concept",
+            "label": "Concept",
+            "properties": [
+                {
+                    "id": "description",
+                    "label": "Description",
+                    "valueType": "string",
+                    "required": false,
+                    "defaultValue": ""
+                },
+                {
+                    "id": "importance",
+                    "label": "Importance",
+                    "valueType": "number",
+                    "required": false,
+                    "defaultValue": 1
+                }
+            ]
+        },
+        {
+            "id": "theme",
+            "label": "Theme",
+            "properties": [
+                {
+                    "id": "description",
+                    "label": "Description",
+                    "valueType": "string",
+                    "required": false,
+                    "defaultValue": ""
+                },
+                {
+                    "id": "importance",
+                    "label": "Importance",
+                    "valueType": "number",
+                    "required": false,
+                    "defaultValue": 1
+                }
+            ]
+        }
+    ]
+}

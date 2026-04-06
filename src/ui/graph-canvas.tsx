@@ -507,9 +507,6 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
             panStateRef.current = null;
             setSelectedNodeId(hitNode.id);
             setSelectedEdgeId(null);
-        } else if (hitEdge) {
-            setSelectedEdgeId(hitEdge.id);
-            setSelectedNodeId(null);
         } else {
             dragStateRef.current = null;
             panStateRef.current = {
@@ -526,6 +523,7 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
                 graph.addNode({
                     id: id,
                     title: "New Node",
+                    type: "Default",
                     weight: 1,
                     position: {
                         x: graphPoint.x,

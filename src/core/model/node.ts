@@ -11,9 +11,11 @@ export interface Velocity {
 export interface GraphNode {
   id: string;
   title: string;
+  type: string;
   weight: number;
-  position?: Position;
+  position: Position;
   velocity?: Velocity;
   body?: string;
   tags?: string[];
+  properties?: Record<string, unknown>;
 }

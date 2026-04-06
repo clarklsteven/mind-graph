@@ -71,6 +71,16 @@ export default function App() {
         layoutRef.current = new Layout(graphRef.current, 1000, 1000);
         setGraphVersion((v) => v + 1);
 
+        // Import the graph interpretation if it exists
+        if (data.interpretationType) {
+            // Load any specific interpretation data from the appropriate configuration file.
+            let interpretationConfig = null;
+            try {
+                interpretationConfig = await import(`../config/${data.interpretationType}.json`);
+            } catch (error) {
+                console.warn(`No specific configuration found for interpretation type: ${data.interpretationType}`);
+            }
+        }
 
         // Reset the file input so the same file can be chosen again later
         event.target.value = "";

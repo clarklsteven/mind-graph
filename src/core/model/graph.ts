@@ -3,6 +3,7 @@ import { Edge } from "./edge";
 import { GraphData } from "./graph-data";
 
 export class Graph {
+  private interpretation: string = "concept-graph";
   private nodes: Map<string, GraphNode> = new Map();
   private edges: Map<string, Edge> = new Map();
 
@@ -88,15 +89,12 @@ export class Graph {
     for (const node of this.nodes.values()) {
       const weight = this.getNodeWeight(node.id);
       node.weight = weight;
-      if (node.id === "d388bba6-25a7-4b65-8df3-1829fb773959") {
-        console.log(`Node ${node.id} has weight ${node.weight}`);
-        console.log(`Connection count: ${this.getConnectionCount(node.id)}`);
-      }
     }
   }
 
   export(): GraphData {
     return {
+      interpretationType: this.interpretation,
       nodes: Array.from(this.nodes.values()),
       edges: Array.from(this.edges.values())
     };
@@ -104,6 +102,7 @@ export class Graph {
 
   import(data: GraphData): Graph {
     const graph = new Graph();
+    graph.interpretation = data.interpretationType;
 
     for (const node of data.nodes) {
       if (graph.getNode(node.id)) {
