@@ -5,6 +5,7 @@
         {
             "id": "relates-to",
             "label": "Relates To",
+            "isDefault": true,
             "directed": false,
             "hierarchical": false,
             "parentEnd": null,
@@ -25,8 +26,23 @@
     ],
     "node_definitions": [
         {
+            "id": "untyped",
+            "label": "Untyped",
+            "isDefault": true,
+            "properties": [
+                {
+                    "id": "description",
+                    "label": "Description",
+                    "valueType": "string",
+                    "required": false,
+                    "defaultValue": "This is an untyped node. Consider assigning a type to this node for better organization and understanding."
+                }
+            ]
+        },
+        {
             "id": "concept",
             "label": "Concept",
+            "isDefault": false,
             "properties": [
                 {
                     "id": "description",
@@ -47,6 +63,7 @@
         {
             "id": "theme",
             "label": "Theme",
+            "isDefault": false,
             "properties": [
                 {
                     "id": "description",
@@ -58,7 +75,7 @@
                 {
                     "id": "importance",
                     "label": "Importance",
-                    "valueType": "number",
+                    "valueType": "string",
                     "required": false,
                     "defaultValue": 1
                 }

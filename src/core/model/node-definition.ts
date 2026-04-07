@@ -9,5 +9,6 @@ export interface NodePropertyDefinition {
 export interface NodeDefinition {
     id: string;
     label: string;
+    isDefault?: boolean;
     properties?: NodePropertyDefinition[];
 }

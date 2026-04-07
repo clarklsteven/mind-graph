@@ -91,11 +91,68 @@ export default function App() {
             } else {
                 console.warn(`No specific configuration found for interpretation type: ${data.interpretationType}`);
             }
+            let normalisedGraph = normaliseGraph(graphRef.current, interpretation);
+            graphRef.current = normalisedGraph;
+            layoutRef.current = new Layout(graphRef.current, 1000, 1000);
         }
 
         // Reset the file input so the same file can be chosen again later
         event.target.value = "";
     };
+
+    const normaliseGraph = (graph: Graph, interpretation: GraphInterpretation): Graph => {
+        const normalisedGraph = new Graph();
+
+        // Find the default node type from the interpretation
+        const defaultNodeDef = interpretation.node_definitions?.find(def => def.isDefault);
+
+        // Add all nodes, ensuring they have valid types and properties
+        for (const node of graph.getNodes()) {
+            let nodeDef = interpretation.node_definitions?.find(def => def.id === node.type);
+            if (!nodeDef) {
+                console.warn(`Node ${node.id} has unknown type ${node.type}, using default type`);
+                nodeDef = defaultNodeDef;
+            }
+
+            const normalisedNode = {
+                ...node,
+                type: nodeDef ? nodeDef.id : "unknown",
+                properties: nodeDef?.properties?.reduce((props, propDef) => {
+                    props[propDef.id] = node.properties?.[propDef.id] ?? "";
+                    return props;
+                }, {} as Record<string, any>)
+            };
+
+            normalisedGraph.addNode(normalisedNode);
+        }
+
+        // Find the default relationship type from the interpretation
+        const defaultRelDef = interpretation.relationship_definitions?.find(def => def.isDefault);
+
+        // Add all edges, ensuring they have valid types and properties
+        for (const edge of graph.getEdges()) {
+            let edgeDef = interpretation.relationship_definitions?.find(def => def.id === edge.type);
+            if (!edgeDef) {
+                console.warn(`Edge ${edge.id} has unknown type ${edge.type}, using default type`);
+                edgeDef = defaultRelDef;
+            }
+
+            // Ensure the from and to nodes still exist after normalisation
+            if (!normalisedGraph.getNode(edge.from) || !normalisedGraph.getNode(edge.to)) {
+                console.warn(`Edge ${edge.id} references missing nodes, skipping`);
+                continue;
+            }
+
+            const normalisedEdge = {
+                ...edge,
+                type: edgeDef!.id
+            };
+
+            normalisedGraph.addEdge(normalisedEdge);
+        }
+
+        return normalisedGraph;
+    }
 
     const handleDeleteSelectedNode = () => {
         if (!selectedNodeId) return;

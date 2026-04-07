@@ -1,7 +1,7 @@
 import React from "react";
 import { Graph } from "../core/model/graph";
 import { GraphNode } from "../core/model/node";
-import { getDangerButtonStyle, getPropertyLabelStyle, getPropertyDisplayStyle, getPropertyInputStyle } from "./styles";
+import { getDangerButtonStyle, getPropertyLabelStyle, getPropertyDisplayStyle, getPropertyInputStyle, getPropertyDropdownStyle } from "./styles";
 import { useEffect, useRef } from "react";
 import { EdgeType } from "../core/model/edge";
 import { GraphInterpretation } from "../core/model/graph-interpretation";
@@ -33,6 +33,11 @@ export default function PropertiesPanel({
         ? graph.getEdge(selectedEdgeId)
         : undefined;
 
+    const nodeDefinition = interpretation ?
+        interpretation?.node_definitions ?
+            interpretation.node_definitions.find((def: any) => def.id === selectedNode?.type) :
+            undefined : undefined;
+
     const titleInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
@@ -45,6 +50,14 @@ export default function PropertiesPanel({
         requestAnimationFrame(() => {
             input.select();
         });
+
+        let node = graph.getNode(selectedNodeId);
+        let nodeType = node ? node.type : "unknown";
+        if (nodeDefinition && nodeDefinition.properties) {
+            console.log(`Node ${selectedNodeId} of type ${nodeType} has properties:`, nodeDefinition.properties);
+        } else {
+            console.log(`Node ${selectedNodeId} of type ${nodeType} has no properties defined in the interpretation`);
+        }
     }, [selectedNodeId]);
 
     const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,6 +68,37 @@ export default function PropertiesPanel({
     };
 
     console.log("Interpretation in PropertiesPanel:", interpretation);
+
+    let propertiesComponents: React.ReactNode = (<div>No properties</div>);
+    if (selectedNode && selectedNode.properties && nodeDefinition && nodeDefinition.properties && nodeDefinition.properties.length > 0) {
+        propertiesComponents =
+            nodeDefinition.properties.map((property) => {
+                const value = String(selectedNode.properties?.[property.id] ?? "");
+
+                if (property.valueType === "string") {
+                    return (
+                        <div>
+                            <div
+                                key={property.id}
+                                style={getPropertyLabelStyle()}>
+                                {property.label}
+                            </div>
+                            <input
+                                type="text"
+                                value={value}
+                                style={getPropertyInputStyle()}
+                                onChange={(e) => {
+                                    selectedNode.properties![property.id] = e.target.value;
+                                    onGraphChanged();
+                                }}
+                            />
+                        </div>
+                    );
+                }
+
+                return null;
+            })
+    }
 
     return (
         <aside
@@ -115,6 +159,24 @@ export default function PropertiesPanel({
                             style={getPropertyInputStyle()}
                         />
                     </div>
+                    <div>
+                        <div style={getPropertyLabelStyle()}>Node Type</div>
+                        <select
+                            value={selectedNode.type}
+                            onChange={(e) => {
+                                selectedNode.type = e.target.value;
+                                onGraphChanged();
+                            }}
+                            style={getPropertyDropdownStyle()}
+                        >
+                            {(interpretation?.node_definitions ?? []).map((def) => (
+                                <option key={def.id} value={def.id}>
+                                    {def.label}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    {propertiesComponents}
                     <div style={{ marginTop: "auto", paddingTop: "16px" }}>
                         <button
                             onClick={onDeleteSelectedNode}
@@ -149,16 +211,7 @@ export default function PropertiesPanel({
                                 selectedEdge.type = event.target.value as "Relates To" | "Theme Of";
                                 onGraphChanged();
                             }}
-                            style={{
-                                width: "100%",
-                                padding: "8px 10px",
-                                border: "1px solid rgb(210, 205, 190)",
-                                borderRadius: "8px",
-                                backgroundColor: "rgb(255, 250, 231)",
-                                color: "rgb(70, 50, 60)",
-                                fontSize: "14px",
-                                boxSizing: "border-box",
-                            }}
+                            style={getPropertyDropdownStyle()}
                         >
                             <option value="Relates To">Relates To</option>
                             <option value="Theme Of">Theme Of</option>

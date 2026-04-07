@@ -80,3 +80,16 @@ export function getPropertyDisplayStyle(): React.CSSProperties {
         fontSize: "13px",
     };
 }
+
+export function getPropertyDropdownStyle(): React.CSSProperties {
+    return {
+        width: "100%",
+        padding: "8px 10px",
+        border: "1px solid rgb(210, 205, 190)",
+        borderRadius: "8px",
+        backgroundColor: "rgb(255, 250, 231)",
+        color: "rgb(70, 50, 60)",
+        fontSize: "14px",
+        boxSizing: "border-box",
+    };
+}

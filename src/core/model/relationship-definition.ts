@@ -1,6 +1,7 @@
 export interface RelationshipDefinition {
     id: string;
     label: string;
+    isDefault?: boolean;
     directed: boolean;
     hierarchical: boolean;
     parentEnd: "source" | "target" | null;
