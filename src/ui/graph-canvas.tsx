@@ -158,6 +158,26 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
         ) || null;
     };
 
+    const getEdgeLabelOpacity = (scale: number): number => {
+        const fadeStart = 0.7;
+        const fadeEnd = 1.1;
+
+        if (scale <= fadeStart) return 0;
+        if (scale >= fadeEnd) return 1;
+
+        return (scale - fadeStart) / (fadeEnd - fadeStart);
+    }
+
+    const getNodeLabelOpacity = (scale: number): number => {
+        const fadeStart = 0.3;
+        const fadeEnd = 0.8;
+
+        if (scale <= fadeStart) return 0;
+        if (scale >= fadeEnd) return 1;
+
+        return (scale - fadeStart) / (fadeEnd - fadeStart);
+    }
+
     const getInterpretationColourPalette = (node: GraphNode): ColourPalette => {
         const nodeDef = getNodeDefinition(node);
         let defaultPalette: ColourPalette = {
@@ -250,6 +270,11 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
             context.fill();
         }
 
+        const labelOpacity = getEdgeLabelOpacity(viewRef.current.scale);
+
+        if (labelOpacity <= 0.05) {
+            return;
+        }
         const label = getRelationshipDefinition(edge)?.label ?? edge.type;
         const { x, y, angle } = getEdgeLabelPlacement(fromScreen.x, fromScreen.y, toScreen.x, toScreen.y, 12);
 
@@ -270,8 +295,10 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
         context.fillStyle = "rgba(128, 128, 128, 0.0)";
         context.fillRect(x - boxWidth / 2, y - boxHeight / 2, boxWidth, boxHeight);
 
+        context.globalAlpha = labelOpacity;
         context.fillStyle = "#88af94";
         context.fillText(label, 0, 0);
+        context.globalAlpha = 1.0;
         context.restore();
     };
 
@@ -340,8 +367,15 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
         );
 
         // Text
+        let labelOpacity = getNodeLabelOpacity(viewRef.current.scale);
+
+        if (labelOpacity <= 0.05) {
+            return;
+        }
+        context.globalAlpha = labelOpacity;
         context.fillStyle = "#651A2C";
         context.fillText(node.title, x, y);
+        context.globalAlpha = 1.0;
     };
 
     const drawPreviewEdge = () => {

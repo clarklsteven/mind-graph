@@ -132,8 +132,9 @@ export class Layout {
             totalMovement += Math.abs(fx) + Math.abs(fy);
         }
 
-        // Weak attraction to connected graph centre for all nodes
-        const centeringStrength = 0.0003;
+        // Get the weight of all nodes to determine how much to apply the centering force
+        const totalWeight = nodes.reduce((sum, node) => sum + node.weight, 0);
+        const centeringStrength = 0.0003 * totalWeight / nodes.length;
 
         for (const node of nodes) {
             /*if (connectedIds.has(node.id)) {
