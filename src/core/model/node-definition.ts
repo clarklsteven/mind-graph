@@ -1,7 +1,7 @@
 export interface NodePropertyDefinition {
     id: string;
     label: string;
-    valueType: "string" | "number" | "boolean";
+    valueType: "string" | "number" | "boolean" | "paragraph";
     required: boolean;
     defaultValue?: unknown;
 }

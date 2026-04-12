@@ -3,18 +3,24 @@ import { getButtonStyle, getSecondaryButtonStyle } from "./styles";
 
 
 type ControlPanelProps = {
+    name: string;
     mode: Mode;
     setMode: (mode: Mode) => void;
     onSave: () => void;
     onLoad: () => void;
+    onCreate: () => void;
 };
 
 export default function ControlPanel({
+    name,
     mode,
     setMode,
     onSave,
     onLoad,
+    onCreate,
+
 }: ControlPanelProps) {
+    console.log("Rendering ControlPanel with name:", name, "and mode:", mode);
     return (
         <aside
             style={{
@@ -40,6 +46,15 @@ export default function ControlPanel({
                 >
                     Mind Graph
                 </h2>
+                <p style={{
+                    fontSize: "14px",
+                    color: "rgb(70, 50, 60)",
+                    textAlign: "center",
+                    marginTop: "4px",
+                }}
+                >
+                    {name || "Untitled Graph"}
+                </p>
 
                 <div
                     style={{
@@ -78,6 +93,9 @@ export default function ControlPanel({
                     gap: "8px",
                 }}
             >
+                <button onClick={onCreate} style={getSecondaryButtonStyle()}>
+                    New Graph
+                </button>
                 <button onClick={onLoad} style={getSecondaryButtonStyle()}>
                     Load Graph
                 </button>

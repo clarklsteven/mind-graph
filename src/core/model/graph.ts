@@ -3,9 +3,18 @@ import { Edge } from "./edge";
 import { GraphData } from "./graph-data";
 
 export class Graph {
-  private interpretation: string = "concept-graph";
+  private name: string = "";
+  private interpretation: string = "";
   private nodes: Map<string, GraphNode> = new Map();
   private edges: Map<string, Edge> = new Map();
+
+  getName(): string {
+    return this.name;
+  }
+
+  setName(name: string) {
+    this.name = name;
+  }
 
   addNode(node: GraphNode) {
     this.nodes.set(node.id, node);
@@ -58,7 +67,6 @@ export class Graph {
         if (node) connections.push(node);
       }
     }
-
     return connections;
   }
 
@@ -66,6 +74,16 @@ export class Graph {
     return Array.from(this.edges.values()).filter((edge) => edge.from === nodeId || edge.to === nodeId).length;
   };
 
+  getConnectedEdges(nodeId: string): Edge[] {
+    const connections: Edge[] = [];
+
+    for (const edge of this.edges.values()) {
+      if (edge.from === nodeId || edge.to === nodeId) {
+        connections.push(edge);
+      }
+    }
+    return connections;
+  }
 
   getNodeWeight(nodeId: string): number {
     const node = this.nodes.get(nodeId);
@@ -85,6 +103,10 @@ export class Graph {
     return 0; // Node not found
   }
 
+  setInterpretation(interpretation: string) {
+    this.interpretation = interpretation;
+  }
+
   calculateNodeWeights() {
     for (const node of this.nodes.values()) {
       const weight = this.getNodeWeight(node.id);
@@ -94,6 +116,7 @@ export class Graph {
 
   export(): GraphData {
     return {
+      name: this.name,
       interpretationType: this.interpretation,
       nodes: Array.from(this.nodes.values()),
       edges: Array.from(this.edges.values())
@@ -102,6 +125,7 @@ export class Graph {
 
   import(data: GraphData): Graph {
     const graph = new Graph();
+    graph.name = data.name;
     graph.interpretation = data.interpretationType;
 
     for (const node of data.nodes) {

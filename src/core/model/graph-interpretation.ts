@@ -1,4 +1,5 @@
 import { NodeDefinition } from './node-definition';
+import { InterpretationPalette } from './palette';
 import { RelationshipDefinition } from './relationship-definition';
 
 export interface GraphInterpretation {
@@ -6,4 +7,5 @@ export interface GraphInterpretation {
     interpretation_type: string;
     relationship_definitions: RelationshipDefinition[];
     node_definitions?: NodeDefinition[];
+    interpretation_palette?: InterpretationPalette;
 }

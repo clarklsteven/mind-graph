@@ -9,6 +9,7 @@ import conceptGraph from "../config/concept-graph.json";
 import narrativeStrategyGraph from "../config/narrative-strategy-graph.json";
 import releaseAssuranceGraph from "../config/release-assurance-graph.json";
 import rootCauseAnalysisGraph from "../config/root-cause-analysis-graph.json";
+import thinkingGraph from "../config/thinking-graph.json";
 
 export type Mode = "select" | "add" | "link" | "delete";
 
@@ -34,8 +35,19 @@ export default function App() {
     interpretationRegistry[narrativeStrategyGraph.interpretation_type] = narrativeStrategyGraph as GraphInterpretation;
     interpretationRegistry[releaseAssuranceGraph.interpretation_type] = releaseAssuranceGraph as GraphInterpretation;
     interpretationRegistry[rootCauseAnalysisGraph.interpretation_type] = rootCauseAnalysisGraph as GraphInterpretation;
-
+    interpretationRegistry[thinkingGraph.interpretation_type] = thinkingGraph as GraphInterpretation;
     const notifyGraphChanged = () => {
+        setGraphVersion((v) => v + 1);
+    };
+
+    const handleCreate = () => {
+        const graphName = window.prompt("Enter graph name", "Untitled Graph")?.trim() || "Untitled Graph";
+        graphRef.current = new Graph();
+        graphRef.current.setName(graphName);
+        layoutRef.current = new Layout(graphRef.current, 1000, 1000);
+        interpretationRef.current = interpretationRegistry[thinkingGraph.interpretation_type];
+        setSelectedNodeId(null);
+        setSelectedEdgeId(null);
         setGraphVersion((v) => v + 1);
     };
 
@@ -53,7 +65,13 @@ export default function App() {
             String(now.getMinutes()).padStart(2, "0"),
         ].join("");
 
-        const filename = `mind-graph-${timestamp}.json`;
+        let outputname = "";
+        if (!graphRef.current.getName().includes("Untitled")) {
+            outputname = graphRef.current.getName().replace(/\s+/g, "-") + "-" + timestamp;
+        } else {
+            outputname = `mind-graph-${timestamp}`;
+        }
+        const filename = `${outputname}.json`;
 
         const blob = new Blob([json], { type: "application/json" });
         const url = URL.createObjectURL(blob);
@@ -102,6 +120,8 @@ export default function App() {
 
     const normaliseGraph = (graph: Graph, interpretation: GraphInterpretation): Graph => {
         const normalisedGraph = new Graph();
+        normalisedGraph.setName(graph.getName());
+        normalisedGraph.setInterpretation(interpretation.interpretation_type);
 
         // Find the default node type from the interpretation
         const defaultNodeDef = interpretation.node_definitions?.find(def => def.isDefault);
@@ -163,7 +183,6 @@ export default function App() {
     };
 
     const handleDeleteSelectedEdge = () => {
-        console.log("Deleting edge", selectedEdgeId);
         if (!selectedEdgeId) return;
 
         graphRef.current.deleteEdge(selectedEdgeId);
@@ -181,10 +200,12 @@ export default function App() {
             }}
         >
             <ControlPanel
+                name={graphRef.current.getName()}
                 mode={mode}
                 setMode={setMode}
                 onSave={handleSaveGraph}
                 onLoad={handleLoadClick}
+                onCreate={handleCreate}
             />
 
             <main style={{ overflow: "hidden" }}>

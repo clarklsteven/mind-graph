@@ -50,14 +50,6 @@ export default function PropertiesPanel({
         requestAnimationFrame(() => {
             input.select();
         });
-
-        let node = graph.getNode(selectedNodeId);
-        let nodeType = node ? node.type : "unknown";
-        if (nodeDefinition && nodeDefinition.properties) {
-            console.log(`Node ${selectedNodeId} of type ${nodeType} has properties:`, nodeDefinition.properties);
-        } else {
-            console.log(`Node ${selectedNodeId} of type ${nodeType} has no properties defined in the interpretation`);
-        }
     }, [selectedNodeId]);
 
     const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,8 +58,6 @@ export default function PropertiesPanel({
         selectedNode.title = event.target.value;
         onGraphChanged();
     };
-
-    console.log("Interpretation in PropertiesPanel:", interpretation);
 
     let propertiesComponents: React.ReactNode = (<div>No properties</div>);
     if (selectedNode && selectedNode.properties && nodeDefinition && nodeDefinition.properties && nodeDefinition.properties.length > 0) {
@@ -87,6 +77,24 @@ export default function PropertiesPanel({
                                 type="text"
                                 value={value}
                                 style={getPropertyInputStyle()}
+                                onChange={(e) => {
+                                    selectedNode.properties![property.id] = e.target.value;
+                                    onGraphChanged();
+                                }}
+                            />
+                        </div>
+                    );
+                } else if (property.valueType === "paragraph") {
+                    return (
+                        <div>
+                            <div
+                                key={property.id}
+                                style={getPropertyLabelStyle()}>
+                                {property.label}
+                            </div>
+                            <textarea
+                                value={value}
+                                style={{ ...getPropertyInputStyle(), height: "80px", resize: "vertical" }}
                                 onChange={(e) => {
                                     selectedNode.properties![property.id] = e.target.value;
                                     onGraphChanged();
@@ -207,14 +215,17 @@ export default function PropertiesPanel({
                         <div style={getPropertyLabelStyle()}>Type</div>
                         <select
                             value={selectedEdge.type}
-                            onChange={(event) => {
-                                selectedEdge.type = event.target.value as "Relates To" | "Theme Of";
+                            onChange={(e) => {
+                                selectedEdge.type = e.target.value;
                                 onGraphChanged();
                             }}
                             style={getPropertyDropdownStyle()}
                         >
-                            <option value="Relates To">Relates To</option>
-                            <option value="Theme Of">Theme Of</option>
+                            {(interpretation?.relationship_definitions ?? []).map((def) => (
+                                <option key={def.id} value={def.id}>
+                                    {def.label}
+                                </option>
+                            ))}
                         </select>                    </div>
                     <div style={{ marginTop: "auto", paddingTop: "16px" }}>
                         <button

@@ -6,6 +6,7 @@ import { Edge } from "../core/model/edge";
 import { GraphNode } from "../core/model/node";
 import { Mode } from "../app";
 import { GraphInterpretation } from "../core/model/graph-interpretation";
+import { ColourPalette, InterpretationPalette } from "../core/model/palette";
 
 type DragState = {
     nodeId: string;
@@ -148,16 +149,29 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
         ) || null;
     };
 
-    /*    const getEdgeLabel = (edge: Edge, interpretation: GraphInterpretation | null): string => {
-            if (!interpretation) console.warn("No interpretation provided for edge label retrieval");
-            if (!interpretation) return edge.type;
-    
-            const relationship = interpretation.relationship_definitions.find(
-                def => def.id === edge.type
-            );
-    
-            return relationship?.label ?? edge.type;
-        }*/
+    const getNodeDefinition = (node: GraphNode) => {
+        if (!interpretation) return null;
+        if (!interpretation.node_definitions) return null;
+
+        return interpretation.node_definitions.find(
+            def => def.id === node.type
+        ) || null;
+    };
+
+    const getInterpretationColourPalette = (node: GraphNode): ColourPalette => {
+        const nodeDef = getNodeDefinition(node);
+        let defaultPalette: ColourPalette = {
+            baseDark: "#888",
+            baseLight: "#ccc",
+            selected: "#f50b9b",
+            hovered: "#60a5fa",
+            linkStart: "#34d399"
+        };
+        if (!nodeDef) return defaultPalette;
+        if (!interpretation || !interpretation.interpretation_palette) return defaultPalette;
+
+        return interpretation.interpretation_palette.nodePalettes[nodeDef.id] || defaultPalette;
+    };
 
     const drawEdge = (edge: Edge) => {
         const canvas = canvasRef.current;
@@ -194,13 +208,16 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
 
         const isSelected = edge.id === selectedEdgeId;
         const isDirectional = getRelationshipDefinition(edge)?.directed ?? false;
+        const isDefaultEdgeType = getRelationshipDefinition(edge)?.isDefault ?? false;
 
         context.beginPath();
         context.moveTo(startX, startY);
         context.lineTo(endX, endY);
         context.strokeStyle = isSelected
             ? "rgb(101, 26, 44)"
-            : "rgb(120, 120, 120)";
+            : isDefaultEdgeType
+                ? "rgb(246, 7, 7)"
+                : "rgb(200, 200, 200)";
         context.lineWidth = isSelected ? 4 : 2;
         context.stroke();
 
@@ -227,7 +244,9 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
             context.closePath();
             context.fillStyle = isSelected
                 ? "rgb(101, 26, 44)"
-                : "rgb(120, 120, 120)";
+                : isDefaultEdgeType
+                    ? "rgb(246, 7, 7)"
+                    : "rgb(200, 200, 200)";
             context.fill();
         }
 
@@ -267,18 +286,20 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
         const isHovered = node.id === hoveredNodeId;
         const isLinkStart = node.id === linkStartNodeId;
         const radius = layout.getNodeRadius(node.id);
+        const isDefaultNodeType = getNodeDefinition(node)?.isDefault ?? false;
+        const colourPalette = getInterpretationColourPalette(node);
 
         context.beginPath();
         const screen = graphToScreen(node.position.x, node.position.y);
         context.arc(screen.x, screen.y, radius * viewRef.current.scale, 0, Math.PI * 2);
 
         context.fillStyle = isBeingDragged
-            ? "#f59e0b" : isLinkStart
-                ? "#34d399" : isSelected
-                    ? "#f59e0b"
+            ? colourPalette.baseDark : isLinkStart
+                ? colourPalette.linkStart : isSelected
+                    ? colourPalette.selected
                     : isHovered
-                        ? "#60a5fa"
-                        : Colours.getColourForNode((node.weight - 1) / 10);
+                        ? colourPalette.hovered : isDefaultNodeType
+                            ? "#f87171" : Colours.getColourForNode((node.weight - 1) / 10, colourPalette);
 
         context.fill();
 

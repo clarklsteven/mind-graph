@@ -15,7 +15,7 @@ export class Layout {
     }
 
     private initializeNodePositions() {
-        const nodes = Array.from(this.graph.export().nodes);
+        const nodes = Array.from(this.graph.getNodes());
         const angleStep = (2 * Math.PI) / nodes.length;
 
         nodes.forEach((node, index) => {
@@ -39,12 +39,42 @@ export class Layout {
     }
 
     getEdges() {
-        return Array.from(this.graph.export().edges);
+        return this.graph.getEdges();
+    }
+
+    private getConnectedNodeIds(): Set<string> {
+        const connected = new Set<string>();
+
+        for (const edge of this.graph.getEdges()) {
+            connected.add(edge.from);
+            connected.add(edge.to);
+        }
+
+        return connected;
+    }
+
+    private getConnectedGraphCentre(nodes: GraphNode[], connectedIds: Set<string>): { x: number; y: number } {
+        const connectedNodes = nodes.filter(node => connectedIds.has(node.id));
+
+        if (connectedNodes.length === 0) {
+            return { x: 0, y: 0 };
+        }
+
+        const sumX = connectedNodes.reduce((sum, node) => sum + node.position.x, 0);
+        const sumY = connectedNodes.reduce((sum, node) => sum + node.position.y, 0);
+
+        return {
+            x: sumX / connectedNodes.length,
+            y: sumY / connectedNodes.length,
+        };
     }
 
     stepSimulation(): number {
-        const nodes = this.graph.export().nodes;
-        const edges = this.graph.export().edges;
+        const nodes = this.graph.getNodes();
+        const edges = this.graph.getEdges();
+        const connectedIds = this.getConnectedNodeIds();
+        const centre = this.getConnectedGraphCentre(nodes, connectedIds);
+
         let totalMovement = 0;
 
         // Repulsion
@@ -73,7 +103,7 @@ export class Layout {
             }
         }
 
-        // Springs
+        // Springs only for connected nodes via edges
         for (const edge of edges) {
             const a = nodes.find((node) => node.id === edge.from);
             const b = nodes.find((node) => node.id === edge.to);
@@ -98,6 +128,26 @@ export class Layout {
             a.position.y += fy;
             b.position.x -= fx;
             b.position.y -= fy;
+
+            totalMovement += Math.abs(fx) + Math.abs(fy);
+        }
+
+        // Weak attraction to connected graph centre for all nodes
+        const centeringStrength = 0.0003;
+
+        for (const node of nodes) {
+            /*if (connectedIds.has(node.id)) {
+                continue;
+            }*/
+
+            const dx = centre.x - node.position.x;
+            const dy = centre.y - node.position.y;
+
+            const fx = dx * centeringStrength;
+            const fy = dy * centeringStrength;
+
+            node.position.x += fx;
+            node.position.y += fy;
 
             totalMovement += Math.abs(fx) + Math.abs(fy);
         }

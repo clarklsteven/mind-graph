@@ -1,0 +1,444 @@
+{
+    "id": "thinking-graph",
+    "interpretation_type": "thinking-graph",
+    "relationship_definitions": [
+        {
+            "id": "untyped",
+            "label": "Untyped",
+            "isDefault": true,
+            "directed": false,
+            "hierarchical": false,
+            "parentEnd": null,
+            "childEnd": null,
+            "singleParent": null,
+            "allowsCycles": null
+        },
+        {
+            "id": "part_of",
+            "label": "Part Of",
+            "isDefault": false,
+            "directed": true,
+            "hierarchical": true,
+            "parentEnd": "target",
+            "childEnd": "source",
+            "singleParent": false,
+            "allowsCycles": false
+        },
+        {
+            "id": "instance_of",
+            "label": "Instance Of",
+            "isDefault": false,
+            "directed": true,
+            "hierarchical": true,
+            "parentEnd": "target",
+            "childEnd": "source",
+            "singleParent": false,
+            "allowsCycles": false
+        },
+        {
+            "id": "enables",
+            "label": "Enables",
+            "isDefault": false,
+            "directed": true,
+            "hierarchical": false,
+            "parentEnd": null,
+            "childEnd": null,
+            "singleParent": false,
+            "allowsCycles": true
+        },
+        {
+            "id": "depends_on",
+            "label": "Depends On",
+            "isDefault": false,
+            "directed": true,
+            "hierarchical": false,
+            "parentEnd": null,
+            "childEnd": null,
+            "singleParent": false,
+            "allowsCycles": true
+        },
+        {
+            "id": "constrains",
+            "label": "Constrains",
+            "isDefault": false,
+            "directed": true,
+            "hierarchical": false,
+            "parentEnd": null,
+            "childEnd": null,
+            "singleParent": false,
+            "allowsCycles": true
+        },
+        {
+            "id": "implements",
+            "label": "Implements",
+            "isDefault": false,
+            "directed": true,
+            "hierarchical": false,
+            "parentEnd": null,
+            "childEnd": null,
+            "singleParent": false,
+            "allowsCycles": true
+        },
+        {
+            "id": "applies_to",
+            "label": "Applies To",
+            "isDefault": false,
+            "directed": true,
+            "hierarchical": false,
+            "parentEnd": null,
+            "childEnd": null,
+            "singleParent": false,
+            "allowsCycles": true
+        },
+        {
+            "id": "produces",
+            "label": "Produces",
+            "isDefault": false,
+            "directed": true,
+            "hierarchical": false,
+            "parentEnd": null,
+            "childEnd": null,
+            "singleParent": false,
+            "allowsCycles": true
+        },
+        {
+            "id": "guides",
+            "label": "Guides",
+            "isDefault": false,
+            "directed": true,
+            "hierarchical": false,
+            "parentEnd": null,
+            "childEnd": null,
+            "singleParent": false,
+            "allowsCycles": true
+        }
+    ],
+    "node_definitions": [
+        {
+            "id": "untyped",
+            "label": "Untyped",
+            "isDefault": true,
+            "properties": [
+                {
+                    "id": "description",
+                    "label": "Description",
+                    "valueType": "string",
+                    "required": false,
+                    "defaultValue": "This is an untyped node. Consider assigning a type to this node for better organization and understanding."
+                }
+            ]
+        },
+        {
+            "id": "theory",
+            "label": "Theory",
+            "isDefault": false,
+            "properties": [
+                {
+                    "id": "intent",
+                    "label": "Node Intent",
+                    "valueType": "paragraph",
+                    "required": false,
+                    "defaultValue": ""
+                },
+                {
+                    "id": "obsidian_path",
+                    "label": "Obsidian Path",
+                    "valueType": "string",
+                    "required": false,
+                    "defaultValue": ""
+                }
+            ]
+        },
+        {
+            "id": "domain",
+            "label": "Domain",
+            "isDefault": false,
+            "properties": [
+                {
+                    "id": "intent",
+                    "label": "Node Intent",
+                    "valueType": "paragraph",
+                    "required": false,
+                    "defaultValue": ""
+                },
+                {
+                    "id": "obsidian_path",
+                    "label": "Obsidian Path",
+                    "valueType": "string",
+                    "required": false,
+                    "defaultValue": ""
+                }
+            ]
+        },
+        {
+            "id": "mechanism",
+            "label": "Mechanism",
+            "isDefault": false,
+            "properties": [
+                {
+                    "id": "intent",
+                    "label": "Node Intent",
+                    "valueType": "paragraph",
+                    "required": false,
+                    "defaultValue": ""
+                },
+                {
+                    "id": "obsidian_path",
+                    "label": "Obsidian Path",
+                    "valueType": "string",
+                    "required": false,
+                    "defaultValue": ""
+                }
+            ]
+        },
+        {
+            "id": "enabler",
+            "label": "Enabler",
+            "isDefault": false,
+            "properties": [
+                {
+                    "id": "intent",
+                    "label": "Node Intent",
+                    "valueType": "paragraph",
+                    "required": false,
+                    "defaultValue": ""
+                },
+                {
+                    "id": "obsidian_path",
+                    "label": "Obsidian Path",
+                    "valueType": "string",
+                    "required": false,
+                    "defaultValue": ""
+                }
+            ]
+        },
+        {
+            "id": "constraint",
+            "label": "Constraint",
+            "isDefault": false,
+            "properties": [
+                {
+                    "id": "intent",
+                    "label": "Node Intent",
+                    "valueType": "paragraph",
+                    "required": false,
+                    "defaultValue": ""
+                },
+                {
+                    "id": "obsidian_path",
+                    "label": "Obsidian Path",
+                    "valueType": "string",
+                    "required": false,
+                    "defaultValue": ""
+                }
+            ]
+        },
+        {
+            "id": "tool",
+            "label": "Tool",
+            "isDefault": false,
+            "properties": [
+                {
+                    "id": "intent",
+                    "label": "Node Intent",
+                    "valueType": "paragraph",
+                    "required": false,
+                    "defaultValue": ""
+                },
+                {
+                    "id": "obsidian_path",
+                    "label": "Obsidian Path",
+                    "valueType": "string",
+                    "required": false,
+                    "defaultValue": ""
+                }
+            ]
+        },
+        {
+            "id": "principle",
+            "label": "Principle",
+            "isDefault": false,
+            "properties": [
+                {
+                    "id": "intent",
+                    "label": "Node Intent",
+                    "valueType": "paragraph",
+                    "required": false,
+                    "defaultValue": ""
+                },
+                {
+                    "id": "obsidian_path",
+                    "label": "Obsidian Path",
+                    "valueType": "string",
+                    "required": false,
+                    "defaultValue": ""
+                }
+            ]
+        },
+        {
+            "id": "grouping",
+            "label": "Grouping",
+            "isDefault": false,
+            "properties": [
+                {
+                    "id": "intent",
+                    "label": "Node Intent",
+                    "valueType": "paragraph",
+                    "required": false,
+                    "defaultValue": ""
+                },
+                {
+                    "id": "obsidian_path",
+                    "label": "Obsidian Path",
+                    "valueType": "string",
+                    "required": false,
+                    "defaultValue": ""
+                }
+            ]
+        },
+        {
+            "id": "outcome",
+            "label": "Outcome",
+            "isDefault": false,
+            "properties": [
+                {
+                    "id": "intent",
+                    "label": "Node Intent",
+                    "valueType": "paragraph",
+                    "required": false,
+                    "defaultValue": ""
+                },
+                {
+                    "id": "obsidian_path",
+                    "label": "Obsidian Path",
+                    "valueType": "string",
+                    "required": false,
+                    "defaultValue": ""
+                }
+            ]
+        },
+        {
+            "id": "graph_question",
+            "label": "Graph Question",
+            "isDefault": false,
+            "properties": [
+                {
+                    "id": "intent",
+                    "label": "Node Intent",
+                    "valueType": "paragraph",
+                    "required": false,
+                    "defaultValue": ""
+                },
+                {
+                    "id": "obsidian_path",
+                    "label": "Obsidian Path",
+                    "valueType": "string",
+                    "required": false,
+                    "defaultValue": ""
+                }
+            ]
+        },
+        {
+            "id": "graph_action",
+            "label": "Graph Action",
+            "isDefault": false,
+            "properties": [
+                {
+                    "id": "intent",
+                    "label": "Node Intent",
+                    "valueType": "paragraph",
+                    "required": false,
+                    "defaultValue": ""
+                },
+                {
+                    "id": "obsidian_path",
+                    "label": "Obsidian Path",
+                    "valueType": "string",
+                    "required": false,
+                    "defaultValue": ""
+                }
+            ]
+        }
+    ],
+    "interpretation_palette": {
+        "nodePalettes": {
+            "theory": {
+                "baseDark": "#4B0082",
+                "baseLight": "#9370DB",
+                "selected": "#FFD700",
+                "hovered": "#DA70D6",
+                "linkStart": "#4B0082"
+            },
+            "domain": {
+                "baseDark": "#006400",
+                "baseLight": "#90EE90",
+                "selected": "#FFD700",
+                "hovered": "#32CD32",
+                "linkStart": "#006400"
+            },
+            "mechanism": {
+                "baseDark": "#8B4513",
+                "baseLight": "#DEB887",
+                "selected": "#FFD700",
+                "hovered": "#D2691E",
+                "linkStart": "#8B4513"
+            },
+            "enabler": {
+                "baseDark": "#00008B",
+                "baseLight": "#ADD8E6",
+                "selected": "#FFD700",
+                "hovered": "#1E90FF",
+                "linkStart": "#00008B"
+            },
+            "constraint": {
+                "baseDark": "#8B0000",
+                "baseLight": "#F08080",
+                "selected": "#FFD700",
+                "hovered": "#FF4500",
+                "linkStart": "#8B0000"
+            },
+            "tool": {
+                "baseDark": "#2F4F4F",
+                "baseLight": "#778899",
+                "selected": "#FFD700",
+                "hovered": "#708090",
+                "linkStart": "#2F4F4F"
+            },
+            "principle": {
+                "baseDark": "#556B2F",
+                "baseLight": "#9ACD32",
+                "selected": "#FFD700",
+                "hovered": "#6B8E23",
+                "linkStart": "#556B2F"
+            },
+            "grouping": {
+                "baseDark": "#483D8B",
+                "baseLight": "#8470FF",
+                "selected": "#FFD700",
+                "hovered": "#7B68EE",
+                "linkStart": "#483D8B"
+            },
+            "outcome": {
+                "baseDark": "#8B008B",
+                "baseLight": "#FF69B4",
+                "selected": "#FFD700",
+                "hovered": "#FF1493",
+                "linkStart": "#8B008B"
+            },
+            "graph_question": {
+                "baseDark": "#ff0000",
+                "baseLight": "#ff0000",
+                "selected": "#FFD700",
+                "hovered": "#20B2AA",
+                "linkStart": "#2E8B57"
+            },
+            "graph_action": {
+                "baseDark": "#99ff33",
+                "baseLight": "#99ff33",
+                "selected": "#FFD700",
+                "hovered": "#CD853F",
+                "linkStart": "#A52A2A"
+            }
+        }
+    }
+}
