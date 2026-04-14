@@ -19,6 +19,7 @@ export default function App() {
     const [mode, setMode] = useState<Mode>("select");
     const [isNewGraphModalOpen, setIsNewGraphModalOpen] = useState(false);
     const [isInterpretationHelpModalOpen, setIsInterpretationHelpModalOpen] = useState(false);
+    const [indicatorState, setIndicatorState] = useState<Record<string, boolean>>({});
 
     let graph: Graph = new Graph();
     let layout: Layout = new Layout(graph, 1000, 1000);
@@ -40,6 +41,7 @@ export default function App() {
     interpretationRegistry[releaseAssuranceGraph.interpretation_type] = releaseAssuranceGraph as GraphInterpretation;
     interpretationRegistry[rootCauseAnalysisGraph.interpretation_type] = rootCauseAnalysisGraph as GraphInterpretation;
     interpretationRegistry[thinkingGraph.interpretation_type] = thinkingGraph as GraphInterpretation;
+
     const notifyGraphChanged = () => {
         setGraphVersion((v) => v + 1);
     };
@@ -127,6 +129,9 @@ export default function App() {
 
         // Reset the file input so the same file can be chosen again later
         event.target.value = "";
+
+        // Reset the indicator state since the new graph may have different indicators
+        setIndicatorState({});
     };
 
     const normaliseGraph = (graph: Graph, interpretation: GraphInterpretation): Graph => {
@@ -205,10 +210,6 @@ export default function App() {
         setIsInterpretationHelpModalOpen(true);
     };
 
-    useEffect(() => {
-        console.log("Help modal state changed:", isInterpretationHelpModalOpen);
-    }, [isInterpretationHelpModalOpen]);
-
     return (
         <div
             style={{
@@ -221,6 +222,9 @@ export default function App() {
             <ControlPanel
                 name={graphRef.current.getName()}
                 mode={mode}
+                interpretation={interpretationRef.current}
+                indicatorState={indicatorState}
+                setIndicatorState={setIndicatorState}
                 setMode={setMode}
                 onSave={handleSaveGraph}
                 onLoad={handleLoadClick}
@@ -240,6 +244,7 @@ export default function App() {
                     selectedEdgeId={selectedEdgeId}
                     setSelectedEdgeId={setSelectedEdgeId}
                     interpretation={interpretationRef.current}
+                    indicatorState={indicatorState}
                 />
             </main>
 

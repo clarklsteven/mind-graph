@@ -12,4 +12,7 @@ export interface NodeDefinition {
     isDefault?: boolean;
     iconId?: string;
     properties?: NodePropertyDefinition[];
+    completeness?: {
+        requiredFields: string[];
+    }
 }

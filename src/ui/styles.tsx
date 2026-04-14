@@ -166,21 +166,101 @@ export function getScrollableHelpStyle(): React.CSSProperties {
     };
 }
 
+export function getHelpContainerStyle(): React.CSSProperties {
+    return {
+        display: "flex",
+        justifyContent: "flex-start",
+        //paddingTop: "8px",
+    };
+}
+
 export function getHelpButtonStyle(disabled: boolean): React.CSSProperties {
     return {
         width: "24px",
         height: "24px",
         borderRadius: "50%",
         border: "1px solid #651A2C",
-        backgroundColor: disabled ? "#f0f0f0" : "#fffaf0",
-        color: "#651A2C",
-        fontWeight: 700,
-        fontSize: "14px",
-        cursor: disabled ? "not-allowed" : "pointer",
+        backgroundColor: disabled ? "#f2eee2" : "#fffaf0",
+        color: disabled ? "#b0a58a" : "#651A2C",
+        cursor: disabled ? "default" : "pointer",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         padding: 0,
+        fontSize: "14px",
         lineHeight: 1,
+    };
+}
+
+export function getPanelSectionStyle(): React.CSSProperties {
+    return {
+        border: "1px solid #e0d8c8",
+        borderRadius: "8px",
+        padding: "8px",
+        backgroundColor: "#fffae7",
+    };
+}
+
+export function getStretchyPanelSectionStyle(): React.CSSProperties {
+    return {
+        border: "1px solid #e0d8c8",
+        borderRadius: "8px",
+        padding: "8px",
+        backgroundColor: "#fffae7",
+        flexGrow: 10,
+    };
+}
+
+export function getPanelSectionTitleStyle(): React.CSSProperties {
+    return {
+        fontSize: "12px",
+        fontWeight: 600,
+        color: "#7a6a4f",
+        marginBottom: "6px",
+        textTransform: "uppercase",
+        letterSpacing: "0.5px",
+    };
+}
+
+export function getPanelSectionContentStyle(): React.CSSProperties {
+    return {
+        display: "flex",
+        flexDirection: "column",
+        gap: "6px",
+    };
+}
+
+export function getControlPanelStyle(): React.CSSProperties {
+    return {
+        display: "flex",
+        flexDirection: "column",
+        padding: "10px",
+        boxSizing: "border-box",
+        gap: "1px",
+    };
+}
+
+export function getMindGraphTitleStyle(): React.CSSProperties {
+    return {
+        fontSize: "20px",
+        fontWeight: 700,
+        color: "#00332a",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: "8px",
+        marginBottom: "16px",
+    };
+}
+export function getGraphTitleStyle(): React.CSSProperties {
+    return {
+        display: "flex",
+        fontSize: "16px",
+        fontWeight: 500,
+        color: "#00332a",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: "8px",
+        //marginBottom: "6px",
     };
 }

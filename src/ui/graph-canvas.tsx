@@ -8,6 +8,7 @@ import { Mode } from "../app";
 import { GraphInterpretation } from "../core/model/graph-interpretation";
 import { ColourPalette, InterpretationPalette } from "../core/model/palette";
 import { NodeIconLibrary } from "../core/model/node-icon-library";
+import { NodeDefinition } from "../core/model/node-definition";
 
 type DragState = {
     nodeId: string;
@@ -26,6 +27,7 @@ type Props = {
     selectedEdgeId: string | null;
     setSelectedEdgeId: (id: string | null) => void;
     interpretation: GraphInterpretation | null;
+    indicatorState: Record<string, boolean>;
 }
 
 type ViewTransform = {
@@ -47,17 +49,17 @@ type CanvasPointerLikeEvent = {
 };
 
 export default function GraphCanvas({ backgroundColor, layout, graph, mode, graphVersion,
-    selectedNodeId, setSelectedNodeId, selectedEdgeId, setSelectedEdgeId, interpretation }: Props) {
+    selectedNodeId, setSelectedNodeId, selectedEdgeId, setSelectedEdgeId, interpretation, indicatorState }: Props) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const dragStateRef = useRef<DragState>(null);
     const viewRef = useRef<ViewTransform>({ offsetX: 0, offsetY: 0, scale: 1 });
     const animationFrameRef = useRef<number | null>(null);
     const isSimulatingRef = useRef(false);
     const panStateRef = useRef<PanState>(null);
+    const indicatorStateRef = useRef<Record<string, boolean>>(indicatorState);
 
     const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
     const [linkStartNodeId, setLinkStartNodeId] = useState<string | null>(null);
-
 
     const getNodeHitRadius = (nodeId: string): number => {
         return Math.max(layout.getNodeRadius(nodeId), 10);
@@ -364,6 +366,16 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
             context.strokeStyle = "#000";
             context.stroke();
         }
+
+        // Incomplete indicator - a small red dot to the top-left of the node
+        if (nodeDefinition && isNodeIncomplete(node, nodeDefinition, indicatorStateRef.current)) {
+            context.beginPath();
+            const dotX = screen.x - 1.5 * radius * viewRef.current.scale * 0.6;
+            const dotY = screen.y - 1.5 * radius * viewRef.current.scale * 0.6;
+            context.arc(dotX, dotY, radius * viewRef.current.scale * 0.2, 0, Math.PI * 2);
+            context.fillStyle = "rgba(255, 0, 0, 0.6)";
+            context.fill();
+        }
     };
 
     const drawLabel = (node: GraphNode) => {
@@ -442,6 +454,11 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
         context.lineWidth = 2;
         context.stroke();
     };
+
+    useEffect(() => {
+        indicatorStateRef.current = indicatorState;
+        draw();
+    }, [indicatorState]);
 
     useEffect(() => {
         draw();
@@ -785,6 +802,17 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
             y: my + ny * offset,
             angle,
         };
+    }
+
+    function isNodeIncomplete(node: GraphNode, definition: NodeDefinition, indicatorState: Record<string, boolean>): boolean {
+        if (!definition.completeness?.requiredFields) return false;
+
+        return definition.completeness.requiredFields.some(field => {
+            if (!node.properties) return false;
+            if (indicatorState[field] === false || indicatorState[field] === undefined) return false; // if field is marked as complete in the state, skip it
+            const value = node.properties[field];
+            return value === null || value === undefined || value === "";
+        });
     }
 
     return (
