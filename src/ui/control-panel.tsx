@@ -1,5 +1,5 @@
 import { Mode } from "../app";
-import { getButtonStyle, getSecondaryButtonStyle } from "./styles";
+import { getButtonStyle, getSecondaryButtonStyle, getHelpButtonStyle } from "./styles";
 
 
 type ControlPanelProps = {
@@ -9,6 +9,7 @@ type ControlPanelProps = {
     onSave: () => void;
     onLoad: () => void;
     onCreate: () => void;
+    onHelp: () => void;
 };
 
 export default function ControlPanel({
@@ -18,9 +19,8 @@ export default function ControlPanel({
     onSave,
     onLoad,
     onCreate,
-
+    onHelp,
 }: ControlPanelProps) {
-    console.log("Rendering ControlPanel with name:", name, "and mode:", mode);
     return (
         <aside
             style={{
@@ -102,6 +102,14 @@ export default function ControlPanel({
 
                 <button onClick={onSave} style={getSecondaryButtonStyle()}>
                     Save Graph
+                </button>
+                <button
+                    disabled={!name}
+                    onClick={onHelp}
+                    style={getHelpButtonStyle(!name)}
+                    title={name ? "Show interpretation help" : "No graph loaded"}
+                >
+                    <span style={{ transform: "translateY(1px)" }}>?</span>
                 </button>
             </div>
         </aside>

@@ -1,6 +1,7 @@
 {
     "id": "root-cause-analysis-graph",
     "interpretation_type": "root-cause-analysis-graph",
+    "label": "Root Cause Analysis Graph",
     "relationship_definitions": [],
     "node_definitions": []
 }

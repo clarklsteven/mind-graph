@@ -93,3 +93,94 @@ export function getPropertyDropdownStyle(): React.CSSProperties {
         boxSizing: "border-box",
     };
 }
+
+export function getModalOverlayStyle(): React.CSSProperties {
+    return {
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
+        backgroundColor: "rgba(0, 0, 0, 0.35)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 1000,
+    };
+}
+
+export function getModalContentStyle(): React.CSSProperties {
+    return {
+        width: "480px",
+        maxWidth: "90vw",
+        maxHeight: "80vh",
+        overflowY: "auto",
+        backgroundColor: "#fffaf0",
+        border: "1px solid #d6c7a1",
+        borderRadius: "10px",
+        boxShadow: "0 8px 24px rgba(0, 0, 0, 0.2)",
+        padding: "16px",
+    };
+}
+
+export function getModalHeaderStyle(): React.CSSProperties {
+    return {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: "12px",
+    };
+}
+
+export function getModalTitleStyle(): React.CSSProperties {
+    return {
+        fontSize: "18px",
+        fontWeight: 600,
+        color: "#651A2C",
+    };
+}
+
+export function getModalCloseButtonStyle(): React.CSSProperties {
+    return {
+        border: "none",
+        background: "transparent",
+        fontSize: "20px",
+        cursor: "pointer",
+        color: "#651A2C",
+    };
+}
+
+export function getModalBodyStyle(): React.CSSProperties {
+    return {
+        display: "flex",
+        flexDirection: "column",
+        gap: "12px",
+    };
+}
+
+export function getScrollableHelpStyle(): React.CSSProperties {
+    return {
+        maxHeight: "60vh",
+        overflowY: "auto",
+        lineHeight: 1.5,
+    };
+}
+
+export function getHelpButtonStyle(disabled: boolean): React.CSSProperties {
+    return {
+        width: "24px",
+        height: "24px",
+        borderRadius: "50%",
+        border: "1px solid #651A2C",
+        backgroundColor: disabled ? "#f0f0f0" : "#fffaf0",
+        color: "#651A2C",
+        fontWeight: 700,
+        fontSize: "14px",
+        cursor: disabled ? "not-allowed" : "pointer",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 0,
+        lineHeight: 1,
+    };
+}

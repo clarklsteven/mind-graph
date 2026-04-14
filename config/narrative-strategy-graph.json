@@ -1,6 +1,7 @@
 {
     "id": "narrative-strategy-graph",
     "interpretation_type": "narrative-strategy-graph",
+    "label": "Narrative Strategy Graph",
     "relationship_definitions": [],
     "node_definitions": []
 }

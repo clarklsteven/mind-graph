@@ -1,6 +1,7 @@
 {
     "id": "thinking-graph",
     "interpretation_type": "thinking-graph",
+    "label": "Thinking Graph",
     "relationship_definitions": [
         {
             "id": "untyped",
@@ -131,6 +132,7 @@
         {
             "id": "theory",
             "label": "Theory",
+            "iconId": "theory",
             "isDefault": false,
             "properties": [
                 {
@@ -152,6 +154,7 @@
         {
             "id": "domain",
             "label": "Domain",
+            "iconId": "domain",
             "isDefault": false,
             "properties": [
                 {
@@ -173,6 +176,7 @@
         {
             "id": "mechanism",
             "label": "Mechanism",
+            "iconId": "mechanism",
             "isDefault": false,
             "properties": [
                 {
@@ -194,6 +198,7 @@
         {
             "id": "enabler",
             "label": "Enabler",
+            "iconId": "enabler",
             "isDefault": false,
             "properties": [
                 {
@@ -215,6 +220,7 @@
         {
             "id": "constraint",
             "label": "Constraint",
+            "iconId": "constraint",
             "isDefault": false,
             "properties": [
                 {
@@ -236,6 +242,7 @@
         {
             "id": "tool",
             "label": "Tool",
+            "iconId": "tool",
             "isDefault": false,
             "properties": [
                 {
@@ -257,6 +264,7 @@
         {
             "id": "principle",
             "label": "Principle",
+            "iconId": "principle",
             "isDefault": false,
             "properties": [
                 {
@@ -278,6 +286,7 @@
         {
             "id": "grouping",
             "label": "Grouping",
+            "iconId": "grouping",
             "isDefault": false,
             "properties": [
                 {
@@ -299,6 +308,7 @@
         {
             "id": "outcome",
             "label": "Outcome",
+            "iconId": "outcome",
             "isDefault": false,
             "properties": [
                 {
@@ -320,6 +330,7 @@
         {
             "id": "graph_question",
             "label": "Graph Question",
+            "iconId": "graph_question",
             "isDefault": false,
             "properties": [
                 {
@@ -341,6 +352,7 @@
         {
             "id": "graph_action",
             "label": "Graph Action",
+            "iconId": "graph_action",
             "isDefault": false,
             "properties": [
                 {
@@ -440,5 +452,6 @@
                 "linkStart": "#A52A2A"
             }
         }
-    }
+    },
+    "helpMarkdown": "thinking-graph-interpretation-help.md"
 }

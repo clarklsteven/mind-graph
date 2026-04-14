@@ -7,6 +7,7 @@ import { GraphNode } from "../core/model/node";
 import { Mode } from "../app";
 import { GraphInterpretation } from "../core/model/graph-interpretation";
 import { ColourPalette, InterpretationPalette } from "../core/model/palette";
+import { NodeIconLibrary } from "../core/model/node-icon-library";
 
 type DragState = {
     nodeId: string;
@@ -302,6 +303,25 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
         context.restore();
     };
 
+    const drawNodeIcon = (
+        context: CanvasRenderingContext2D,
+        x: number,
+        y: number,
+        radius: number,
+        icon: string
+    ) => {
+        context.save();
+
+        context.fillStyle = "#ffffff";
+        context.font = `${Math.max(12, radius * 0.9)}px sans-serif`;
+        context.textAlign = "center";
+        context.textBaseline = "middle";
+
+        context.fillText(icon, x, y);
+
+        context.restore();
+    }
+
     const drawNode = (node: GraphNode) => {
         const canvas = canvasRef.current;
         if (!canvas) return;
@@ -330,6 +350,15 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
 
         context.fill();
 
+        const nodeDefinition = getNodeDefinition(node);
+
+        const iconId = nodeDefinition?.iconId;
+        const icon = iconId ? NodeIconLibrary.getIcon(iconId) : null;
+
+        if (icon) {
+            drawNodeIcon(context, Math.floor(screen.x), Math.floor(screen.y), radius * viewRef.current.scale, icon);
+        }
+
         if (isSelected) {
             context.lineWidth = 2;
             context.strokeStyle = "#000";
@@ -354,8 +383,8 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
         const textHeight = 12;
 
         const screen = graphToScreen(node.position.x, node.position.y);
-        const x = screen.x + offsetX;
-        const y = screen.y - offsetY;
+        const x = Math.floor(screen.x + offsetX);
+        const y = Math.floor(screen.y - offsetY);
 
         // Background
         context.fillStyle = "rgba(255, 250, 231, 0.0)";

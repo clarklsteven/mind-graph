@@ -3,18 +3,22 @@ import ControlPanel from "./ui/control-panel";
 import PropertiesPanel from "./ui/properties-panel";
 import { Graph } from "./core/model/graph";
 import { Layout } from "./core/layout/layout";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { GraphInterpretation } from "./core/model/graph-interpretation";
 import conceptGraph from "../config/concept-graph.json";
 import narrativeStrategyGraph from "../config/narrative-strategy-graph.json";
 import releaseAssuranceGraph from "../config/release-assurance-graph.json";
 import rootCauseAnalysisGraph from "../config/root-cause-analysis-graph.json";
 import thinkingGraph from "../config/thinking-graph.json";
+import { NewGraphModal } from "./ui/new-graph-modal";
+import { InterpretationHelpModal } from "./ui/interpretation-help-modal";
 
 export type Mode = "select" | "add" | "link" | "delete";
 
 export default function App() {
     const [mode, setMode] = useState<Mode>("select");
+    const [isNewGraphModalOpen, setIsNewGraphModalOpen] = useState(false);
+    const [isInterpretationHelpModalOpen, setIsInterpretationHelpModalOpen] = useState(false);
 
     let graph: Graph = new Graph();
     let layout: Layout = new Layout(graph, 1000, 1000);
@@ -40,17 +44,24 @@ export default function App() {
         setGraphVersion((v) => v + 1);
     };
 
-    const handleCreate = () => {
-        const graphName = window.prompt("Enter graph name", "Untitled Graph")?.trim() || "Untitled Graph";
+    const handleConfirmCreateNewGraph = (name: string, interpretationType: string) => {
+        createGraph(name, interpretationType);
+        setIsNewGraphModalOpen(false);
+    };
+
+    const createGraph = (name: string, interpretationType: string) => {
         graphRef.current = new Graph();
-        graphRef.current.setName(graphName);
+        graphRef.current.setName(name);
         layoutRef.current = new Layout(graphRef.current, 1000, 1000);
-        interpretationRef.current = interpretationRegistry[thinkingGraph.interpretation_type];
+        interpretationRef.current = interpretationRegistry[interpretationType];
         setSelectedNodeId(null);
         setSelectedEdgeId(null);
         setGraphVersion((v) => v + 1);
     };
 
+    const handleOpenNewGraphModal = () => {
+        setIsNewGraphModalOpen(true);
+    }
     const handleSaveGraph = () => {
         const graphData = graphRef.current.export();
         const json = JSON.stringify(graphData, null, 2);
@@ -190,6 +201,14 @@ export default function App() {
         notifyGraphChanged();
     };
 
+    const handleOpenHelpModal = () => {
+        setIsInterpretationHelpModalOpen(true);
+    };
+
+    useEffect(() => {
+        console.log("Help modal state changed:", isInterpretationHelpModalOpen);
+    }, [isInterpretationHelpModalOpen]);
+
     return (
         <div
             style={{
@@ -205,7 +224,8 @@ export default function App() {
                 setMode={setMode}
                 onSave={handleSaveGraph}
                 onLoad={handleLoadClick}
-                onCreate={handleCreate}
+                onCreate={handleOpenNewGraphModal}
+                onHelp={handleOpenHelpModal}
             />
 
             <main style={{ overflow: "hidden" }}>
@@ -239,6 +259,19 @@ export default function App() {
                 accept=".json,application/json"
                 style={{ display: "none" }}
                 onChange={handleLoadGraph}
+            />
+
+            <NewGraphModal
+                isOpen={isNewGraphModalOpen}
+                onClose={() => setIsNewGraphModalOpen(false)}
+                onCreate={handleConfirmCreateNewGraph}
+                interpretations={Object.values(interpretationRegistry)}
+            />
+
+            <InterpretationHelpModal
+                isOpen={isInterpretationHelpModalOpen}
+                onClose={() => setIsInterpretationHelpModalOpen(false)}
+                interpretation={interpretationRef.current!}
             />
         </div>
     );

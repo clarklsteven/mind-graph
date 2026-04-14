@@ -1,6 +1,7 @@
 {
     "id": "release-assurance-graph",
     "interpretation_type": "release-assurance-graph",
+    "label": "Release Assurance Graph",
     "relationship_definitions": [],
     "node_definitions": []
 }
