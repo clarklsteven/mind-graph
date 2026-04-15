@@ -23,7 +23,11 @@
             "parentEnd": "target",
             "childEnd": "source",
             "singleParent": false,
-            "allowsCycles": false
+            "allowsCycles": false,
+            "sourceWeightConsidered": true,
+            "targetWeightConsidered": false,
+            "sourceWeightMultiplier": 1,
+            "targetWeightMultiplier": 0
         },
         {
             "id": "instance_of",
@@ -34,7 +38,11 @@
             "parentEnd": "target",
             "childEnd": "source",
             "singleParent": false,
-            "allowsCycles": false
+            "allowsCycles": false,
+            "sourceWeightConsidered": true,
+            "targetWeightConsidered": false,
+            "sourceWeightMultiplier": 0.2,
+            "targetWeightMultiplier": 0
         },
         {
             "id": "enables",
@@ -45,7 +53,11 @@
             "parentEnd": null,
             "childEnd": null,
             "singleParent": false,
-            "allowsCycles": true
+            "allowsCycles": true,
+            "sourceWeightConsidered": true,
+            "targetWeightConsidered": false,
+            "sourceWeightMultiplier": 0.2,
+            "targetWeightMultiplier": 0
         },
         {
             "id": "depends_on",
@@ -56,7 +68,11 @@
             "parentEnd": null,
             "childEnd": null,
             "singleParent": false,
-            "allowsCycles": true
+            "allowsCycles": true,
+            "sourceWeightConsidered": true,
+            "targetWeightConsidered": false,
+            "sourceWeightMultiplier": 0.2,
+            "targetWeightMultiplier": 0
         },
         {
             "id": "constrains",
@@ -67,7 +83,11 @@
             "parentEnd": null,
             "childEnd": null,
             "singleParent": false,
-            "allowsCycles": true
+            "allowsCycles": true,
+            "sourceWeightConsidered": false,
+            "targetWeightConsidered": true,
+            "sourceWeightMultiplier": 0,
+            "targetWeightMultiplier": 0.2
         },
         {
             "id": "implements",
@@ -78,7 +98,11 @@
             "parentEnd": null,
             "childEnd": null,
             "singleParent": false,
-            "allowsCycles": true
+            "allowsCycles": true,
+            "sourceWeightConsidered": false,
+            "targetWeightConsidered": false,
+            "sourceWeightMultiplier": 0,
+            "targetWeightMultiplier": 0
         },
         {
             "id": "applies_to",
@@ -89,7 +113,11 @@
             "parentEnd": null,
             "childEnd": null,
             "singleParent": false,
-            "allowsCycles": true
+            "allowsCycles": true,
+            "sourceWeightConsidered": false,
+            "targetWeightConsidered": false,
+            "sourceWeightMultiplier": 0,
+            "targetWeightMultiplier": 0
         },
         {
             "id": "produces",
@@ -100,7 +128,11 @@
             "parentEnd": null,
             "childEnd": null,
             "singleParent": false,
-            "allowsCycles": true
+            "allowsCycles": true,
+            "sourceWeightConsidered": false,
+            "targetWeightConsidered": true,
+            "sourceWeightMultiplier": 0,
+            "targetWeightMultiplier": 0.2
         },
         {
             "id": "guides",
@@ -111,7 +143,11 @@
             "parentEnd": null,
             "childEnd": null,
             "singleParent": false,
-            "allowsCycles": true
+            "allowsCycles": true,
+            "sourceWeightConsidered": false,
+            "targetWeightConsidered": true,
+            "sourceWeightMultiplier": 0,
+            "targetWeightMultiplier": 0.2
         }
     ],
     "node_definitions": [

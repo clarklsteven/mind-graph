@@ -117,7 +117,7 @@ export class Layout {
             const distance = Math.sqrt(distSq);
 
             const idealLength = 90;
-            const springStrength = 0.01;
+            const springStrength = 0.005;
 
             const force = springStrength * (distance - idealLength);
 

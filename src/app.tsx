@@ -5,6 +5,7 @@ import { Graph } from "./core/model/graph";
 import { Layout } from "./core/layout/layout";
 import { useEffect, useRef, useState } from "react";
 import { GraphInterpretation } from "./core/model/graph-interpretation";
+import { Interpretation } from "./core/interpretation/interpretation";
 import conceptGraph from "../config/concept-graph.json";
 import narrativeStrategyGraph from "../config/narrative-strategy-graph.json";
 import releaseAssuranceGraph from "../config/release-assurance-graph.json";
@@ -29,7 +30,7 @@ export default function App() {
 
     const graphRef = useRef<Graph>(graph);
     const layoutRef = useRef<Layout>(layout);
-    const interpretationRef = useRef<GraphInterpretation>(null);
+    const interpretationRef = useRef<Interpretation>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [graphVersion, setGraphVersion] = useState(0);
     const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
@@ -43,6 +44,11 @@ export default function App() {
     interpretationRegistry[thinkingGraph.interpretation_type] = thinkingGraph as GraphInterpretation;
 
     const notifyGraphChanged = () => {
+        interpretationRef.current?.calculateNodeWeights(graphRef.current);
+        console.log("Graph changed, updated node weights:");
+        graphRef.current.getNodes().forEach(node => {
+            console.log(`Node ${node.id} (${node.title}): weight = ${node.weight}`);
+        });
         setGraphVersion((v) => v + 1);
     };
 
@@ -55,7 +61,7 @@ export default function App() {
         graphRef.current = new Graph();
         graphRef.current.setName(name);
         layoutRef.current = new Layout(graphRef.current, 1000, 1000);
-        interpretationRef.current = interpretationRegistry[interpretationType];
+        interpretationRef.current = new Interpretation(interpretationRegistry[interpretationType]);
         setSelectedNodeId(null);
         setSelectedEdgeId(null);
         setGraphVersion((v) => v + 1);
@@ -116,13 +122,13 @@ export default function App() {
 
         // Import the graph interpretation if it exists
         if (data.interpretationType) {
-            const interpretation: GraphInterpretation | undefined = interpretationRegistry[data.interpretationType];
+            const interpretation: GraphInterpretation = interpretationRegistry[data.interpretationType];
             if (interpretation) {
-                interpretationRef.current = interpretation;
+                interpretationRef.current = new Interpretation(interpretation);
             } else {
                 console.warn(`No specific configuration found for interpretation type: ${data.interpretationType}`);
             }
-            let normalisedGraph = normaliseGraph(graphRef.current, interpretation);
+            let normalisedGraph = normaliseGraph(graphRef.current, interpretationRef.current?.getInterpretation()!);
             graphRef.current = normalisedGraph;
             layoutRef.current = new Layout(graphRef.current, 1000, 1000);
         }
@@ -222,7 +228,7 @@ export default function App() {
             <ControlPanel
                 name={graphRef.current.getName()}
                 mode={mode}
-                interpretation={interpretationRef.current}
+                interpretation={interpretationRef.current?.getInterpretation() || null}
                 indicatorState={indicatorState}
                 setIndicatorState={setIndicatorState}
                 setMode={setMode}
@@ -243,7 +249,7 @@ export default function App() {
                     setSelectedNodeId={setSelectedNodeId}
                     selectedEdgeId={selectedEdgeId}
                     setSelectedEdgeId={setSelectedEdgeId}
-                    interpretation={interpretationRef.current}
+                    interpretation={interpretationRef.current?.getInterpretation() || null}
                     indicatorState={indicatorState}
                 />
             </main>
@@ -255,7 +261,7 @@ export default function App() {
                 onGraphChanged={notifyGraphChanged}
                 onDeleteSelectedNode={handleDeleteSelectedNode}
                 onDeleteSelectedEdge={handleDeleteSelectedEdge}
-                interpretation={interpretationRef.current}
+                interpretation={interpretationRef.current?.getInterpretation() || null}
             />
 
             <input
@@ -276,7 +282,7 @@ export default function App() {
             <InterpretationHelpModal
                 isOpen={isInterpretationHelpModalOpen}
                 onClose={() => setIsInterpretationHelpModalOpen(false)}
-                interpretation={interpretationRef.current!}
+                interpretation={interpretationRef.current?.getInterpretation()!}
             />
         </div>
     );

@@ -18,7 +18,6 @@ export class Graph {
 
   addNode(node: GraphNode) {
     this.nodes.set(node.id, node);
-    this.calculateNodeWeights();
   }
 
   deleteNode(nodeId: string) {
@@ -28,18 +27,15 @@ export class Graph {
         this.edges.delete(edge.id);
       }
     }
-    this.calculateNodeWeights();
   }
 
   addEdge(edge: Edge) {
     this.edges.set(edge.id, edge);
-    this.calculateNodeWeights();
 
   }
 
   deleteEdge(edgeId: string) {
     this.edges.delete(edgeId);
-    this.calculateNodeWeights();
   }
 
   getNode(id: string): GraphNode | undefined {
@@ -87,31 +83,11 @@ export class Graph {
 
   getNodeWeight(nodeId: string): number {
     const node = this.nodes.get(nodeId);
-    let connectedNodes = this.getConnectedNodes(nodeId);
-    if (node) {
-      let weight = 1; // Default weight
-      if (connectedNodes.length === 0) {
-        // No connections, weight is 1
-        weight = 1;
-      }
-      else {
-        // Weight is 1 + sqr root number of connections
-        weight = 1 + Math.sqrt(connectedNodes.length);
-      }
-      return weight;
-    }
-    return 0; // Node not found
+    return node ? node.weight : 0;
   }
 
   setInterpretation(interpretation: string) {
     this.interpretation = interpretation;
-  }
-
-  calculateNodeWeights() {
-    for (const node of this.nodes.values()) {
-      const weight = this.getNodeWeight(node.id);
-      node.weight = weight;
-    }
   }
 
   export(): GraphData {
