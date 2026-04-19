@@ -86,6 +86,10 @@ export class Graph {
     return node ? node.weight : 0;
   }
 
+  getInterpretation(): string {
+    return this.interpretation;
+  }
+
   setInterpretation(interpretation: string) {
     this.interpretation = interpretation;
   }
@@ -93,7 +97,7 @@ export class Graph {
   export(): GraphData {
     return {
       name: this.name,
-      interpretationType: this.interpretation,
+      interpretation: this.interpretation,
       nodes: Array.from(this.nodes.values()),
       edges: Array.from(this.edges.values())
     };
@@ -102,9 +106,10 @@ export class Graph {
   import(data: GraphData): Graph {
     const graph = new Graph();
     graph.name = data.name;
-    graph.interpretation = data.interpretationType;
+    graph.interpretation = data.interpretation;
 
     for (const node of data.nodes) {
+      console.log(JSON.stringify(node));
       if (graph.getNode(node.id)) {
         throw new Error(`Duplicate node id: ${node.id}`);
       }

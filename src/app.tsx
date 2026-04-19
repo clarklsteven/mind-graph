@@ -6,13 +6,9 @@ import { Layout } from "./core/layout/layout";
 import { useEffect, useRef, useState } from "react";
 import { GraphInterpretation } from "./core/model/graph-interpretation";
 import { Interpretation } from "./core/interpretation/interpretation";
-import conceptGraph from "../config/concept-graph.json";
-import narrativeStrategyGraph from "../config/narrative-strategy-graph.json";
-import releaseAssuranceGraph from "../config/release-assurance-graph.json";
-import rootCauseAnalysisGraph from "../config/root-cause-analysis-graph.json";
-import thinkingGraph from "../config/thinking-graph.json";
 import { NewGraphModal } from "./ui/new-graph-modal";
 import { InterpretationHelpModal } from "./ui/interpretation-help-modal";
+import { loadInterpretations } from "./core/utils/interpretations-loader";
 
 export type Mode = "select" | "add" | "link" | "delete";
 
@@ -21,6 +17,21 @@ export default function App() {
     const [isNewGraphModalOpen, setIsNewGraphModalOpen] = useState(false);
     const [isInterpretationHelpModalOpen, setIsInterpretationHelpModalOpen] = useState(false);
     const [indicatorState, setIndicatorState] = useState<Record<string, boolean>>({});
+    const [interpretationRegistry, setInterpretationRegistry] = useState<Record<string, GraphInterpretation>>({});
+    const [interpretationsLoaded, setInterpretationsLoaded] = useState(false);
+    const [initialLoadComplete, setInitialLoadComplete] = useState(false);
+
+    useEffect(() => {
+        const loadInterpretationsAsync = async () => {
+            const result = await loadInterpretations();
+            console.log("Loaded interpretations:", result);
+            setInterpretationRegistry(result);
+            setInterpretationsLoaded(true);
+        };
+
+        loadInterpretationsAsync();
+        console.log("Started loading interpretations");
+    }, [interpretationsLoaded]);
 
     let graph: Graph = new Graph();
     let layout: Layout = new Layout(graph, 1000, 1000);
@@ -36,12 +47,25 @@ export default function App() {
     const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
     const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
 
-    const interpretationRegistry: Record<string, GraphInterpretation> = {};
-    interpretationRegistry[conceptGraph.interpretation_type] = conceptGraph as GraphInterpretation;
-    interpretationRegistry[narrativeStrategyGraph.interpretation_type] = narrativeStrategyGraph as GraphInterpretation;
-    interpretationRegistry[releaseAssuranceGraph.interpretation_type] = releaseAssuranceGraph as GraphInterpretation;
-    interpretationRegistry[rootCauseAnalysisGraph.interpretation_type] = rootCauseAnalysisGraph as GraphInterpretation;
-    interpretationRegistry[thinkingGraph.interpretation_type] = thinkingGraph as GraphInterpretation;
+    // const interpretationRegistry: Record<string, GraphInterpretation> = {};
+    //    interpretationRegistry[conceptGraph.interpretation_type] = conceptGraph as GraphInterpretation;
+    //    interpretationRegistry[narrativeStrategyGraph.interpretation_type] = narrativeStrategyGraph as GraphInterpretation;
+    //    interpretationRegistry[releaseAssuranceGraph.interpretation_type] = releaseAssuranceGraph as GraphInterpretation;
+    //    interpretationRegistry[rootCauseAnalysisGraph.interpretation_type] = rootCauseAnalysisGraph as GraphInterpretation;
+    //    interpretationRegistry[thinkingGraph.interpretation_type] = thinkingGraph as GraphInterpretation;
+
+    const serialiseGraph = (graph: Graph) => {
+        return JSON.stringify({
+            name: graph.getName(),
+            interpretation: graph.getInterpretation(),
+            nodes: graph.getNodes(),
+            edges: graph.getEdges(),
+        });
+    }
+
+    const deserialiseGraph = (json: string) => {
+        return JSON.parse(json);
+    }
 
     const notifyGraphChanged = () => {
         interpretationRef.current?.calculateNodeWeights(graphRef.current);
@@ -122,11 +146,11 @@ export default function App() {
 
         // Import the graph interpretation if it exists
         if (data.interpretationType) {
-            const interpretation: GraphInterpretation = interpretationRegistry[data.interpretationType];
+            const interpretation: GraphInterpretation = interpretationRegistry[data.interpretation];
             if (interpretation) {
                 interpretationRef.current = new Interpretation(interpretation);
             } else {
-                console.warn(`No specific configuration found for interpretation type: ${data.interpretationType}`);
+                console.warn(`No specific configuration found for interpretation type: ${data.interpretation}`);
             }
             let normalisedGraph = normaliseGraph(graphRef.current, interpretationRef.current?.getInterpretation()!);
             graphRef.current = normalisedGraph;
@@ -215,6 +239,64 @@ export default function App() {
     const handleOpenHelpModal = () => {
         setIsInterpretationHelpModalOpen(true);
     };
+
+    useEffect(() => {
+        if (!initialLoadComplete) return;
+        if (!graphRef.current) return;
+
+        const timeout = setTimeout(() => {
+            const data = serialiseGraph(graphRef.current);
+            console.log("Autosaving graph:", data);
+            localStorage.setItem("mindgraph_autosave", data);
+            console.log("Autosaved");
+        }, 500); // half a second
+
+        return () => clearTimeout(timeout);
+    }, [graphVersion]);
+
+    useEffect(() => {
+        if (!interpretationsLoaded) return;
+
+        const saved = localStorage.getItem("mindgraph_autosave");
+        if (!saved) return;
+
+        try {
+            const data = deserialiseGraph(saved);
+            const interpretation = interpretationRegistry[data.interpretation];
+
+            if (!interpretation) {
+                console.warn(`No interpretation found for ${data.interpretation} whilst restoring autosave`);
+                return;
+            }
+            console.log(`Restoring autosave with interpretation ${data.interpretation}`);
+
+            interpretationRef.current = new Interpretation(interpretation);
+
+            const importedGraph = graphRef.current.import(data);
+            const normalisedGraph = normaliseGraph(
+                importedGraph,
+                interpretationRef.current.getInterpretation()
+            );
+
+            graphRef.current = normalisedGraph;
+            layoutRef.current = new Layout(graphRef.current, 1000, 1000);
+
+            if (data.name) {
+                graphRef.current.setName(data.name);
+            }
+
+            setGraphVersion(v => v + 1);
+            console.log("Autosave restored");
+        } catch (e) {
+            console.error("Failed to restore autosave", e);
+        } finally {
+            setInitialLoadComplete(true);
+        }
+    }, [interpretationsLoaded, interpretationRegistry]);
+
+    if (!interpretationsLoaded) {
+        return <div>Loading interpretations...</div>;
+    }
 
     return (
         <div

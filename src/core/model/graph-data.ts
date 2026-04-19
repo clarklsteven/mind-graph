@@ -4,7 +4,7 @@ import { GraphInterpretation } from './graph-interpretation';
 
 export interface GraphData {
   name: string;
-  interpretationType: string;
+  interpretation: string;
   nodes: GraphNode[];
   edges: Edge[];
   graphInterpretation?: GraphInterpretation;
