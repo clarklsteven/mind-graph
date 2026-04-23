@@ -1,0 +1,19 @@
+{
+    "id": "mind-map-graph",
+    "interpretation_type": "mind-map-graph",
+    "label": "Mind Map Graph",
+    "relationship_definitions": [
+        {
+            "id": "untyped",
+            "label": "Untyped",
+            "isDefault": false,
+            "directed": false,
+            "hierarchical": false,
+            "parentEnd": null,
+            "childEnd": null,
+            "singleParent": true,
+            "allowsCycles": null
+        }
+    ],
+    "node_definitions": []
+}

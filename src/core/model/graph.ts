@@ -109,7 +109,6 @@ export class Graph {
     graph.interpretation = data.interpretation;
 
     for (const node of data.nodes) {
-      console.log(JSON.stringify(node));
       if (graph.getNode(node.id)) {
         throw new Error(`Duplicate node id: ${node.id}`);
       }
@@ -127,5 +126,14 @@ export class Graph {
     }
 
     return graph;
+  }
+
+  serialise(): string {
+    return JSON.stringify(this.export());
+  }
+
+  static deserialise(serialized: string): Graph {
+    const data = JSON.parse(serialized);
+    return new Graph().import(data);
   }
 }

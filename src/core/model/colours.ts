@@ -24,10 +24,16 @@ export class Colours {
     }
 
     static getColourForNode(weight: number, colourPalette: ColourPalette): string {
+        const parsedBaseDark = this.parseColour(colourPalette.baseDark);
+        const parsedBaseLight = this.parseColour(colourPalette.baseLight);
 
-        const r = Math.round(this.parseColour(colourPalette.baseDark)!.r + (this.parseColour(colourPalette.baseLight)!.r - this.parseColour(colourPalette.baseDark)!.r) * (1 - weight));
-        const g = Math.round(this.parseColour(colourPalette.baseDark)!.g + (this.parseColour(colourPalette.baseLight)!.g - this.parseColour(colourPalette.baseDark)!.g) * (1 - weight));
-        const b = Math.round(this.parseColour(colourPalette.baseDark)!.b + (this.parseColour(colourPalette.baseLight)!.b - this.parseColour(colourPalette.baseDark)!.b) * (1 - weight));
+        if (!parsedBaseDark || !parsedBaseLight) {
+            console.warn(`Invalid colour format in palette: ${colourPalette.baseDark} or ${colourPalette.baseLight}`);
+            return 'rgb(null, null, null)';
+        }
+        const r = Math.round(parsedBaseDark.r + (parsedBaseLight.r - parsedBaseDark.r) * (1 - weight));
+        const g = Math.round(parsedBaseDark.g + (parsedBaseLight.g - parsedBaseDark.g) * (1 - weight));
+        const b = Math.round(parsedBaseDark.b + (parsedBaseLight.b - parsedBaseDark.b) * (1 - weight));
         return `rgb(${r}, ${g}, ${b})`;
     }
 }

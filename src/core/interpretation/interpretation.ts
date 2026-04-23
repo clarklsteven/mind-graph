@@ -25,7 +25,6 @@ export class Interpretation {
                     if (!otherNode) continue;
 
                     const relationshipDef = this.interpretation.relationship_definitions.find(def => def.id === edge.type);
-                    console.log(`Found relationship definition for edge ${edge.id} of type ${edge.type}: ${JSON.stringify(relationshipDef)}`);
                     if (!relationshipDef) continue;
                     if (relationshipDef.sourceWeightConsidered && edge.to === node.id) {
                         newWeight += (otherNode.weight || 1) * (relationshipDef.sourceWeightMultiplier || 1);
@@ -34,7 +33,6 @@ export class Interpretation {
                         newWeight += (otherNode.weight || 1) * (relationshipDef.targetWeightMultiplier || 1);
                     }
                 }
-                console.log(`Calculated new weight for node ${node.id} (${node.title}): ${node.weight}/${newWeight}`);
                 if (node.weight !== newWeight) {
                     node.weight = newWeight;
                     hasChanged = true;

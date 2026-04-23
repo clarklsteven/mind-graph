@@ -5,6 +5,10 @@ import path from 'path';
 export default defineConfig({
   plugins: [react()],
   test: {
+    coverage: {
+      provider: 'v8',
+      reportOnFailure: true,
+    },
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./vitest.setup.ts'],
