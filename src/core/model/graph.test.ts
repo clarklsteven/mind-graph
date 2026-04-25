@@ -270,4 +270,23 @@ describe('Graph', () => {
         graph.setInterpretation('Test Interpretation');
         expect(graph.getInterpretation()).toBe('Test Interpretation');
     });
+
+    it('should serialise and deserialise', () => {
+        const graph = new Graph();
+        const node: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A" };
+        const edge: Edge = { id: 'e1', from: '1', to: '1', type: "Relates To" };
+
+        graph.addNode(node);
+        graph.addEdge(edge);
+        graph.setName('Test Graph');
+        graph.setInterpretation('Test Interpretation');
+
+        const serialised = graph.serialise();
+        const deserialised = Graph.deserialise(serialised);
+
+        expect(deserialised.getName()).toBe('Test Graph');
+        expect(deserialised.getInterpretation()).toBe('Test Interpretation');
+        expect(deserialised.getNodes()).toHaveLength(1);
+        expect(deserialised.getEdges()).toHaveLength(1);
+    });
 });

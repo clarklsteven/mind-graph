@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { GraphInterpretation } from "../core/model/graph-interpretation";
+import { GraphInterpretation } from "../../core/model/graph-interpretation";
 import { Modal } from "./modal";
-import { getScrollableHelpStyle } from "./styles";
+import { getScrollableHelpStyle } from "../utils/styles";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 

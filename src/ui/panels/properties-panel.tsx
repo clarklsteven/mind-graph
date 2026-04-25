@@ -1,10 +1,10 @@
 import React from "react";
-import { Graph } from "../core/model/graph";
-import { GraphNode } from "../core/model/node";
-import { getDangerButtonStyle, getPropertyLabelStyle, getPropertyDisplayStyle, getPropertyInputStyle, getPropertyDropdownStyle } from "./styles";
+import { Graph } from "../../core/model/graph";
+import { GraphNode } from "../../core/model/node";
+import { getDangerButtonStyle, getPropertyLabelStyle, getPropertyDisplayStyle, getPropertyInputStyle, getPropertyDropdownStyle } from "../utils/styles";
 import { useEffect, useRef } from "react";
-import { EdgeType } from "../core/model/edge";
-import { GraphInterpretation } from "../core/model/graph-interpretation";
+import { EdgeType } from "../../core/model/edge";
+import { GraphInterpretation } from "../../core/model/graph-interpretation";
 
 type PropertiesPanelProps = {
     graph: Graph;

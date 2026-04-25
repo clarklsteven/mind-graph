@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { GraphInterpretation } from "../core/model/graph-interpretation";
+import { GraphInterpretation } from "../../core/model/graph-interpretation";
 import { Modal } from "./modal";
-import { getPropertyInputStyle, getPropertyLabelStyle } from "./styles";
+import { getPropertyInputStyle, getPropertyLabelStyle } from "../utils/styles";
 
 type NewGraphModalProps = {
     isOpen: boolean;

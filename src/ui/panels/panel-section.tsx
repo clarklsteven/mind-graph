@@ -1,5 +1,5 @@
 import React from "react";
-import { getPanelSectionContentStyle, getPanelSectionStyle, getPanelSectionTitleStyle, getStretchyPanelSectionStyle } from "./styles";
+import { getPanelSectionContentStyle, getPanelSectionStyle, getPanelSectionTitleStyle, getStretchyPanelSectionStyle } from "../utils/styles";
 
 type PanelSectionProps = {
     title?: string;

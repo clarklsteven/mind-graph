@@ -160,5 +160,4 @@ export class GraphCoordinator {
             this.layout = new Layout(this.graph!, 1000, 1000);
         }
     };
-
 }

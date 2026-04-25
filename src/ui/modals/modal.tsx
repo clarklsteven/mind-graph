@@ -5,7 +5,7 @@ import {
     getModalHeaderStyle,
     getModalOverlayStyle,
     getModalTitleStyle
-} from "./styles";
+} from "../utils/styles";
 
 type ModalProps = {
     isOpen: boolean;

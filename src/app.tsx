@@ -1,15 +1,17 @@
-import GraphCanvas from "./ui/graph-canvas";
-import ControlPanel from "./ui/control-panel";
-import PropertiesPanel from "./ui/properties-panel";
+import GraphCanvas from "./ui/panels/graph-canvas";
+import ControlPanel from "./ui/panels/control-panel";
+import PropertiesPanel from "./ui/panels/properties-panel";
 import { Graph } from "./core/model/graph";
 import { Layout } from "./core/layout/layout";
 import { useEffect, useRef, useState } from "react";
 import { GraphInterpretation } from "./core/model/graph-interpretation";
 import { Interpretation } from "./core/interpretation/interpretation";
-import { NewGraphModal } from "./ui/new-graph-modal";
-import { InterpretationHelpModal } from "./ui/interpretation-help-modal";
+import { NewGraphModal } from "./ui/modals/new-graph-modal";
+import { InterpretationHelpModal } from "./ui/modals/interpretation-help-modal";
 import { loadInterpretations } from "./core/utils/interpretations-loader";
 import { GraphCoordinator } from "./core/graph-coordinator/graph-coordinator";
+import { GraphRenderer } from "./ui/renderers/graph-renderer";
+import { DefaultRenderer } from "./ui/renderers/default-renderer";
 
 export type Mode = "select" | "add" | "link" | "delete";
 
@@ -38,6 +40,10 @@ export default function App() {
     const [graphVersion, setGraphVersion] = useState(0);
     const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
     const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
+    const rendererRef = useRef<GraphRenderer>(null);
+    rendererRef.current = new DefaultRenderer(graphCoordinatorRef.current?.getGraph()!,
+        graphCoordinatorRef.current?.getLayout()!,
+        graphCoordinatorRef.current?.getInterpretation().getInterpretation()!);
 
     const notifyGraphChanged = () => {
         graphCoordinatorRef.current?.getInterpretation()?.calculateNodeWeights(graphCoordinatorRef.current?.getGraph()!);
@@ -178,6 +184,7 @@ export default function App() {
 
             <main style={{ overflow: "hidden" }}>
                 <GraphCanvas
+                    renderer={rendererRef.current}
                     backgroundColor="rgb(255, 250, 231)"
                     mode={mode}
                     graph={graphCoordinatorRef.current?.getGraph() || new Graph()}
