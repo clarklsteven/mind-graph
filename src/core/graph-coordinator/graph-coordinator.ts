@@ -1,3 +1,4 @@
+import { GraphRenderer } from "../../ui/renderers/graph-renderer";
 import { Interpretation } from "../interpretation/interpretation";
 import { Layout } from "../layout/layout";
 import { Graph } from "../model/graph";
@@ -7,6 +8,7 @@ export class GraphCoordinator {
     private graph?: Graph;
     private interpretation: Interpretation;
     private layout?: Layout;
+    private renderer?: GraphRenderer;
 
     constructor(interpretation: Interpretation) {
         this.interpretation = interpretation;
@@ -36,6 +38,14 @@ export class GraphCoordinator {
 
     setLayout(layout: Layout) {
         this.layout = layout;
+    }
+
+    getRenderer(): GraphRenderer | undefined {
+        return this.renderer;
+    }
+
+    setRenderer(renderer: GraphRenderer) {
+        this.renderer = renderer;
     }
 
     static createGraph(name: string, interpretation: Interpretation) {

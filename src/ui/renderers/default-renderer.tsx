@@ -66,8 +66,13 @@ export class DefaultRenderer extends GraphRenderer {
         context.stroke();
 
         if (isDirectional) {
-            const arrowLength = 10;
-            const arrowWidth = 5;
+            let arrowLength = 10;
+            let arrowWidth = 5;
+            // Make the arrows smaller as we zoom out, so they don't dominate the graph
+            if (graphState.view.scale < 1) {
+                arrowLength = Math.ceil(arrowLength * graphState.view.scale);
+                arrowWidth = Math.ceil(arrowWidth * graphState.view.scale);
+            }
 
             const px = -uy;
             const py = ux;
@@ -186,8 +191,9 @@ export class DefaultRenderer extends GraphRenderer {
         if (!context) return;
         const radius = this.layout.getNodeRadius(node.id);
         const padding = 4;
-        const offsetX = radius + 4;
-        const offsetY = radius + 4;
+        //        const padding = 4 * graphState.view.scale;
+        const offsetX = (radius + padding) * graphState.view.scale;
+        const offsetY = (radius + padding) * graphState.view.scale;
 
         context.font = "12px sans-serif";
 

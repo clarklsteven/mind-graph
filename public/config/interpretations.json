@@ -1,6 +1,7 @@
 [
     "thinking-graph.json",
     "concept-graph.json",
+    "mind-map-graph.json",
     "narrative-strategy-graph.json",
     "release-assurance-graph.json",
     "root-cause-analysis-graph.json"

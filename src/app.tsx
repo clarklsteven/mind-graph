@@ -12,6 +12,7 @@ import { loadInterpretations } from "./core/utils/interpretations-loader";
 import { GraphCoordinator } from "./core/graph-coordinator/graph-coordinator";
 import { GraphRenderer } from "./ui/renderers/graph-renderer";
 import { DefaultRenderer } from "./ui/renderers/default-renderer";
+import { MindMapRenderer } from "./ui/renderers/mind-map-renderer";
 
 export type Mode = "select" | "add" | "link" | "delete";
 
@@ -50,8 +51,30 @@ export default function App() {
         setGraphVersion((v) => v + 1);
     };
 
+    const setRendererForInterpretation = (interpretationType: string) => {
+        switch (interpretationType) {
+            case "mind-map-graph":
+                graphCoordinatorRef.current.setRenderer(
+                    new MindMapRenderer(
+                        graphCoordinatorRef.current.getGraph()!,
+                        graphCoordinatorRef.current.getLayout()!,
+                        graphCoordinatorRef.current.getInterpretation()!.getInterpretation())
+                );
+                break;
+            default:
+                graphCoordinatorRef.current.setRenderer(
+                    new DefaultRenderer(
+                        graphCoordinatorRef.current.getGraph()!,
+                        graphCoordinatorRef.current.getLayout()!,
+                        graphCoordinatorRef.current.getInterpretation()!.getInterpretation())
+                );
+                break;
+        }
+    }
+
     const handleConfirmCreateNewGraph = (name: string, interpretationType: string) => {
         graphCoordinatorRef.current = GraphCoordinator.createGraph(name, new Interpretation(interpretationRegistry[interpretationType]));
+        setRendererForInterpretation(interpretationType);
         setSelectedNodeId(null);
         setSelectedEdgeId(null);
         setGraphVersion((v) => v + 1);
@@ -59,6 +82,7 @@ export default function App() {
     };
 
     const handleOpenNewGraphModal = () => {
+        console.log(interpretationRegistry);
         setIsNewGraphModalOpen(true);
     }
 
@@ -75,6 +99,7 @@ export default function App() {
     ) => {
         const file = event.target.files?.[0];
         await graphCoordinatorRef.current?.loadGraph(file!, interpretationRegistry);
+        setRendererForInterpretation(graphCoordinatorRef.current.getGraph()?.getInterpretation()!)
         setGraphVersion((v) => v + 1);
 
         // Reset the file input so the same file can be chosen again later
@@ -184,7 +209,7 @@ export default function App() {
 
             <main style={{ overflow: "hidden" }}>
                 <GraphCanvas
-                    renderer={rendererRef.current}
+                    renderer={graphCoordinatorRef.current.getRenderer() || rendererRef.current}
                     backgroundColor="rgb(255, 250, 231)"
                     mode={mode}
                     graph={graphCoordinatorRef.current?.getGraph() || new Graph()}

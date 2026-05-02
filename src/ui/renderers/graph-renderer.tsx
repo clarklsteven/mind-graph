@@ -54,7 +54,7 @@ export class GraphRenderer {
     }
 
     getNodeLabelOpacity(scale: number): number {
-        const fadeStart = 0.3;
+        const fadeStart = 0.6;
         const fadeEnd = 0.8;
 
         if (scale <= fadeStart) return 0;
@@ -140,5 +140,7 @@ export class GraphRenderer {
         });
     }
 
-
+    protected getNodeById(nodeId: string): GraphNode | undefined {
+        return this.graph.getNode(nodeId);
+    }
 };

@@ -1,6 +1,7 @@
 {
     "id": "concept-graph",
     "interpretation_type": "concept-graph",
+    "label": "Concept Graph",
     "relationship_definitions": [
         {
             "id": "relates-to",
