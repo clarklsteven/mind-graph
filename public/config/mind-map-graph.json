@@ -15,5 +15,86 @@
             "allowsCycles": null
         }
     ],
-    "node_definitions": []
+    "node_definitions": [
+        {
+            "id": "level-0",
+            "label": "Level 0",
+            "iconId": "",
+            "isDefault": false,
+            "properties": [],
+            "completeness": {
+                "requiredFields": []
+            }
+        },
+        {
+            "id": "level-1",
+            "label": "Level 1",
+            "iconId": "",
+            "isDefault": false,
+            "properties": [],
+            "completeness": {
+                "requiredFields": []
+            }
+        },
+        {
+            "id": "level-2",
+            "label": "Level 2",
+            "iconId": "",
+            "isDefault": false,
+            "properties": [],
+            "completeness": {
+                "requiredFields": []
+            }
+        },
+        {
+            "id": "level-3",
+            "label": "Level 3",
+            "iconId": "",
+            "isDefault": false,
+            "properties": [],
+            "completeness": {
+                "requiredFields": []
+            }
+        }
+    ],
+    "interpretation_palette": {
+        "nodePalettes": {
+            "level-0": {
+                "baseDark": "#003300",
+                "baseLight": "#004d00",
+                "selected": "#FFD700",
+                "hovered": "#00b300",
+                "linkStart": "#4B0082"
+            },
+            "level-1": {
+                "baseDark": "#194d19",
+                "baseLight": "#267326",
+                "selected": "#FFD700",
+                "hovered": "#40bf40",
+                "linkStart": "#006400"
+            },
+            "level-2": {
+                "baseDark": "#194d33",
+                "baseLight": "#26734d",
+                "selected": "#FFD700",
+                "hovered": "#40bf80",
+                "linkStart": "#8B4513"
+            },
+            "level-3": {
+                "baseDark": "#00664d",
+                "baseLight": "#009973",
+                "selected": "#FFD700",
+                "hovered": "#00e6ac",
+                "linkStart": "#00008B"
+            }
+        }
+    },
+    "capabilities": {
+        "manualNodeCreation": false,
+        "manualEdgeCreation": false,
+        "nodeTypeEditable": false,
+        "nodePropertiesEditable": false,
+        "edgePropertiesEditable": false,
+        "missingPropertiesIndicators": false
+    }
 }

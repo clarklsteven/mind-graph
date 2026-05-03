@@ -59,6 +59,8 @@ export class MindMapRenderer extends GraphRenderer {
         const context = canvas.getContext("2d");
         if (!context) return;
         const screen = this.graphToScreen(graphState, node.position.x, node.position.y);
+        const colourPalette = this.getInterpretationColourPalette(node);
+
 
         const paddingX = 16;
         const paddingY = 8;
@@ -78,17 +80,19 @@ export class MindMapRenderer extends GraphRenderer {
         const y = screen.y - height / 2;
         const radius = height / 2;
 
+        const nodeColour: string = Colours.getColourForNode(0, colourPalette);
+        const borderColour: string = Colours.getColourForNode(1, colourPalette);
         context.beginPath();
         context.roundRect(x, y, width, height, radius);
 
-        context.fillStyle = "#ffffff";
+        context.fillStyle = nodeColour;
         context.fill();
 
         context.lineWidth = 2;
-        context.strokeStyle = "#651A2C";
+        context.strokeStyle = borderColour;
         context.stroke();
 
-        context.fillStyle = "#651A2C";
+        context.fillStyle = "#FFFFFF";
         context.fillText(text, screen.x, screen.y);
 
         context.restore();

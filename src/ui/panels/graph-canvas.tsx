@@ -5,10 +5,9 @@ import { Edge } from "../../core/model/edge";
 import { GraphNode } from "../../core/model/node";
 import { Mode } from "../../app";
 import { GraphInterpretation } from "../../core/model/graph-interpretation";
-import { ColourPalette } from "../../core/model/palette";
-import { NodeDefinition } from "../../core/model/node-definition";
 import { GraphRenderer } from "../renderers/graph-renderer";
 import { GraphState } from "../graph-state";
+import { GraphInteractionController } from "../interactions/graph-interaction-controller";
 
 export type DragState = {
     nodeId: string;
@@ -23,11 +22,13 @@ type Props = {
     graph: Graph;
     mode: Mode;
     graphVersion: number;
+    setGraphVersion: (v: number) => void;
     selectedNodeId: string | null;
     setSelectedNodeId: (id: string | null) => void;
     selectedEdgeId: string | null;
     setSelectedEdgeId: (id: string | null) => void;
     interpretation: GraphInterpretation | null;
+    interactionController: GraphInteractionController | undefined;
     indicatorState: Record<string, boolean>;
 }
 
@@ -49,8 +50,8 @@ type CanvasPointerLikeEvent = {
     clientY: number;
 };
 
-export default function GraphCanvas({ backgroundColor, layout, graph, mode, graphVersion, renderer,
-    selectedNodeId, setSelectedNodeId, selectedEdgeId, setSelectedEdgeId, interpretation, indicatorState }: Props) {
+export default function GraphCanvas({ backgroundColor, layout, graph, mode, graphVersion, setGraphVersion, renderer,
+    selectedNodeId, setSelectedNodeId, selectedEdgeId, setSelectedEdgeId, interpretation, interactionController, indicatorState }: Props) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const dragStateRef = useRef<DragState>(null);
     const viewRef = useRef<ViewTransform>({ offsetX: 0, offsetY: 0, scale: 1 });
@@ -81,7 +82,7 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
         stopSimulation();
         isSimulatingRef.current = true;
 
-        const movementThreshold = 0.3;
+        const movementThreshold = 0.2;
         const quietFramesNeeded = 8;
         let quietFrames = 0;
 
@@ -210,6 +211,30 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
             canvas.removeEventListener("wheel", wheelHandler);
         };
     }, []);
+
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            const selectedNodeId = graphStateRef.current.selectedNodeId ? graphStateRef.current.selectedNodeId : "";
+            const handled = interactionController?.onKeyDown?.(event, {
+                graph,
+                selectedNodeId,
+                setSelectedNodeId,
+                graphVersion,
+                setGraphVersion
+            });
+
+            if (handled) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+        };
+
+        window.addEventListener("keydown", handleKeyDown, { capture: true });
+
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown, { capture: true });
+        };
+    }, [interactionController, graph, selectedNodeId]);
 
     const getCanvasCoordinates = (event: CanvasPointerLikeEvent) => {
         const canvas = canvasRef.current;

@@ -2,6 +2,7 @@ import GraphCanvas from "./ui/panels/graph-canvas";
 import ControlPanel from "./ui/panels/control-panel";
 import PropertiesPanel from "./ui/panels/properties-panel";
 import { Graph } from "./core/model/graph";
+import { GraphNode } from "./core/model/node";
 import { Layout } from "./core/layout/layout";
 import { useEffect, useRef, useState } from "react";
 import { GraphInterpretation } from "./core/model/graph-interpretation";
@@ -13,6 +14,8 @@ import { GraphCoordinator } from "./core/graph-coordinator/graph-coordinator";
 import { GraphRenderer } from "./ui/renderers/graph-renderer";
 import { DefaultRenderer } from "./ui/renderers/default-renderer";
 import { MindMapRenderer } from "./ui/renderers/mind-map-renderer";
+import { MindMapInteractionController } from "./ui/interactions/mind-map-interaction-controller";
+import { DefaultInteractionController } from "./ui/interactions/default-interaction-controller";
 
 export type Mode = "select" | "add" | "link" | "delete";
 
@@ -72,9 +75,34 @@ export default function App() {
         }
     }
 
+    const setInteractionControllerForInterpretation = (interpretationType: string) => {
+        switch (interpretationType) {
+            case "mind-map-graph":
+                graphCoordinatorRef.current.setInteractionController(
+                    new MindMapInteractionController()
+                );
+                break;
+            default:
+                graphCoordinatorRef.current.setInteractionController(
+                    new DefaultInteractionController()
+                );
+                break;
+        }
+    }
+
     const handleConfirmCreateNewGraph = (name: string, interpretationType: string) => {
         graphCoordinatorRef.current = GraphCoordinator.createGraph(name, new Interpretation(interpretationRegistry[interpretationType]));
         setRendererForInterpretation(interpretationType);
+        setInteractionControllerForInterpretation(interpretationType);
+        if (interpretationType === "mind-map-graph") {
+            graphCoordinatorRef.current.getGraph()?.addNode({
+                id: crypto.randomUUID(),
+                title: name,
+                type: "level-0",
+                weight: 1,
+                position: { x: 500, y: 500 }
+            });
+        }
         setSelectedNodeId(null);
         setSelectedEdgeId(null);
         setGraphVersion((v) => v + 1);
@@ -100,6 +128,7 @@ export default function App() {
         const file = event.target.files?.[0];
         await graphCoordinatorRef.current?.loadGraph(file!, interpretationRegistry);
         setRendererForInterpretation(graphCoordinatorRef.current.getGraph()?.getInterpretation()!)
+        setInteractionControllerForInterpretation(graphCoordinatorRef.current.getGraph()?.getInterpretation()!)
         setGraphVersion((v) => v + 1);
 
         // Reset the file input so the same file can be chosen again later
@@ -215,12 +244,14 @@ export default function App() {
                     graph={graphCoordinatorRef.current?.getGraph() || new Graph()}
                     layout={graphCoordinatorRef.current?.getLayout() || new Layout(new Graph(), 1000, 1000)}
                     graphVersion={graphVersion}
+                    setGraphVersion={setGraphVersion}
                     selectedNodeId={selectedNodeId}
                     setSelectedNodeId={setSelectedNodeId}
                     selectedEdgeId={selectedEdgeId}
                     setSelectedEdgeId={setSelectedEdgeId}
                     interpretation={graphCoordinatorRef.current?.getInterpretation().getInterpretation() || null}
                     indicatorState={indicatorState}
+                    interactionController={graphCoordinatorRef.current.getInteractionController()}
                 />
             </main>
 

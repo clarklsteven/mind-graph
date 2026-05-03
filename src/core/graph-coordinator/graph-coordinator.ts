@@ -1,3 +1,4 @@
+import { GraphInteractionController } from "../../ui/interactions/graph-interaction-controller";
 import { GraphRenderer } from "../../ui/renderers/graph-renderer";
 import { Interpretation } from "../interpretation/interpretation";
 import { Layout } from "../layout/layout";
@@ -9,6 +10,7 @@ export class GraphCoordinator {
     private interpretation: Interpretation;
     private layout?: Layout;
     private renderer?: GraphRenderer;
+    private interaction?: GraphInteractionController;
 
     constructor(interpretation: Interpretation) {
         this.interpretation = interpretation;
@@ -46,6 +48,14 @@ export class GraphCoordinator {
 
     setRenderer(renderer: GraphRenderer) {
         this.renderer = renderer;
+    }
+
+    getInteractionController(): GraphInteractionController | undefined {
+        return this.interaction;
+    }
+
+    setInteractionController(interaction: GraphInteractionController): void {
+        this.interaction = interaction;
     }
 
     static createGraph(name: string, interpretation: Interpretation) {

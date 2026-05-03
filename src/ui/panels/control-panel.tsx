@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { Mode } from "../../app";
 import { Graph } from "../../core/model/graph";
 import { GraphInterpretation } from "../../core/model/graph-interpretation";
@@ -74,6 +74,38 @@ export default function ControlPanel({
         }
     }
 
+    let indicatorsSection: React.ReactNode = (<StretchyPanelSection><div /></StretchyPanelSection>);
+    if (interpretation?.capabilities?.missingPropertiesIndicators) {
+        indicatorsSection = (
+            <StretchyPanelSection title="Indicators">
+                {indicatorComponents}
+            </StretchyPanelSection>
+        );
+    }
+
+    let addNodes: React.ReactNode = null;
+    if (interpretation?.capabilities?.manualNodeCreation) {
+        addNodes = (
+            <button
+                onClick={() => setMode("add")}
+                style={getButtonStyle(mode === "add")}
+            >
+                Add Node
+            </button>
+        );
+    }
+    let linkNodes: React.ReactNode = null;
+    if (interpretation?.capabilities?.manualEdgeCreation) {
+        linkNodes = (
+            <button
+                onClick={() => setMode("link")}
+                style={getButtonStyle(mode === "link")}
+            >
+                Link Nodes
+            </button>
+        );
+    }
+
     return (
         <aside
             style={{
@@ -106,25 +138,12 @@ export default function ControlPanel({
                 >
                     Select
                 </button>
-
-                <button
-                    onClick={() => setMode("add")}
-                    style={getButtonStyle(mode === "add")}
-                >
-                    Add Node
-                </button>
-
-                <button
-                    onClick={() => setMode("link")}
-                    style={getButtonStyle(mode === "link")}
-                >
-                    Link Nodes
-                </button>
+                {addNodes}
+                {linkNodes}
             </PanelSection>
 
-            <StretchyPanelSection title="Indicators">
-                {indicatorComponents}
-            </StretchyPanelSection>
+            {indicatorsSection}
+
             <PanelSection>
                 <button onClick={onCreate} style={getSecondaryButtonStyle()}>
                     New Graph
