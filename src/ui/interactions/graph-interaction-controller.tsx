@@ -1,6 +1,4 @@
-import { Edge } from "../../core/model/edge";
 import { Graph } from "../../core/model/graph";
-import { GraphNode } from "../../core/model/node";
 
 export interface GraphInteractionContext {
     graph: Graph;

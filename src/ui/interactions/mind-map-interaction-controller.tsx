@@ -36,10 +36,11 @@ export class MindMapInteractionController implements GraphInteractionController 
             id: childId,
             title: "New Node",
             type: childType,
-            weight: 10 / (childLevel + 1),
+            weight: 1,
             position: {
                 x: parent.position.x + xOffset, y: parent.position.y + yOffset,
-            }
+            },
+            size: { width: 50, height: 20 }
         };
 
         const edge: Edge = {

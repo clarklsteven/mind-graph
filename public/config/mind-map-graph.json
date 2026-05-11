@@ -4,15 +4,19 @@
     "label": "Mind Map Graph",
     "relationship_definitions": [
         {
-            "id": "untyped",
-            "label": "Untyped",
+            "id": "parent-child",
+            "label": "Parent / Child",
             "isDefault": false,
             "directed": false,
             "hierarchical": false,
             "parentEnd": null,
             "childEnd": null,
             "singleParent": true,
-            "allowsCycles": null
+            "allowsCycles": null,
+            "sourceWeightConsidered": false,
+            "targetWeightConsidered": true,
+            "sourceWeightMultiplier": 0,
+            "targetWeightMultiplier": 1
         }
     ],
     "node_definitions": [

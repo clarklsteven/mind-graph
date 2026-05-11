@@ -61,6 +61,7 @@ export class GraphCoordinator {
     static createGraph(name: string, interpretation: Interpretation) {
         const graphCoordinator = new GraphCoordinator(interpretation);
         graphCoordinator.getGraph()?.setName(name);
+        graphCoordinator.getGraph()?.setInterpretation(interpretation.getInterpretation().interpretation_type);
         return graphCoordinator;
     }
 

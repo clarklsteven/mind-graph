@@ -2,12 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import { Graph } from "../../core/model/graph";
 import { Layout } from "../../core/layout/layout";
 import { Edge } from "../../core/model/edge";
-import { GraphNode } from "../../core/model/node";
+import { GraphNode, Size } from "../../core/model/node";
 import { Mode } from "../../app";
 import { GraphInterpretation } from "../../core/model/graph-interpretation";
 import { GraphRenderer } from "../renderers/graph-renderer";
 import { GraphState } from "../graph-state";
 import { GraphInteractionController } from "../interactions/graph-interaction-controller";
+import { NodeMeasurer } from "../../core/layout/node-measurer";
+import { MindMapNodeMeasurer } from "../../core/layout/mind-map-node-measurer";
 
 export type DragState = {
     nodeId: string;
@@ -51,7 +53,8 @@ type CanvasPointerLikeEvent = {
 };
 
 export default function GraphCanvas({ backgroundColor, layout, graph, mode, graphVersion, setGraphVersion, renderer,
-    selectedNodeId, setSelectedNodeId, selectedEdgeId, setSelectedEdgeId, interpretation, interactionController, indicatorState }: Props) {
+    selectedNodeId, setSelectedNodeId, selectedEdgeId, setSelectedEdgeId, interpretation, interactionController,
+    indicatorState }: Props) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const dragStateRef = useRef<DragState>(null);
     const viewRef = useRef<ViewTransform>({ offsetX: 0, offsetY: 0, scale: 1 });
@@ -69,14 +72,26 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
         mode,
         indicatorState: indicatorStateRef.current,
     });
+    const nodeMeasurerRef = useRef<NodeMeasurer | null>(null);
+    setNodeMeasurerBasedOnInterpretation(graph.getInterpretation());
 
+    function setNodeMeasurerBasedOnInterpretation(interpretationType: string) {
+        if (!canvasRef.current) return;
+
+        switch (interpretationType) {
+            case "mind-map-graph":
+                nodeMeasurerRef.current = new MindMapNodeMeasurer(canvasRef.current.getContext("2d") as CanvasRenderingContext2D);
+                console.log("Set MindMapNodeMeasurer!");
+                break;
+        }
+    }
 
     const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
     const [linkStartNodeId, setLinkStartNodeId] = useState<string | null>(null);
 
-    const getNodeHitRadius = (nodeId: string): number => {
-        return Math.max(layout.getNodeRadius(nodeId), 10);
-    };
+    /*    const getNodeHitRadius = (nodeId: string): number => {
+            return Math.max(layout.getNodeRadius(nodeId), 10);
+        };*/
 
     function runSimulation() {
         stopSimulation();
@@ -160,6 +175,8 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
     }, [indicatorState]);
 
     useEffect(() => {
+        graph.getNodes().forEach(node => node.size = nodeMeasurerRef.current?.measure(node) as Size);
+        console.log(graph.getNodes()[0]);
         draw();
         runSimulation();
     }, [graphVersion]);
@@ -248,23 +265,6 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
         };
     };
 
-    const hitTestNode = (x: number, y: number): GraphNode | null => {
-        const nodes = graph.getNodes();
-        for (let i = nodes.length - 1; i >= 0; i--) {
-            const node = nodes[i];
-            const dx = x - node.position.x;
-            const dy = y - node.position.y;
-            const distanceSquared = dx * dx + dy * dy;
-            const hitRadius = getNodeHitRadius(node.id);
-
-            if (distanceSquared <= hitRadius * hitRadius) {
-                return node;
-            }
-        }
-
-        return null;
-    };
-
     const hitTestEdge = (x: number, y: number): Edge | null => {
         const edges = graph.getEdges();
 
@@ -301,7 +301,7 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
         if (!point) return;
 
         const graphPoint = screenToGraph(point.x, point.y);
-        const hitNode = hitTestNode(graphPoint.x, graphPoint.y);
+        const hitNode = renderer.hitTestNode(graphPoint);
         const hitEdge = hitNode ? null : hitTestEdge(graphPoint.x, graphPoint.y);
 
         if (hitEdge) {
@@ -390,6 +390,7 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
                         vx: 0,
                         vy: 0,
                     },
+                    size: { width: 8, height: 8 }
                 });
                 setSelectedNodeId(id);
                 graphStateRef.current.selectedNodeId = id;
@@ -433,7 +434,7 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
         }
 
         // --- Hover only ---
-        const hovered = hitTestNode(graphPoint.x, graphPoint.y);
+        const hovered = renderer.hitTestNode(graphPoint);
         setHoveredNodeId(hovered ? hovered.id : null);
         graphStateRef.current.hoveredNodeId = hovered ? hovered.id : null;
 
@@ -501,15 +502,6 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
             }}
         />
     );
-
-    function graphToScreen(x: number, y: number) {
-        const view = viewRef.current;
-
-        return {
-            x: x * view.scale + view.offsetX,
-            y: y * view.scale + view.offsetY,
-        };
-    }
 
     function screenToGraph(x: number, y: number) {
         const view = viewRef.current;

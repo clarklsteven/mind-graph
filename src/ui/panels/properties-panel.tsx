@@ -108,6 +108,36 @@ export default function PropertiesPanel({
             })
     }
 
+    let nodeType: React.ReactNode = null;
+    if (interpretation?.capabilities?.nodeTypeEditable) {
+        const selectedNode = graph.getNodes().find(n => n.id === selectedNodeId);
+        if (selectedNode) {
+            nodeType = (<div>
+                <div style={getPropertyLabelStyle()}>Node Type</div>
+                <select
+                    value={selectedNode.type}
+                    onChange={(e) => {
+                        selectedNode.type = e.target.value;
+                        onGraphChanged();
+                    }}
+                    style={getPropertyDropdownStyle()}
+                >
+                    {(interpretation?.node_definitions ?? []).map((def) => (
+                        <option key={def.id} value={def.id}>
+                            {def.label}
+                        </option>
+                    ))}
+                </select>
+            </div>
+            );
+        }
+    }
+
+    let theSelectedEdge = selectedEdge;
+    if (!interpretation?.capabilities?.edgePropertiesEditable) {
+        theSelectedEdge = undefined;
+    }
+
     return (
         <aside
             style={{
@@ -167,23 +197,7 @@ export default function PropertiesPanel({
                             style={getPropertyInputStyle()}
                         />
                     </div>
-                    <div>
-                        <div style={getPropertyLabelStyle()}>Node Type</div>
-                        <select
-                            value={selectedNode.type}
-                            onChange={(e) => {
-                                selectedNode.type = e.target.value;
-                                onGraphChanged();
-                            }}
-                            style={getPropertyDropdownStyle()}
-                        >
-                            {(interpretation?.node_definitions ?? []).map((def) => (
-                                <option key={def.id} value={def.id}>
-                                    {def.label}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
+                    {nodeType}
                     {propertiesComponents}
                     <div style={{ marginTop: "auto", paddingTop: "16px" }}>
                         <button
@@ -194,7 +208,7 @@ export default function PropertiesPanel({
                         </button>
                     </div>
                 </div>
-            ) : selectedEdge ? (
+            ) : theSelectedEdge ? (
                 <div
                     style={{
                         display: "flex",
@@ -208,15 +222,15 @@ export default function PropertiesPanel({
                     >
                         <div>Edge ID</div>
                         <div style={getPropertyDisplayStyle()}>
-                            {selectedEdge.id}
+                            {theSelectedEdge.id}
                         </div>
                     </div>
                     <div>
                         <div style={getPropertyLabelStyle()}>Type</div>
                         <select
-                            value={selectedEdge.type}
+                            value={theSelectedEdge.type}
                             onChange={(e) => {
-                                selectedEdge.type = e.target.value;
+                                theSelectedEdge.type = e.target.value;
                                 onGraphChanged();
                             }}
                             style={getPropertyDropdownStyle()}

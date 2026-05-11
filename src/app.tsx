@@ -16,8 +16,12 @@ import { DefaultRenderer } from "./ui/renderers/default-renderer";
 import { MindMapRenderer } from "./ui/renderers/mind-map-renderer";
 import { MindMapInteractionController } from "./ui/interactions/mind-map-interaction-controller";
 import { DefaultInteractionController } from "./ui/interactions/default-interaction-controller";
+import { MindMapLayout } from "./core/layout/mind-map-layout";
 
 export type Mode = "select" | "add" | "link" | "delete";
+
+const CANVASWIDTH = 1000;
+const CANVASHEIGHT = 1000;
 
 export default function App() {
     const [mode, setMode] = useState<Mode>("select");
@@ -90,17 +94,34 @@ export default function App() {
         }
     }
 
+    const setLayoutForInterpretation = (interpretationType: string) => {
+        switch (interpretationType) {
+            case "mind-map-graph":
+                graphCoordinatorRef.current.setLayout(
+                    new MindMapLayout(graphCoordinatorRef.current.getGraph()!, CANVASWIDTH, CANVASHEIGHT)
+                );
+                break;
+            default:
+                graphCoordinatorRef.current.setLayout(
+                    new Layout(graphCoordinatorRef.current.getGraph()!, CANVASWIDTH, CANVASHEIGHT)
+                );
+                break;
+        }
+    }
+
     const handleConfirmCreateNewGraph = (name: string, interpretationType: string) => {
         graphCoordinatorRef.current = GraphCoordinator.createGraph(name, new Interpretation(interpretationRegistry[interpretationType]));
         setRendererForInterpretation(interpretationType);
         setInteractionControllerForInterpretation(interpretationType);
+        setLayoutForInterpretation(interpretationType);
         if (interpretationType === "mind-map-graph") {
             graphCoordinatorRef.current.getGraph()?.addNode({
                 id: crypto.randomUUID(),
                 title: name,
                 type: "level-0",
                 weight: 1,
-                position: { x: 500, y: 500 }
+                position: { x: 500, y: 500 },
+                size: { width: 8, height: 8 }
             });
         }
         setSelectedNodeId(null);
@@ -129,6 +150,7 @@ export default function App() {
         await graphCoordinatorRef.current?.loadGraph(file!, interpretationRegistry);
         setRendererForInterpretation(graphCoordinatorRef.current.getGraph()?.getInterpretation()!)
         setInteractionControllerForInterpretation(graphCoordinatorRef.current.getGraph()?.getInterpretation()!)
+        setLayoutForInterpretation(graphCoordinatorRef.current.getGraph()?.getInterpretation()!);
         setGraphVersion((v) => v + 1);
 
         // Reset the file input so the same file can be chosen again later
@@ -209,6 +231,13 @@ export default function App() {
             setInitialLoadComplete(true);
         }
     }, [interpretationsLoaded, interpretationRegistry]);
+
+    // If the graph version changes then the node weights may need recalculating
+    useEffect(() => {
+        if (graphCoordinatorRef.current.getGraph()) {
+            graphCoordinatorRef.current.getInterpretation().calculateNodeWeights(graphCoordinatorRef.current.getGraph()!);
+        }
+    }, [graphVersion]);
 
     if (!interpretationsLoaded) {
         return <div>Loading interpretations...</div>;

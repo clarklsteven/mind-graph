@@ -5,6 +5,7 @@ import { GraphInterpretation } from "../../core/model/graph-interpretation";
 import { GraphNode } from "../../core/model/node";
 import { NodeDefinition } from "../../core/model/node-definition";
 import { ColourPalette } from "../../core/model/palette";
+import { Point } from "../../core/model/point";
 import { GraphState } from "../graph-state";
 
 export interface EdgeLabelPlacement {
@@ -28,6 +29,7 @@ export class GraphRenderer {
     drawNode(canvas: HTMLCanvasElement, graphState: GraphState, node: GraphNode): void { }
     drawLabel(canvas: HTMLCanvasElement, graphState: GraphState, node: GraphNode): void { }
     drawPreviewEdge(canvas: HTMLCanvasElement, graphState: GraphState): void { }
+    hitTestNode(point: Point): GraphNode | null { return null }
 
     graphToScreen(graphState: GraphState, x: number, y: number) {
         return {

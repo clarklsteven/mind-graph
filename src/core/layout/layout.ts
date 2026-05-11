@@ -2,10 +2,10 @@ import { Graph } from "../model/graph";
 import { GraphNode, Position } from "../model/node";
 
 export class Layout {
-    private graph: Graph;
-    private width: number;
-    private height: number;
-    private nodePositions: Map<string, Position> = new Map();
+    protected graph: Graph;
+    protected width: number;
+    protected height: number;
+    protected nodePositions: Map<string, Position> = new Map();
 
     constructor(graph: Graph, width: number, height: number) {
         this.graph = graph;
@@ -42,7 +42,7 @@ export class Layout {
         return this.graph.getEdges();
     }
 
-    private getConnectedNodeIds(): Set<string> {
+    protected getConnectedNodeIds(): Set<string> {
         const connected = new Set<string>();
 
         for (const edge of this.graph.getEdges()) {
@@ -53,7 +53,7 @@ export class Layout {
         return connected;
     }
 
-    private getConnectedGraphCentre(nodes: GraphNode[], connectedIds: Set<string>): { x: number; y: number } {
+    protected getConnectedGraphCentre(nodes: GraphNode[], connectedIds: Set<string>): { x: number; y: number } {
         const connectedNodes = nodes.filter(node => connectedIds.has(node.id));
 
         if (connectedNodes.length === 0) {

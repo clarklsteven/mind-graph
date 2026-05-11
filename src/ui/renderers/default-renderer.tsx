@@ -7,6 +7,7 @@ import { GraphNode } from "../../core/model/node";
 import { GraphState } from "../graph-state";
 import { GraphRenderer } from "./graph-renderer";
 import { NodeIconLibrary } from "../../core/model/node-icon-library";
+import { Point } from "../../core/model/point";
 
 export class DefaultRenderer extends GraphRenderer {
 
@@ -277,6 +278,23 @@ export class DefaultRenderer extends GraphRenderer {
         context.strokeStyle = "rgba(141, 66, 84, 0.45)";
         context.lineWidth = 2;
         context.stroke();
+    };
+
+    hitTestNode(point: Point): GraphNode | null {
+        const nodes = this.graph.getNodes();
+        for (let i = nodes.length - 1; i >= 0; i--) {
+            const node = nodes[i];
+            const dx = point.x - node.position.x;
+            const dy = point.y - node.position.y;
+            const distanceSquared = dx * dx + dy * dy;
+            const hitRadius = Math.max(this.layout.getNodeRadius(node.id), 10);
+
+            if (distanceSquared <= hitRadius * hitRadius) {
+                return node;
+            }
+        }
+
+        return null;
     };
 
 };
