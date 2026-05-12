@@ -89,24 +89,19 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
     const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
     const [linkStartNodeId, setLinkStartNodeId] = useState<string | null>(null);
 
-    /*    const getNodeHitRadius = (nodeId: string): number => {
-            return Math.max(layout.getNodeRadius(nodeId), 10);
-        };*/
-
     function runSimulation() {
         stopSimulation();
         isSimulatingRef.current = true;
+        layout.resetSimulationStability();
 
-        const movementThreshold = 0.2;
         const quietFramesNeeded = 8;
         let quietFrames = 0;
 
         const step = () => {
-            const movement = layout.stepSimulation();
-            const averageMovement = movement / layout.getNodes().length;
+            layout.stepSimulation();
             draw();
 
-            if (averageMovement < movementThreshold) {
+            if (layout.isSimulationStable()) {
                 quietFrames++;
             } else {
                 quietFrames = 0;

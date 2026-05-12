@@ -6,6 +6,8 @@ export class Layout {
     protected width: number;
     protected height: number;
     protected nodePositions: Map<string, Position> = new Map();
+    protected isStable: boolean = false;
+    protected lastAverageMovement: number = 0;
 
     constructor(graph: Graph, width: number, height: number) {
         this.graph = graph;
@@ -137,10 +139,6 @@ export class Layout {
         const centeringStrength = 0.0003 * totalWeight / nodes.length;
 
         for (const node of nodes) {
-            /*if (connectedIds.has(node.id)) {
-                continue;
-            }*/
-
             const dx = centre.x - node.position.x;
             const dy = centre.y - node.position.y;
 
@@ -153,6 +151,22 @@ export class Layout {
             totalMovement += Math.abs(fx) + Math.abs(fy);
         }
 
+        let averageMovement = totalMovement / nodes.length;
+        let movementChange = Math.abs(averageMovement - this.lastAverageMovement) / this.lastAverageMovement;
+        if (movementChange < 1e-8) {
+            this.isStable = true;
+        }
+        this.lastAverageMovement = averageMovement;
+
         return totalMovement;
+    }
+
+    isSimulationStable(): boolean {
+        return this.isStable;
+    }
+
+    resetSimulationStability(): void {
+        this.isStable = false;
+        this.lastAverageMovement = 0;
     }
 }

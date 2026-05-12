@@ -13,7 +13,6 @@ export class MindMapLayout extends Layout {
     stepSimulation(): number {
         const nodes = this.graph.getNodes();
         const edges = this.graph.getEdges();
-        const connectedIds = this.getConnectedNodeIds();
 
         let totalMovement = 0;
 
@@ -142,6 +141,13 @@ export class MindMapLayout extends Layout {
 
             totalMovement += Math.abs(node.velocity.vx) + Math.abs(node.velocity.vy);
         }
+
+        let averageMovement = totalMovement / nodes.length;
+        let movementChange = Math.abs(averageMovement - this.lastAverageMovement) / this.lastAverageMovement;
+        if (movementChange < 1e-8) {
+            this.isStable = true;
+        }
+        this.lastAverageMovement = averageMovement;
 
         return totalMovement;
     }

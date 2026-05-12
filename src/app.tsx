@@ -131,7 +131,6 @@ export default function App() {
     };
 
     const handleOpenNewGraphModal = () => {
-        console.log(interpretationRegistry);
         setIsNewGraphModalOpen(true);
     }
 
@@ -201,7 +200,7 @@ export default function App() {
         if (!saved) return;
 
         try {
-            const data = Graph.deserialise(saved);
+            const data: Graph = Graph.deserialise(saved);
             const interpretation = interpretationRegistry[data.getInterpretation()];
 
             if (!interpretation) {
@@ -222,7 +221,9 @@ export default function App() {
             );
 
             graphCoordinatorRef.current?.setGraph(normalisedGraph);
-            graphCoordinatorRef.current?.setLayout(new Layout(graphCoordinatorRef.current?.getGraph()!, 1000, 1000));
+            setRendererForInterpretation(interpretation.id)
+            setInteractionControllerForInterpretation(interpretation.id)
+            setLayoutForInterpretation(interpretation.id);
 
             setGraphVersion(v => v + 1);
         } catch (e) {
