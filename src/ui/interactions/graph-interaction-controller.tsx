@@ -10,5 +10,6 @@ export interface GraphInteractionContext {
 
 export interface GraphInteractionController {
     onKeyDown?(event: KeyboardEvent, context: GraphInteractionContext): boolean;
+    deleteNode(nodeId: string, graph: Graph): void;
 }
 

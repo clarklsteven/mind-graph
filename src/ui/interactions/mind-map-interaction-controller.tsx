@@ -1,8 +1,11 @@
 import { Edge } from "../../core/model/edge";
+import { Graph } from "../../core/model/graph";
 import { GraphNode } from "../../core/model/node";
+import { getDescendantNodeIds } from "../../core/utils/descendent-nodes";
 import { GraphInteractionContext, GraphInteractionController } from "./graph-interaction-controller";
 
 export class MindMapInteractionController implements GraphInteractionController {
+
     onKeyDown(event: KeyboardEvent, context: GraphInteractionContext): boolean {
         if (!context.selectedNodeId) return false;
 
@@ -83,7 +86,8 @@ export class MindMapInteractionController implements GraphInteractionController 
             weight: 1,
             position: {
                 x: parent.position.x + 200, y: parent.position.y + 200,
-            }
+            },
+            size: { width: 8, height: 8 }
         };
 
         const edge: Edge = {
@@ -97,5 +101,10 @@ export class MindMapInteractionController implements GraphInteractionController 
         context.graph.addEdge(edge);
         context.setSelectedNodeId(child.id);
         context.setGraphVersion(context.graphVersion + 1);
+    }
+
+    deleteNode(nodeId: string, graph: Graph): void {
+        const idsToDelete = getDescendantNodeIds(graph, nodeId);
+        idsToDelete.forEach((id: string) => graph.deleteNode(id));
     }
 }

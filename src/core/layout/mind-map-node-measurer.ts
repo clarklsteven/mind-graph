@@ -12,7 +12,6 @@ export class MindMapNodeMeasurer implements NodeMeasurer {
 
         const textWidth = this.ctx.measureText(node.title).width;
 
-        console.log("Measure");
         return {
             width: textWidth + paddingX * 2,
             height: 14 + paddingY * 2

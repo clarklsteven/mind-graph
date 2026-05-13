@@ -162,7 +162,8 @@ export default function App() {
     const handleDeleteSelectedNode = () => {
         if (!selectedNodeId) return;
 
-        graphCoordinatorRef.current?.getGraph()?.deleteNode(selectedNodeId);
+        //graphCoordinatorRef.current?.getGraph()?.deleteNode(selectedNodeId);
+        graphCoordinatorRef.current.getInteractionController()?.deleteNode(selectedNodeId, graphCoordinatorRef.current.getGraph()!);
         setSelectedNodeId(null);
         notifyGraphChanged();
     };

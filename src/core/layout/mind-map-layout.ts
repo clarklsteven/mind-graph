@@ -6,7 +6,6 @@ import { matchesGlob } from "node:path";
 export class MindMapLayout extends Layout {
 
     constructor(graph: Graph, width: number, height: number) {
-        console.log("MindMapLayout!");
         super(graph, width, height);
     }
 

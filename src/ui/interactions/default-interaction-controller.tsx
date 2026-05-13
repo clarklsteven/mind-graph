@@ -1,3 +1,4 @@
+import { Graph } from "../../core/model/graph";
 import { GraphInteractionContext, GraphInteractionController } from "./graph-interaction-controller";
 
 export class DefaultInteractionController implements GraphInteractionController {
@@ -5,15 +6,7 @@ export class DefaultInteractionController implements GraphInteractionController 
         return false;
     }
 
-    private createChildNode(context: GraphInteractionContext) {
-        // create node
-        // create parent-child edge from selected node to new node
-        // select new node
-    }
-
-    private createSiblingNode(context: GraphInteractionContext) {
-        // find parent of selected node
-        // create new child under same parent
-        // select new node
+    deleteNode(nodeId: string, graph: Graph): void {
+        graph.deleteNode(nodeId);
     }
 }

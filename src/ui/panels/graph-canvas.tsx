@@ -82,7 +82,6 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
         switch (interpretationType) {
             case "mind-map-graph":
                 nodeMeasurerRef.current = new MindMapNodeMeasurer(canvasRef.current.getContext("2d") as CanvasRenderingContext2D);
-                console.log("Set MindMapNodeMeasurer!");
                 break;
         }
     }
@@ -172,7 +171,6 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
 
     useEffect(() => {
         graph.getNodes().forEach(node => node.size = nodeMeasurerRef.current?.measure(node) as Size);
-        console.log(graph.getNodes()[0]);
         draw();
         runSimulation();
     }, [graphVersion]);
