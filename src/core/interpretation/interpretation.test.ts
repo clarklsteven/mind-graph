@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { Interpretation } from './interpretation';
 import { Graph } from '../model/graph';
-import { GraphInterpretation } from '../model/graph-interpretation';
+import type { GraphInterpretation } from '../model/graph-interpretation';
 
 describe('Interpretation', () => {
     it('should return the correct interpretation', () => {
@@ -61,19 +61,22 @@ describe('Interpretation', () => {
             id: 'node1', type: 'type1',
             title: '',
             weight: 0,
-            position: { x: 0, y: 0 }
+            position: { x: 0, y: 0 },
+            size: { width: 8, height: 8 }
         });
         graph.addNode({
             id: 'node2', type: 'type1',
             title: '',
             weight: 0,
-            position: { x: 0, y: 0 }
+            position: { x: 0, y: 0 },
+            size: { width: 8, height: 8 }
         });
         graph.addNode({
             id: 'node3', type: 'type1',
             title: '',
             weight: 0,
-            position: { x: 0, y: 0 }
+            position: { x: 0, y: 0 },
+            size: { width: 8, height: 8 }
         });
         graph.addEdge({ id: 'edge1', from: 'node1', to: 'node2', type: 'rel1' });
         graph.addEdge({ id: 'edge2', from: 'node2', to: 'node3', type: 'rel2' });

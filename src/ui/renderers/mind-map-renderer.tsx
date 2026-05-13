@@ -1,11 +1,11 @@
-import { Layout } from "../../core/layout/layout";
+import type { Layout } from "../../core/layout/layout";
 import { Colours } from "../../core/model/colours";
-import { Edge } from "../../core/model/edge";
-import { Graph } from "../../core/model/graph";
-import { GraphInterpretation } from "../../core/model/graph-interpretation";
-import { GraphNode } from "../../core/model/node";
-import { Point } from "../../core/model/point";
-import { GraphState } from "../graph-state";
+import type { Edge } from "../../core/model/edge";
+import type { Graph } from "../../core/model/graph";
+import type { GraphInterpretation } from "../../core/model/graph-interpretation";
+import type { GraphNode } from "../../core/model/node";
+import type { Point } from "../../core/model/point";
+import type { GraphState } from "../graph-state";
 import { GraphRenderer } from "./graph-renderer";
 
 export class MindMapRenderer extends GraphRenderer {
@@ -61,16 +61,12 @@ export class MindMapRenderer extends GraphRenderer {
         const isHovered = node.id === graphState.hoveredNodeId;
 
         const paddingX = 16;
-        const paddingY = 8;
 
         context.save();
         const text = node.title || "Untitled";
         const weightFactor = 1 + Math.log10(Math.sqrt(node.weight)) / 3;
         const baseFontSize = 12 * weightFactor;
         context.font = `${baseFontSize}px sans-serif`;
-        const baseTextMetrics = context.measureText(text);
-        const baseWidth = Math.max(80, baseTextMetrics.width + paddingX * 2) * weightFactor;
-        const baseHeight = 32 * weightFactor;
 
         const fontSize = 12 * graphState.view.scale * weightFactor;
         context.font = `${fontSize}px sans-serif`;
@@ -105,6 +101,11 @@ export class MindMapRenderer extends GraphRenderer {
 
         context.restore();
     }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    drawPreviewEdge(canvas: HTMLCanvasElement, graphState: GraphState): void { }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    drawLabel(canvas: HTMLCanvasElement, graphState: GraphState): void { }
 
     hitTestNode(point: Point): GraphNode | null {
         const nodes = this.graph.getNodes();

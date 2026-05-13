@@ -1,13 +1,13 @@
-import { Layout } from "../../core/layout/layout";
+import type { Layout } from "../../core/layout/layout";
 import { Colours } from "../../core/model/colours";
-import { Edge } from "../../core/model/edge";
-import { Graph } from "../../core/model/graph";
-import { GraphInterpretation } from "../../core/model/graph-interpretation";
-import { GraphNode } from "../../core/model/node";
-import { GraphState } from "../graph-state";
+import type { Edge } from "../../core/model/edge";
+import type { Graph } from "../../core/model/graph";
+import type { GraphInterpretation } from "../../core/model/graph-interpretation";
+import type { GraphNode } from "../../core/model/node";
+import type { GraphState } from "../graph-state";
 import { GraphRenderer } from "./graph-renderer";
 import { NodeIconLibrary } from "../../core/model/node-icon-library";
-import { Point } from "../../core/model/point";
+import type { Point } from "../../core/model/point";
 
 export class DefaultRenderer extends GraphRenderer {
 
@@ -118,7 +118,6 @@ export class DefaultRenderer extends GraphRenderer {
         // optional background so text is readable
         const metrics = context.measureText(label);
         const paddingX = 4;
-        const paddingY = 2;
         const boxWidth = metrics.width + paddingX * 2;
         const boxHeight = 16;
 
@@ -215,7 +214,7 @@ export class DefaultRenderer extends GraphRenderer {
         );
 
         // Text
-        let labelOpacity = this.getNodeLabelOpacity(graphState.view.scale);
+        const labelOpacity = this.getNodeLabelOpacity(graphState.view.scale);
 
         if (labelOpacity <= 0.05) {
             return;

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { Graph } from './graph';
-import { GraphNode } from './node';
-import { Edge } from './edge';
+import type { GraphNode } from './node';
+import type { Edge } from './edge';
 
 describe('Graph', () => {
     it('should have a name that can be set and retrieved', () => {
@@ -14,7 +14,7 @@ describe('Graph', () => {
 
     it('should add a node', () => {
         const graph = new Graph();
-        const node: GraphNode = { id: '1', title: 'Test Node', weight: 1, position: { x: 0, y: 0 }, type: "Type A" };
+        const node: GraphNode = { id: '1', title: 'Test Node', weight: 1, position: { x: 0, y: 0 }, type: "Type A", size: { width: 8, height: 8 } };
 
         graph.addNode(node);
         const retrieved = graph.getNode('1');
@@ -24,8 +24,8 @@ describe('Graph', () => {
 
     it('should get all nodes', () => {
         const graph = new Graph();
-        const node1: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A" };
-        const node2: GraphNode = { id: '2', title: 'Node 2', weight: 1, position: { x: 0, y: 0 }, type: "Type B" };
+        const node1: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A", size: { width: 8, height: 8 } };
+        const node2: GraphNode = { id: '2', title: 'Node 2', weight: 1, position: { x: 0, y: 0 }, type: "Type B", size: { width: 8, height: 8 } };
 
         graph.addNode(node1);
         graph.addNode(node2);
@@ -38,8 +38,8 @@ describe('Graph', () => {
 
     it('should delete a node and its associated edges', () => {
         const graph = new Graph();
-        const node1: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A" };
-        const node2: GraphNode = { id: '2', title: 'Node 2', weight: 1, position: { x: 0, y: 0 }, type: "Type B" };
+        const node1: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A", size: { width: 8, height: 8 } };
+        const node2: GraphNode = { id: '2', title: 'Node 2', weight: 1, position: { x: 0, y: 0 }, type: "Type B", size: { width: 8, height: 8 } };
         const edge: Edge = { id: 'e1', from: '1', to: '2', type: "Relates To" };
 
         graph.addNode(node1);
@@ -56,8 +56,8 @@ describe('Graph', () => {
 
     it('should add an edge', () => {
         const graph = new Graph();
-        const node1: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A" };
-        const node2: GraphNode = { id: '2', title: 'Node 2', weight: 1, position: { x: 0, y: 0 }, type: "Type B" };
+        const node1: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A", size: { width: 8, height: 8 } };
+        const node2: GraphNode = { id: '2', title: 'Node 2', weight: 1, position: { x: 0, y: 0 }, type: "Type B", size: { width: 8, height: 8 } };
         const edge: Edge = { id: 'e1', from: '1', to: '2', type: "Relates To" };
 
         graph.addNode(node1);
@@ -70,8 +70,8 @@ describe('Graph', () => {
 
     it('should delete an edge', () => {
         const graph = new Graph();
-        const node1: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A" };
-        const node2: GraphNode = { id: '2', title: 'Node 2', weight: 1, position: { x: 0, y: 0 }, type: "Type B" };
+        const node1: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A", size: { width: 8, height: 8 } };
+        const node2: GraphNode = { id: '2', title: 'Node 2', weight: 1, position: { x: 0, y: 0 }, type: "Type B", size: { width: 8, height: 8 } };
         const edge: Edge = { id: 'e1', from: '1', to: '2', type: "Relates To" };
 
         graph.addNode(node1);
@@ -87,8 +87,8 @@ describe('Graph', () => {
 
     it('should get a specific edge', () => {
         const graph = new Graph();
-        const node1: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A" };
-        const node2: GraphNode = { id: '2', title: 'Node 2', weight: 1, position: { x: 0, y: 0 }, type: "Type B" };
+        const node1: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A", size: { width: 8, height: 8 } };
+        const node2: GraphNode = { id: '2', title: 'Node 2', weight: 1, position: { x: 0, y: 0 }, type: "Type B", size: { width: 8, height: 8 } };
         const edge: Edge = { id: 'e1', from: '1', to: '2', type: "Relates To" };
 
         graph.addNode(node1);
@@ -101,8 +101,8 @@ describe('Graph', () => {
 
     it('shounld get all edges', () => {
         const graph = new Graph();
-        const node1: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A" };
-        const node2: GraphNode = { id: '2', title: 'Node 2', weight: 1, position: { x: 0, y: 0 }, type: "Type B" };
+        const node1: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A", size: { width: 8, height: 8 } };
+        const node2: GraphNode = { id: '2', title: 'Node 2', weight: 1, position: { x: 0, y: 0 }, type: "Type B", size: { width: 8, height: 8 } };
         const edge1: Edge = { id: 'e1', from: '1', to: '2', type: "Relates To" };
         const edge2: Edge = { id: 'e2', from: '2', to: '1', type: "Relates To" };
 
@@ -119,7 +119,7 @@ describe('Graph', () => {
 
     it('should get a specific node', () => {
         const graph = new Graph();
-        const node: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A" };
+        const node: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A", size: { width: 8, height: 8 } };
 
         graph.addNode(node);
         const retrieved = graph.getNode('1');
@@ -129,9 +129,9 @@ describe('Graph', () => {
 
     it('should get connected nodes', () => {
         const graph = new Graph();
-        const node1: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A" };
-        const node2: GraphNode = { id: '2', title: 'Node 2', weight: 1, position: { x: 0, y: 0 }, type: "Type B" };
-        const node3: GraphNode = { id: '3', title: 'Node 3', weight: 1, position: { x: 0, y: 0 }, type: "Type C" };
+        const node1: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A", size: { width: 8, height: 8 } };
+        const node2: GraphNode = { id: '2', title: 'Node 2', weight: 1, position: { x: 0, y: 0 }, type: "Type B", size: { width: 8, height: 8 } };
+        const node3: GraphNode = { id: '3', title: 'Node 3', weight: 1, position: { x: 0, y: 0 }, type: "Type C", size: { width: 8, height: 8 } };
         const edge1: Edge = { id: 'e1', from: '1', to: '2', type: "Relates To" };
         const edge2: Edge = { id: 'e2', from: '1', to: '3', type: "Relates To" };
 
@@ -149,9 +149,9 @@ describe('Graph', () => {
 
     it('should get connected edges', () => {
         const graph = new Graph();
-        const node1: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A" };
-        const node2: GraphNode = { id: '2', title: 'Node 2', weight: 1, position: { x: 0, y: 0 }, type: "Type B" };
-        const node3: GraphNode = { id: '3', title: 'Node 3', weight: 1, position: { x: 0, y: 0 }, type: "Type C" };
+        const node1: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A", size: { width: 8, height: 8 } };
+        const node2: GraphNode = { id: '2', title: 'Node 2', weight: 1, position: { x: 0, y: 0 }, type: "Type B", size: { width: 8, height: 8 } };
+        const node3: GraphNode = { id: '3', title: 'Node 3', weight: 1, position: { x: 0, y: 0 }, type: "Type C", size: { width: 8, height: 8 } };
         const edge1: Edge = { id: 'e1', from: '1', to: '2', type: "Relates To" };
         const edge2: Edge = { id: 'e2', from: '1', to: '3', type: "Relates To" };
         const edge3: Edge = { id: 'e3', from: '2', to: '3', type: "Relates To" };
@@ -171,9 +171,9 @@ describe('Graph', () => {
 
     it('should get connection count', () => {
         const graph = new Graph();
-        const node1: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A" };
-        const node2: GraphNode = { id: '2', title: 'Node 2', weight: 1, position: { x: 0, y: 0 }, type: "Type B" };
-        const node3: GraphNode = { id: '3', title: 'Node 3', weight: 1, position: { x: 0, y: 0 }, type: "Type C" };
+        const node1: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A", size: { width: 8, height: 8 } };
+        const node2: GraphNode = { id: '2', title: 'Node 2', weight: 1, position: { x: 0, y: 0 }, type: "Type B", size: { width: 8, height: 8 } };
+        const node3: GraphNode = { id: '3', title: 'Node 3', weight: 1, position: { x: 0, y: 0 }, type: "Type C", size: { width: 8, height: 8 } };
         const edge1: Edge = { id: 'e1', from: '1', to: '2', type: "Relates To" };
         const edge2: Edge = { id: 'e2', from: '1', to: '3', type: "Relates To" };
 
@@ -188,7 +188,7 @@ describe('Graph', () => {
 
     it('should export graph data', () => {
         const graph = new Graph();
-        const node: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A" };
+        const node: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A", size: { width: 8, height: 8 } };
         const edge: Edge = { id: 'e1', from: '1', to: '1', type: "Relates To" };
 
         graph.addNode(node);
@@ -201,7 +201,7 @@ describe('Graph', () => {
     });
 
     it('should import graph data', () => {
-        const node: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A" };
+        const node: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A", size: { width: 8, height: 8 } };
         const edge: Edge = { id: 'e1', from: '1', to: '1', type: "Relates To" };
 
         const imported = new Graph().import({
@@ -216,7 +216,7 @@ describe('Graph', () => {
     });
 
     it('should throw on import with duplicate node ids', () => {
-        const node: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A" };
+        const node: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A", size: { width: 8, height: 8 } };
 
         expect(() => {
             new Graph().import({
@@ -229,7 +229,7 @@ describe('Graph', () => {
     });
 
     it('should throw on import with edge missing from node', () => {
-        const node: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A" };
+        const node: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A", size: { width: 8, height: 8 } };
         const edge: Edge = { id: 'e1', from: '1', to: 'missing', type: "Relates To" };
 
         expect(() => {
@@ -241,7 +241,7 @@ describe('Graph', () => {
             });
         }).toThrow('Edge e1 refers to missing to node: missing');
 
-        const node2: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A" };
+        const node2: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A", size: { width: 8, height: 8 } };
         const edge2: Edge = { id: 'e1', from: 'missing', to: 'e1', type: "Relates To" };
 
         expect(() => {
@@ -256,7 +256,7 @@ describe('Graph', () => {
 
     it('should return node weight', () => {
         const graph = new Graph();
-        const node: GraphNode = { id: '1', title: 'Node 1', weight: 5, position: { x: 0, y: 0 }, type: "Type A" };
+        const node: GraphNode = { id: '1', title: 'Node 1', weight: 5, position: { x: 0, y: 0 }, type: "Type A", size: { width: 8, height: 8 } };
 
         graph.addNode(node);
         expect(graph.getNodeWeight('1')).toBe(5);
@@ -273,7 +273,7 @@ describe('Graph', () => {
 
     it('should serialise and deserialise', () => {
         const graph = new Graph();
-        const node: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A" };
+        const node: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A", size: { width: 8, height: 8 } };
         const edge: Edge = { id: 'e1', from: '1', to: '1', type: "Relates To" };
 
         graph.addNode(node);

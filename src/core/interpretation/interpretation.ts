@@ -1,5 +1,5 @@
-import { Graph } from "../model/graph";
-import { GraphInterpretation } from "../model/graph-interpretation";
+import type { Graph } from "../model/graph";
+import type { GraphInterpretation } from "../model/graph-interpretation";
 
 export class Interpretation {
     private interpretation: GraphInterpretation;

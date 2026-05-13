@@ -1,8 +1,8 @@
-import { Edge } from "../../core/model/edge";
-import { Graph } from "../../core/model/graph";
-import { GraphNode } from "../../core/model/node";
+import type { Edge } from "../../core/model/edge";
+import type { Graph } from "../../core/model/graph";
+import type { GraphNode } from "../../core/model/node";
 import { getDescendantNodeIds } from "../../core/utils/descendent-nodes";
-import { GraphInteractionContext, GraphInteractionController } from "./graph-interaction-controller";
+import type { GraphInteractionContext, GraphInteractionController } from "./graph-interaction-controller";
 
 export class MindMapInteractionController implements GraphInteractionController {
 

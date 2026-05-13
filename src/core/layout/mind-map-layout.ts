@@ -1,7 +1,5 @@
-import { measureMemory } from "node:vm";
-import { Graph } from "../model/graph";
+import type { Graph } from "../model/graph";
 import { Layout } from "./layout";
-import { matchesGlob } from "node:path";
 
 export class MindMapLayout extends Layout {
 
@@ -88,7 +86,7 @@ export class MindMapLayout extends Layout {
             const idealLength = 90;
             const springStrength = 0.005 * Math.sqrt(nodes.length);
 
-            let force = springStrength * (distance - idealLength);
+            const force = springStrength * (distance - idealLength);
 
             const fx = (dx / distance) * force;
             const fy = (dy / distance) * force;
@@ -141,8 +139,8 @@ export class MindMapLayout extends Layout {
             totalMovement += Math.abs(node.velocity.vx) + Math.abs(node.velocity.vy);
         }
 
-        let averageMovement = totalMovement / nodes.length;
-        let movementChange = Math.abs(averageMovement - this.lastAverageMovement) / this.lastAverageMovement;
+        const averageMovement = totalMovement / nodes.length;
+        const movementChange = Math.abs(averageMovement - this.lastAverageMovement) / this.lastAverageMovement;
         if (movementChange < 1e-8) {
             this.isStable = true;
         }

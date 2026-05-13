@@ -1,9 +1,10 @@
-import { GraphInteractionController } from "../../ui/interactions/graph-interaction-controller";
-import { GraphRenderer } from "../../ui/renderers/graph-renderer";
+import type { GraphInteractionController } from "../../ui/interactions/graph-interaction-controller";
+import type { GraphRenderer } from "../../ui/renderers/graph-renderer";
 import { Interpretation } from "../interpretation/interpretation";
 import { Layout } from "../layout/layout";
 import { Graph } from "../model/graph";
-import { GraphInterpretation } from "../model/graph-interpretation";
+import type { GraphInterpretation } from "../model/graph-interpretation";
+import type { GraphNode } from "../model/node";
 
 export class GraphCoordinator {
     private graph?: Graph;
@@ -87,7 +88,7 @@ export class GraphCoordinator {
                 properties: nodeDef?.properties?.reduce((props, propDef) => {
                     props[propDef.id] = node.properties?.[propDef.id] ?? "";
                     return props;
-                }, {} as Record<string, any>)
+                }, {} as Record<string, Partial<GraphNode>>)
             };
 
             normalisedGraph.addNode(normalisedNode);
@@ -135,7 +136,7 @@ export class GraphCoordinator {
             String(now.getMinutes()).padStart(2, "0"),
         ].join("");
 
-        let outputname = "";
+        let outputname: string;
         if (!this.graph?.getName().includes("Untitled")) {
             outputname = this.graph?.getName().replace(/\s+/g, "-") + "-" + timestamp;
         } else {
@@ -173,9 +174,9 @@ export class GraphCoordinator {
             } else {
                 console.warn(`No specific configuration found for interpretation type: ${data.interpretation}`);
             }
-            let normalisedGraph = this.normaliseGraph(
+            const normalisedGraph = this.normaliseGraph(
                 this.graph!,
-                this.interpretation?.getInterpretation()!
+                this.interpretation.getInterpretation()!
             );
             this.graph = normalisedGraph;
             this.layout = new Layout(this.graph!, 1000, 1000);

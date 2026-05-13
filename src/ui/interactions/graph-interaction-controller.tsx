@@ -1,4 +1,4 @@
-import { Graph } from "../../core/model/graph";
+import type { Graph } from "../../core/model/graph";
 
 export interface GraphInteractionContext {
     graph: Graph;

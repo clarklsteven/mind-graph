@@ -1,6 +1,6 @@
-import { GraphNode } from "./node";
-import { Edge } from "./edge";
-import { GraphData } from "./graph-data";
+import type { GraphNode } from "./node";
+import type { Edge } from "./edge";
+import type { GraphData } from "./graph-data";
 
 export class Graph {
   private name: string = "";

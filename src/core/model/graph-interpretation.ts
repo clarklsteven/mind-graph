@@ -1,6 +1,6 @@
-import { NodeDefinition } from './node-definition';
-import { InterpretationPalette } from './palette';
-import { RelationshipDefinition } from './relationship-definition';
+import type { NodeDefinition } from './node-definition';
+import type { InterpretationPalette } from './palette';
+import type { RelationshipDefinition } from './relationship-definition';
 
 export interface InterpretationCapabilities {
     manualNodeCreation?: boolean;

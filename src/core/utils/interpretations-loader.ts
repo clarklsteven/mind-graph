@@ -1,4 +1,4 @@
-import { GraphInterpretation } from "../model/graph-interpretation";
+import type { GraphInterpretation } from "../model/graph-interpretation";
 
 export async function loadInterpretations(): Promise<Record<string, GraphInterpretation>> {
     const manifestResponse = await fetch("/config/interpretations.json");

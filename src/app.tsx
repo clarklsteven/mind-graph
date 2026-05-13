@@ -2,16 +2,15 @@ import GraphCanvas from "./ui/panels/graph-canvas";
 import ControlPanel from "./ui/panels/control-panel";
 import PropertiesPanel from "./ui/panels/properties-panel";
 import { Graph } from "./core/model/graph";
-import { GraphNode } from "./core/model/node";
 import { Layout } from "./core/layout/layout";
 import { useEffect, useRef, useState } from "react";
-import { GraphInterpretation } from "./core/model/graph-interpretation";
+import type { GraphInterpretation } from "./core/model/graph-interpretation";
 import { Interpretation } from "./core/interpretation/interpretation";
 import { NewGraphModal } from "./ui/modals/new-graph-modal";
 import { InterpretationHelpModal } from "./ui/modals/interpretation-help-modal";
 import { loadInterpretations } from "./core/utils/interpretations-loader";
 import { GraphCoordinator } from "./core/graph-coordinator/graph-coordinator";
-import { GraphRenderer } from "./ui/renderers/graph-renderer";
+import type { GraphRenderer } from "./ui/renderers/graph-renderer";
 import { DefaultRenderer } from "./ui/renderers/default-renderer";
 import { MindMapRenderer } from "./ui/renderers/mind-map-renderer";
 import { MindMapInteractionController } from "./ui/interactions/mind-map-interaction-controller";
@@ -42,19 +41,23 @@ export default function App() {
         loadInterpretationsAsync();
     }, [interpretationsLoaded]);
 
-    let graphCoordinator: GraphCoordinator = new GraphCoordinator(new Interpretation({ interpretation_type: "none" } as GraphInterpretation));
+    const graphCoordinator: GraphCoordinator = new GraphCoordinator(new Interpretation({ interpretation_type: "none" } as GraphInterpretation));
     const fileInputRef = useRef<HTMLInputElement>(null);
     const graphCoordinatorRef = useRef<GraphCoordinator>(graphCoordinator);
     const [graphVersion, setGraphVersion] = useState(0);
     const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
     const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
     const rendererRef = useRef<GraphRenderer>(null);
-    rendererRef.current = new DefaultRenderer(graphCoordinatorRef.current?.getGraph()!,
-        graphCoordinatorRef.current?.getLayout()!,
-        graphCoordinatorRef.current?.getInterpretation().getInterpretation()!);
+    const coordinator = graphCoordinatorRef.current;
+    if (!coordinator) {
+        throw new Error("GraphCoordinator has not been initialised");
+    }
+    rendererRef.current = new DefaultRenderer(coordinator.getGraph()!,
+        coordinator.getLayout()!,
+        coordinator.getInterpretation().getInterpretation()!);
 
     const notifyGraphChanged = () => {
-        graphCoordinatorRef.current?.getInterpretation()?.calculateNodeWeights(graphCoordinatorRef.current?.getGraph()!);
+        graphCoordinatorRef.current?.getInterpretation()?.calculateNodeWeights(coordinator.getGraph()!);
         setGraphVersion((v) => v + 1);
     };
 
@@ -147,9 +150,9 @@ export default function App() {
     ) => {
         const file = event.target.files?.[0];
         await graphCoordinatorRef.current?.loadGraph(file!, interpretationRegistry);
-        setRendererForInterpretation(graphCoordinatorRef.current.getGraph()?.getInterpretation()!)
-        setInteractionControllerForInterpretation(graphCoordinatorRef.current.getGraph()?.getInterpretation()!)
-        setLayoutForInterpretation(graphCoordinatorRef.current.getGraph()?.getInterpretation()!);
+        setRendererForInterpretation(coordinator.getGraph()!.getInterpretation()!)
+        setInteractionControllerForInterpretation(coordinator.getGraph()!.getInterpretation()!)
+        setLayoutForInterpretation(coordinator.getGraph()!.getInterpretation()!);
         setGraphVersion((v) => v + 1);
 
         // Reset the file input so the same file can be chosen again later
@@ -217,8 +220,8 @@ export default function App() {
                 return;
             }
             const normalisedGraph = graphCoordinatorRef.current?.normaliseGraph(
-                graphCoordinatorRef.current?.getGraph()!,
-                graphCoordinatorRef.current?.getInterpretation().getInterpretation()!
+                coordinator.getGraph()!,
+                coordinator.getInterpretation().getInterpretation()!
             );
 
             graphCoordinatorRef.current?.setGraph(normalisedGraph);
@@ -314,7 +317,7 @@ export default function App() {
             <InterpretationHelpModal
                 isOpen={isInterpretationHelpModalOpen}
                 onClose={() => setIsInterpretationHelpModalOpen(false)}
-                interpretation={graphCoordinatorRef.current?.getInterpretation().getInterpretation()!}
+                interpretation={coordinator.getInterpretation().getInterpretation()!}
             />
         </div>
     );

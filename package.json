@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/clarklsteven/mind-graph#readme",
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
@@ -35,9 +36,11 @@
     "@vitejs/plugin-react": "^6.0.1",
     "@vitest/coverage-v8": "^4.1.2",
     "@vitest/ui": "^4.1.2",
+    "eslint": "^10.3.0",
     "jsdom": "^29.0.1",
     "tsx": "^4.21.0",
     "typescript": "^6.0.2",
+    "typescript-eslint": "^8.59.3",
     "vitest": "^4.1.2"
   },
   "dependencies": {

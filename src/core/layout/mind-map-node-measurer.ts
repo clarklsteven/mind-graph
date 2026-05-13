@@ -1,5 +1,5 @@
-import { GraphNode, Size } from "../model/node";
-import { NodeMeasurer } from "./node-measurer";
+import type { GraphNode, Size } from "../model/node";
+import type { NodeMeasurer } from "./node-measurer";
 
 export class MindMapNodeMeasurer implements NodeMeasurer {
     constructor(private ctx: CanvasRenderingContext2D) { }

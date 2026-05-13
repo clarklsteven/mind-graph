@@ -1,10 +1,10 @@
 import React from "react";
-import { Graph } from "../../core/model/graph";
-import { GraphNode } from "../../core/model/node";
+import type { Graph } from "../../core/model/graph";
+import type { GraphNode } from "../../core/model/node";
 import { getDangerButtonStyle, getPropertyLabelStyle, getPropertyDisplayStyle, getPropertyInputStyle, getPropertyDropdownStyle } from "../utils/styles";
 import { useEffect, useRef } from "react";
-import { EdgeType } from "../../core/model/edge";
-import { GraphInterpretation } from "../../core/model/graph-interpretation";
+import type { GraphInterpretation } from "../../core/model/graph-interpretation";
+import type { NodeDefinition } from "../../core/model/node-definition";
 
 type PropertiesPanelProps = {
     graph: Graph;
@@ -35,7 +35,7 @@ export default function PropertiesPanel({
 
     const nodeDefinition = interpretation ?
         interpretation?.node_definitions ?
-            interpretation.node_definitions.find((def: any) => def.id === selectedNode?.type) :
+            interpretation.node_definitions.find((def: NodeDefinition) => def.id === selectedNode?.type) :
             undefined : undefined;
 
     const titleInputRef = useRef<HTMLInputElement>(null);

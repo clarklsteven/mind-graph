@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { GraphInterpretation } from "../../core/model/graph-interpretation";
+import type { GraphInterpretation } from "../../core/model/graph-interpretation";
 import { Modal } from "./modal";
 import { getPropertyInputStyle, getPropertyLabelStyle } from "../utils/styles";
 

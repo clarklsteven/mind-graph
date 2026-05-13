@@ -28,6 +28,7 @@ describe('NodeIconLibrary', () => {
         });
 
         it('should return the untyped icon when iconId is null', () => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             expect(NodeIconLibrary.getIcon(null as any)).toBe('•');
         });
 

@@ -1,4 +1,4 @@
-import { Graph } from "./core/model/graph";
+/*import { Graph } from "./core/model/graph";
 import { GraphNode } from "./core/model/node";
 import { Edge } from "./core/model/edge";
 import fs from "node:fs";
@@ -21,4 +21,4 @@ const edge: Edge = {
 graph.addEdge(edge);
 
 let graphData = graph.export();
-fs.writeFileSync("graph-data.json", JSON.stringify(graphData, null, 2));
+fs.writeFileSync("graph-data.json", JSON.stringify(graphData, null, 2));*/

@@ -1,5 +1,5 @@
-import { Graph } from "../model/graph";
-import { GraphNode, Position } from "../model/node";
+import type { Graph } from "../model/graph";
+import type { GraphNode, Position } from "../model/node";
 
 export class Layout {
     protected graph: Graph;
@@ -36,7 +36,7 @@ export class Layout {
     }
 
     getNodes(): GraphNode[] {
-        let nodes: GraphNode[] = this.graph.getNodes();
+        const nodes: GraphNode[] = this.graph.getNodes();
         return nodes;
     }
 
@@ -151,8 +151,8 @@ export class Layout {
             totalMovement += Math.abs(fx) + Math.abs(fy);
         }
 
-        let averageMovement = totalMovement / nodes.length;
-        let movementChange = Math.abs(averageMovement - this.lastAverageMovement) / this.lastAverageMovement;
+        const averageMovement = totalMovement / nodes.length;
+        const movementChange = Math.abs(averageMovement - this.lastAverageMovement) / this.lastAverageMovement;
         if (movementChange < 1e-8) {
             this.isStable = true;
         }

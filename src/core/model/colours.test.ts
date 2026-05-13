@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { Colours } from './colours';
 
 describe('Colours', () => {
-    let colourPalette = {
+    const colourPalette = {
         baseDark: "#005545",
         baseLight: "#80a896",
         selected: "#ffeb3b",
@@ -33,7 +33,6 @@ describe('Colours', () => {
     });
 
     it('should return null for invalid colour formats', () => {
-        // @ts-ignore
         expect(Colours.getColourForNode(0.5, { baseDark: "invalid", baseLight: "invalid", selected: "invalid", hovered: "invalid", linkStart: "invalid" })).toBe('rgb(null, null, null)');
     });
 });

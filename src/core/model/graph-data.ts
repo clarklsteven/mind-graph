@@ -1,6 +1,6 @@
-import { GraphNode } from './node';
-import { Edge } from './edge';
-import { GraphInterpretation } from './graph-interpretation';
+import type { GraphNode } from './node';
+import type { Edge } from './edge';
+import type { GraphInterpretation } from './graph-interpretation';
 
 export interface GraphData {
   name: string;

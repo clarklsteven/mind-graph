@@ -1,7 +1,6 @@
-import React, { useEffect } from "react";
-import { Mode } from "../../app";
-import { Graph } from "../../core/model/graph";
-import { GraphInterpretation } from "../../core/model/graph-interpretation";
+import React from "react";
+import type { Mode } from "../../app";
+import type { GraphInterpretation } from "../../core/model/graph-interpretation";
 import { PanelSection, StretchyPanelSection } from "../panels/panel-section";
 import { getButtonStyle, getSecondaryButtonStyle, getHelpButtonStyle, getControlPanelStyle, getGraphTitleStyle, getHelpContainerStyle, getMindGraphTitleStyle } from "../utils/styles";
 

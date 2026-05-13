@@ -1,12 +1,12 @@
-import { Layout } from "../../core/layout/layout";
-import { Edge } from "../../core/model/edge";
-import { Graph } from "../../core/model/graph";
-import { GraphInterpretation } from "../../core/model/graph-interpretation";
-import { GraphNode } from "../../core/model/node";
-import { NodeDefinition } from "../../core/model/node-definition";
-import { ColourPalette } from "../../core/model/palette";
-import { Point } from "../../core/model/point";
-import { GraphState } from "../graph-state";
+import type { Layout } from "../../core/layout/layout";
+import type { Edge } from "../../core/model/edge";
+import type { Graph } from "../../core/model/graph";
+import type { GraphInterpretation } from "../../core/model/graph-interpretation";
+import type { GraphNode } from "../../core/model/node";
+import type { NodeDefinition } from "../../core/model/node-definition";
+import type { ColourPalette } from "../../core/model/palette";
+import type { Point } from "../../core/model/point";
+import type { GraphState } from "../graph-state";
 
 export interface EdgeLabelPlacement {
     x: number;
@@ -14,7 +14,7 @@ export interface EdgeLabelPlacement {
     angle: number;
 }
 
-export class GraphRenderer {
+export abstract class GraphRenderer {
     protected graph: Graph;
     protected layout: Layout;
     protected interpretation: GraphInterpretation;
@@ -25,11 +25,11 @@ export class GraphRenderer {
         this.interpretation = interpretation;
     }
 
-    drawEdge(canvas: HTMLCanvasElement, graphState: GraphState, edge: Edge): void { }
-    drawNode(canvas: HTMLCanvasElement, graphState: GraphState, node: GraphNode): void { }
-    drawLabel(canvas: HTMLCanvasElement, graphState: GraphState, node: GraphNode): void { }
-    drawPreviewEdge(canvas: HTMLCanvasElement, graphState: GraphState): void { }
-    hitTestNode(point: Point): GraphNode | null { return null }
+    abstract drawEdge(canvas: HTMLCanvasElement, graphState: GraphState, edge: Edge): void;
+    abstract drawNode(canvas: HTMLCanvasElement, graphState: GraphState, node: GraphNode): void;
+    abstract drawLabel(canvas: HTMLCanvasElement, graphState: GraphState, node: GraphNode): void;
+    abstract drawPreviewEdge(canvas: HTMLCanvasElement, graphState: GraphState): void;
+    abstract hitTestNode(point: Point): GraphNode | null;
 
     graphToScreen(graphState: GraphState, x: number, y: number) {
         return {
@@ -118,7 +118,7 @@ export class GraphRenderer {
 
     getInterpretationColourPalette(node: GraphNode): ColourPalette {
         const nodeDef = this.getNodeDefinition(node);
-        let defaultPalette: ColourPalette = {
+        const defaultPalette: ColourPalette = {
             baseDark: "#888",
             baseLight: "#ccc",
             selected: "#f50b9b",

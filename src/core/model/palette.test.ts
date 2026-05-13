@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { InterpretationPaletteManager, ColourPalette, InterpretationPalette } from './palette';
+import type { ColourPalette, InterpretationPalette } from './palette';
+import { InterpretationPaletteManager } from './palette';
 
 describe('InterpretationPaletteManager', () => {
     const mockPalette: InterpretationPalette = {
@@ -63,6 +64,7 @@ describe('InterpretationPaletteManager', () => {
         });
 
         it('should handle undefined nodeType gracefully', () => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const result = manager.getColourPaletteForNodeType(undefined as any);
             const expectedDefault: ColourPalette = {
                 baseDark: '#333',

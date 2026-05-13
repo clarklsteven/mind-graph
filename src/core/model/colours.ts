@@ -1,4 +1,4 @@
-import { ColourPalette } from "./palette";
+import type { ColourPalette } from "./palette";
 
 interface Colour {
     r: number;

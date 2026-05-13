@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from "react";
-import { Graph } from "../../core/model/graph";
-import { Layout } from "../../core/layout/layout";
-import { Edge } from "../../core/model/edge";
-import { GraphNode, Size } from "../../core/model/node";
-import { Mode } from "../../app";
-import { GraphInterpretation } from "../../core/model/graph-interpretation";
-import { GraphRenderer } from "../renderers/graph-renderer";
-import { GraphState } from "../graph-state";
-import { GraphInteractionController } from "../interactions/graph-interaction-controller";
-import { NodeMeasurer } from "../../core/layout/node-measurer";
+import type { Graph } from "../../core/model/graph";
+import type { Layout } from "../../core/layout/layout";
+import type { Edge } from "../../core/model/edge";
+import type { Size } from "../../core/model/node";
+import type { Mode } from "../../app";
+import type { GraphInterpretation } from "../../core/model/graph-interpretation";
+import type { GraphRenderer } from "../renderers/graph-renderer";
+import type { GraphState } from "../graph-state";
+import type { GraphInteractionController } from "../interactions/graph-interaction-controller";
+import type { NodeMeasurer } from "../../core/layout/node-measurer";
 import { MindMapNodeMeasurer } from "../../core/layout/mind-map-node-measurer";
 
 export type DragState = {
@@ -53,7 +53,7 @@ type CanvasPointerLikeEvent = {
 };
 
 export default function GraphCanvas({ backgroundColor, layout, graph, mode, graphVersion, setGraphVersion, renderer,
-    selectedNodeId, setSelectedNodeId, selectedEdgeId, setSelectedEdgeId, interpretation, interactionController,
+    selectedNodeId, setSelectedNodeId, selectedEdgeId, setSelectedEdgeId, interactionController,
     indicatorState }: Props) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const dragStateRef = useRef<DragState>(null);
@@ -176,10 +176,6 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
     }, [graphVersion]);
 
     useEffect(() => {
-        const handleResize = () => {
-            draw();
-        };
-
         window.addEventListener("resize", draw);
 
         return () => {
@@ -371,7 +367,7 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
             graphStateRef.current.selectedEdgeId = null;
 
             if (mode === "add" && !hitNode) {
-                let id = crypto.randomUUID();
+                const id = crypto.randomUUID();
                 graph.addNode({
                     id: id,
                     title: "New Node",

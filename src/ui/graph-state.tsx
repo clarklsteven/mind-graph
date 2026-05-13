@@ -1,4 +1,4 @@
-import { DragState, ViewTransform } from "./panels/graph-canvas";
+import type { DragState, ViewTransform } from "./panels/graph-canvas";
 
 export interface GraphState {
     view: ViewTransform;

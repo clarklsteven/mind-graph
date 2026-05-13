@@ -1,4 +1,4 @@
-import { Graph } from "../model/graph";
+import type { Graph } from "../model/graph";
 
 export function getDescendantNodeIds(graph: Graph, rootNodeId: string): Set<string> {
     const result = new Set<string>();
