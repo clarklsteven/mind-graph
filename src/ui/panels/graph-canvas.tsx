@@ -72,6 +72,7 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
         mode,
         indicatorState: indicatorStateRef.current,
     });
+    graphStateRef.current.mode = mode;
     const nodeMeasurerRef = useRef<NodeMeasurer | null>(null);
     setNodeMeasurerBasedOnInterpretation(graph.getInterpretation());
 
@@ -324,6 +325,7 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
 
             if (!linkStartNodeId) {
                 setLinkStartNodeId(hitNode.id);
+                graphStateRef.current.linkStartNodeId = hitNode.id;
                 draw();
                 return;
             }
