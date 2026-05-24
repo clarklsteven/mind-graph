@@ -1,7 +1,7 @@
 import React from "react";
 import type { Mode } from "../../app";
 import type { GraphInterpretation } from "../../core/model/graph-interpretation";
-import { PanelSection, StretchyPanelSection } from "../panels/panel-section";
+import { PanelSection, StretchyPanelSection } from "./panel-section";
 import { getButtonStyle, getSecondaryButtonStyle, getHelpButtonStyle, getControlPanelStyle, getGraphTitleStyle, getHelpContainerStyle, getMindGraphTitleStyle } from "../utils/styles";
 
 
