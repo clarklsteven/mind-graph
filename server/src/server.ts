@@ -3,6 +3,7 @@ import healthcheckRouter from "./routes/healthcheck";
 import userRouter from "./routes/user";
 
 const app = express();
+app.use(express.json());
 
 app.use("/healthcheck", healthcheckRouter);
 app.use("/user", userRouter);
