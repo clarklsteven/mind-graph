@@ -147,7 +147,6 @@ export default function PropertiesPanel({
                 boxSizing: "border-box",
                 width: "260px",
                 minWidth: "260px",
-                height: "100%",
                 display: "flex",
                 flexDirection: "column",
             }}
@@ -168,7 +167,6 @@ export default function PropertiesPanel({
                         display: "flex",
                         flexDirection: "column",
                         gap: "16px",
-                        height: "100%",
                     }}
                 >
                     <div>
@@ -214,7 +212,6 @@ export default function PropertiesPanel({
                         display: "flex",
                         flexDirection: "column",
                         gap: "16px",
-                        height: "100%",
                     }}
                 >
                     <div

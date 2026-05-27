@@ -1,6 +1,3 @@
-import GraphCanvas from "./ui/panels/graph-canvas";
-import ControlPanel from "./ui/panels/control-panel";
-import PropertiesPanel from "./ui/panels/properties-panel";
 import { Graph } from "./core/model/graph";
 import { Layout } from "./core/layout/layout";
 import { useEffect, useRef, useState } from "react";
@@ -16,6 +13,10 @@ import { MindMapRenderer } from "./ui/renderers/mind-map-renderer";
 import { MindMapInteractionController } from "./ui/interactions/mind-map-interaction-controller";
 import { DefaultInteractionController } from "./ui/interactions/default-interaction-controller";
 import { MindMapLayout } from "./core/layout/mind-map-layout";
+import Toolbar from "./ui/toolbar";
+import MainArea from "./ui/main-area";
+import { SettingsModal } from "./ui/modals/settings-modal";
+import StatusBar from "./ui/statusbar";
 
 export type Mode = "select" | "add" | "link" | "delete";
 
@@ -26,6 +27,7 @@ export default function App() {
     const [mode, setMode] = useState<Mode>("select");
     const [isNewGraphModalOpen, setIsNewGraphModalOpen] = useState(false);
     const [isInterpretationHelpModalOpen, setIsInterpretationHelpModalOpen] = useState(false);
+    const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
     const [indicatorState, setIndicatorState] = useState<Record<string, boolean>>({});
     const [interpretationRegistry, setInterpretationRegistry] = useState<Record<string, GraphInterpretation>>({});
     const [interpretationsLoaded, setInterpretationsLoaded] = useState(false);
@@ -183,6 +185,10 @@ export default function App() {
         setIsInterpretationHelpModalOpen(true);
     };
 
+    const handleOpenSettingsModal = () => {
+        setIsSettingsModalOpen(true);
+    };
+
     // Autosave graph to local storage on changes, with debouncing
     useEffect(() => {
         if (!initialLoadComplete) return;
@@ -249,55 +255,39 @@ export default function App() {
     }
 
     return (
-        <div
-            style={{
-                display: "grid",
-                gridTemplateColumns: "220px 1fr 260px",
-                width: "100vw",
-                height: "100vh",
-            }}
+        <div className="app-shell"
         >
-            <ControlPanel
+            <Toolbar
+                onSave={handleSaveGraph}
+                onLoad={handleLoadClick}
+                onCreate={handleOpenNewGraphModal}
+                onHelp={handleOpenHelpModal}
+                onSettings={handleOpenSettingsModal}
+            />
+            <MainArea
                 name={graphCoordinatorRef.current?.getGraph()?.getName() || "Untitled Graph"}
                 mode={mode}
                 interpretation={graphCoordinatorRef.current?.getInterpretation().getInterpretation() || null}
                 indicatorState={indicatorState}
                 setIndicatorState={setIndicatorState}
                 setMode={setMode}
-                onSave={handleSaveGraph}
-                onLoad={handleLoadClick}
-                onCreate={handleOpenNewGraphModal}
-                onHelp={handleOpenHelpModal}
-            />
-
-            <main style={{ overflow: "hidden" }}>
-                <GraphCanvas
-                    renderer={graphCoordinatorRef.current.getRenderer() || rendererRef.current}
-                    backgroundColor="rgb(255, 250, 231)"
-                    mode={mode}
-                    graph={graphCoordinatorRef.current?.getGraph() || new Graph()}
-                    layout={graphCoordinatorRef.current?.getLayout() || new Layout(new Graph(), 1000, 1000)}
-                    graphVersion={graphVersion}
-                    setGraphVersion={setGraphVersion}
-                    selectedNodeId={selectedNodeId}
-                    setSelectedNodeId={setSelectedNodeId}
-                    selectedEdgeId={selectedEdgeId}
-                    setSelectedEdgeId={setSelectedEdgeId}
-                    interpretation={graphCoordinatorRef.current?.getInterpretation().getInterpretation() || null}
-                    indicatorState={indicatorState}
-                    interactionController={graphCoordinatorRef.current.getInteractionController()}
-                />
-            </main>
-
-            <PropertiesPanel
+                renderer={graphCoordinatorRef.current.getRenderer() || rendererRef.current}
+                backgroundColor="rgb(255, 250, 231)"
+                layout={graphCoordinatorRef.current?.getLayout() || new Layout(new Graph(), 1000, 1000)}
                 graph={graphCoordinatorRef.current?.getGraph() || new Graph()}
+                graphVersion={graphVersion}
+                setGraphVersion={setGraphVersion}
                 selectedNodeId={selectedNodeId}
+                setSelectedNodeId={setSelectedNodeId}
                 selectedEdgeId={selectedEdgeId}
+                setSelectedEdgeId={setSelectedEdgeId}
+                interactionController={graphCoordinatorRef.current.getInteractionController()}
                 onGraphChanged={notifyGraphChanged}
                 onDeleteSelectedNode={handleDeleteSelectedNode}
                 onDeleteSelectedEdge={handleDeleteSelectedEdge}
-                interpretation={graphCoordinatorRef.current?.getInterpretation().getInterpretation() || null}
             />
+
+            <StatusBar />
 
             <input
                 ref={fileInputRef}
@@ -318,6 +308,11 @@ export default function App() {
                 isOpen={isInterpretationHelpModalOpen}
                 onClose={() => setIsInterpretationHelpModalOpen(false)}
                 interpretation={coordinator.getInterpretation().getInterpretation()!}
+            />
+
+            <SettingsModal
+                isOpen={isSettingsModalOpen}
+                onClose={() => setIsSettingsModalOpen(false)}
             />
         </div>
     );

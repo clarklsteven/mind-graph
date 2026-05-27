@@ -8,7 +8,7 @@ export class UserSettings {
     }
 
     getSettings(): any {
-        let settingsData = fs.readFileSync("/home/slc/.mind-graph/settings.json", "utf-8");
+        const settingsData = fs.readFileSync("/home/slc/.mind-graph/settings.json", "utf-8");
         this.settings = JSON.parse(settingsData);
         return this.settings;
     }

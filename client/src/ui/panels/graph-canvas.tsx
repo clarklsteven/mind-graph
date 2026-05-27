@@ -487,7 +487,6 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
 
             style={{
                 width: "100vw",
-                height: "100vh",
                 display: "block",
                 cursor: dragStateRef.current ? "grabbing" : "default",
             }}

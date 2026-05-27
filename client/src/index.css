@@ -1,7 +1,54 @@
 html,
 body,
 #root {
-  margin: 0;
-  padding: 0;
-  height: 100%;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    overflow: hidden;
+}
+
+.app-shell {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.toolbar {
+    height: 48px;
+    background-color: rgb(245, 239, 217);
+    border-bottom: 1px solid rgb(210, 205, 190);
+    display: flex;
+    flex-direction: row;
+    padding: 0 8px;
+}
+
+.main-area {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+}
+
+.status-bar {
+    flex: 0 0 20px;
+    background-color: rgb(245, 239, 217);
+    border-top: 1px solid rgb(210, 205, 190);
+    display: flex;
+    align-items: right;
+    justify-content: right;
+    padding: 3px 8px;
+}
+
+.left-panel {
+    width: 250px;
+}
+
+.right-panel {
+    width: 300px;
+}
+
+.graph-area {
+    flex: 1;
 }

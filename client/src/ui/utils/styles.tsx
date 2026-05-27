@@ -17,8 +17,7 @@ export function getButtonStyle(isActive: boolean): React.CSSProperties {
 
 export function getSecondaryButtonStyle(): React.CSSProperties {
     return {
-        width: "100%",
-        padding: "10px 12px",
+        padding: "5px 12px",
         textAlign: "center",
         border: "1px solid rgb(160, 150, 140)",
         borderRadius: "8px",
@@ -100,7 +99,6 @@ export function getModalOverlayStyle(): React.CSSProperties {
         top: 0,
         left: 0,
         width: "100vw",
-        height: "100vh",
         backgroundColor: "rgba(0, 0, 0, 0.35)",
         display: "flex",
         alignItems: "center",
@@ -248,8 +246,9 @@ export function getMindGraphTitleStyle(): React.CSSProperties {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        gap: "8px",
-        marginBottom: "16px",
+        marginBottom: "8px",
+        marginTop: "12px",
+        flex: 1
     };
 }
 export function getGraphTitleStyle(): React.CSSProperties {
@@ -261,6 +260,5 @@ export function getGraphTitleStyle(): React.CSSProperties {
         flexDirection: "column",
         alignItems: "center",
         gap: "8px",
-        //marginBottom: "6px",
     };
 }

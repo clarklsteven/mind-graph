@@ -12,10 +12,6 @@ type ControlPanelProps = {
     indicatorState: Record<string, boolean>;
     setIndicatorState: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
     setMode: (mode: Mode) => void;
-    onSave: () => void;
-    onLoad: () => void;
-    onCreate: () => void;
-    onHelp: () => void;
 };
 
 export default function ControlPanel({
@@ -25,10 +21,6 @@ export default function ControlPanel({
     indicatorState,
     setIndicatorState,
     setMode,
-    onSave,
-    onLoad,
-    onCreate,
-    onHelp,
 }: ControlPanelProps) {
     function formatIndicatorName(field: string): string {
         // Convert snake_case or camelCase to Title Case for display
@@ -117,13 +109,9 @@ export default function ControlPanel({
                 width: "220px",
                 minWidth: "220px",
                 gap: "12px",
-                height: "100vh",
             }}
         >
             <div style={getControlPanelStyle()}>
-                <div style={getMindGraphTitleStyle()}>
-                    Mind Graph
-                </div>
                 <div style={getGraphTitleStyle()}
                 >
                     {name || "Untitled Graph"}
@@ -142,29 +130,6 @@ export default function ControlPanel({
             </PanelSection>
 
             {indicatorsSection}
-
-            <PanelSection>
-                <button onClick={onCreate} style={getSecondaryButtonStyle()}>
-                    New Graph
-                </button>
-                <button onClick={onLoad} style={getSecondaryButtonStyle()}>
-                    Load Graph
-                </button>
-
-                <button onClick={onSave} style={getSecondaryButtonStyle()}>
-                    Save Graph
-                </button>
-            </PanelSection>
-            <div style={getHelpContainerStyle()}>
-                <button
-                    disabled={!name}
-                    onClick={onHelp}
-                    style={getHelpButtonStyle(!name)}
-                    title={name ? "Show interpretation help" : "No graph loaded"}
-                >
-                    <span style={{ transform: "translateY(1px)" }}>?</span>
-                </button>
-            </div>
         </aside>
     );
 }
