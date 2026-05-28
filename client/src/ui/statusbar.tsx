@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Circle } from "lucide-react";
 import { getSettings, verifyVaultPath } from "../api/user";
+import type { UserSettingsInterface } from "../../../server/src/model/user-settings";
 
 export default function StatusBar() {
     const [isVaultAvailable, setIsVaultAvailable] = useState(false);
@@ -8,7 +9,7 @@ export default function StatusBar() {
     useEffect(() => {
         async function loadVaultStatus() {
             try {
-                const settings = await getSettings();
+                const settings: UserSettingsInterface = await getSettings();
                 const vaultPath = settings?.vaultPath;
 
                 if (!vaultPath) {

@@ -32,8 +32,7 @@ describe('styles utilities', () => {
 
     it('should return the correct secondary button style', () => {
         expect(styles.getSecondaryButtonStyle()).toEqual({
-            width: '100%',
-            padding: '10px 12px',
+            padding: '5px 12px',
             textAlign: 'center',
             border: '1px solid rgb(160, 150, 140)',
             borderRadius: '8px',
@@ -115,7 +114,6 @@ describe('styles utilities', () => {
             top: 0,
             left: 0,
             width: '100vw',
-            height: '100vh',
             backgroundColor: 'rgba(0, 0, 0, 0.35)',
             display: 'flex',
             alignItems: 'center',
@@ -254,10 +252,11 @@ describe('styles utilities', () => {
             fontWeight: 700,
             color: '#00332a',
             display: 'flex',
+            flex: 1,
             flexDirection: 'column',
             alignItems: 'center',
-            gap: '8px',
-            marginBottom: '16px',
+            marginBottom: '8px',
+            marginTop: '12px'
         });
 
         expect(styles.getGraphTitleStyle()).toEqual({

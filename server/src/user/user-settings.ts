@@ -1,22 +1,29 @@
 import fs from "fs";
+import type { UserSettingsInterface } from "../model/user-settings";
 
 export class UserSettings {
-    private settings;
+    private settingsPath: string = "/home/slc/.mind-graph/settings.json";
+    private settings: UserSettingsInterface;
 
-    constructor() {
-        this.settings = {};
+    constructor(settingsPath?: string) {
+        if (settingsPath) {
+            this.settingsPath = settingsPath;
+        }
+        this.settings = {
+            vaultPath: undefined
+        };
     }
 
-    getSettings(): any {
-        const settingsData = fs.readFileSync("/home/slc/.mind-graph/settings.json", "utf-8");
+    getSettings(): UserSettingsInterface {
+        const settingsData = fs.readFileSync(this.settingsPath, "utf-8");
         this.settings = JSON.parse(settingsData);
         return this.settings;
     }
 
-    updateSettings(newSettings: any): void {
+    updateSettings(newSettings: Partial<UserSettingsInterface>): void {
         this.getSettings(); // Just in case it's not already been loaded
         this.settings = { ...this.settings, ...newSettings };
-        fs.writeFileSync("/home/slc/.mind-graph/settings.json", JSON.stringify(this.settings, null, 2), "utf-8");
+        fs.writeFileSync(this.settingsPath, JSON.stringify(this.settings, null, 2), "utf-8");
     }
 
     verifyVaultPath(path: string): boolean {

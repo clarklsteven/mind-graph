@@ -1,5 +1,5 @@
 import type { Graph } from "../model/graph";
-import type { GraphNode, Position } from "../model/node";
+import type { GraphNode } from "../model/node";
 
 export class NarrativeStrategyLayout {
     protected graph: Graph;
