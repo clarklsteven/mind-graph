@@ -17,6 +17,7 @@ import Toolbar from "./ui/toolbar";
 import MainArea from "./ui/main-area";
 import { SettingsModal } from "./ui/modals/settings-modal";
 import StatusBar from "./ui/statusbar";
+import { LoadGraphModal } from "./ui/modals/load-graph-modal";
 
 export type Mode = "select" | "add" | "link" | "delete";
 
@@ -28,6 +29,7 @@ export default function App() {
     const [isNewGraphModalOpen, setIsNewGraphModalOpen] = useState(false);
     const [isInterpretationHelpModalOpen, setIsInterpretationHelpModalOpen] = useState(false);
     const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+    const [isLoadGraphModalOpen, setIsLoadGraphModalOpen] = useState(false);
     const [indicatorState, setIndicatorState] = useState<Record<string, boolean>>({});
     const [interpretationRegistry, setInterpretationRegistry] = useState<Record<string, GraphInterpretation>>({});
     const [interpretationsLoaded, setInterpretationsLoaded] = useState(false);
@@ -147,18 +149,31 @@ export default function App() {
         fileInputRef.current?.click();
     };
 
+    /*    const handleLoadGraph = async (
+            event: React.ChangeEvent<HTMLInputElement>
+        ) => {
+            const file = event.target.files?.[0];
+            await graphCoordinatorRef.current?.loadGraph(file!, interpretationRegistry);
+            setRendererForInterpretation(coordinator.getGraph()!.getInterpretation()!)
+            setInteractionControllerForInterpretation(coordinator.getGraph()!.getInterpretation()!)
+            setLayoutForInterpretation(coordinator.getGraph()!.getInterpretation()!);
+            setGraphVersion((v) => v + 1);
+    
+            // Reset the file input so the same file can be chosen again later
+            event.target.value = "";
+    
+            // Reset the indicator state since the new graph may have different indicators
+            setIndicatorState({});
+        };*/
+
     const handleLoadGraph = async (
-        event: React.ChangeEvent<HTMLInputElement>
+        name: string
     ) => {
-        const file = event.target.files?.[0];
-        await graphCoordinatorRef.current?.loadGraph(file!, interpretationRegistry);
+        await graphCoordinatorRef.current?.loadGraph(name, interpretationRegistry);
         setRendererForInterpretation(coordinator.getGraph()!.getInterpretation()!)
         setInteractionControllerForInterpretation(coordinator.getGraph()!.getInterpretation()!)
         setLayoutForInterpretation(coordinator.getGraph()!.getInterpretation()!);
         setGraphVersion((v) => v + 1);
-
-        // Reset the file input so the same file can be chosen again later
-        event.target.value = "";
 
         // Reset the indicator state since the new graph may have different indicators
         setIndicatorState({});
@@ -188,6 +203,10 @@ export default function App() {
     const handleOpenSettingsModal = () => {
         setIsSettingsModalOpen(true);
     };
+
+    const handleOpenLoadGraphModal = () => {
+        setIsLoadGraphModalOpen(true);
+    }
 
     // Autosave graph to local storage on changes, with debouncing
     useEffect(() => {
@@ -263,6 +282,7 @@ export default function App() {
                 onCreate={handleOpenNewGraphModal}
                 onHelp={handleOpenHelpModal}
                 onSettings={handleOpenSettingsModal}
+                onLoadGraph={handleOpenLoadGraphModal}
             />
             <MainArea
                 name={graphCoordinatorRef.current?.getGraph()?.getName() || "Untitled Graph"}
@@ -294,7 +314,7 @@ export default function App() {
                 type="file"
                 accept=".json,application/json"
                 style={{ display: "none" }}
-                onChange={handleLoadGraph}
+            //onChange={handleLoadGraph}
             />
 
             <NewGraphModal
@@ -313,6 +333,12 @@ export default function App() {
             <SettingsModal
                 isOpen={isSettingsModalOpen}
                 onClose={() => setIsSettingsModalOpen(false)}
+            />
+
+            <LoadGraphModal
+                isOpen={isLoadGraphModalOpen}
+                onClose={() => setIsLoadGraphModalOpen(false)}
+                onLoad={(name) => handleLoadGraph(name)}
             />
         </div>
     );

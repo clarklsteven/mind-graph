@@ -13,6 +13,7 @@ type ToolbarProps = {
     onCreate: () => void;
     onSettings: () => void;
     onHelp: () => void;
+    onLoadGraph: () => void;
 };
 
 export default function Toolbar({
@@ -20,7 +21,8 @@ export default function Toolbar({
     onLoad,
     onCreate,
     onSettings,
-    onHelp
+    onHelp,
+    onLoadGraph
 }: ToolbarProps) {
     return (
         <div className="toolbar">
@@ -40,7 +42,7 @@ export default function Toolbar({
                     <FilePlus size={16} />
                 </button>
                 <button
-                    onClick={onLoad}
+                    onClick={onLoadGraph}
                     style={getSecondaryButtonStyle()}
                     title={"Load Graph"}
                 >

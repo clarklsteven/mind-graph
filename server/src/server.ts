@@ -15,5 +15,5 @@ app.use("/user", userRouter);
 const port = 3000;
 
 app.listen(port, () => {
-    console.log(`Mind Graph server listening on ${port}`);
+    console.info(`Mind Graph server listening on ${port}`);
 });

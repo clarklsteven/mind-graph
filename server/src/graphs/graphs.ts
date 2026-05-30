@@ -3,6 +3,12 @@ import { UserSettings } from "../user/user-settings";
 import type { UserSettingsInterface } from "../model/user-settings";
 import fs from "fs";
 
+type GraphEntry = {
+    name: string;
+    interpretation: string;
+    lastModified: string;
+};
+
 export class Graphs {
     private userSettings: UserSettings;
 
@@ -10,8 +16,9 @@ export class Graphs {
         this.userSettings = new UserSettings();
     }
 
-    async getGraphs(): Promise<string[]> {
-        let graphs: string[] = [];
+    async getGraphs(): Promise<GraphEntry[]> {
+        let graphList: string[] = [];
+        const graphs: GraphEntry[] = [];
         const settings: UserSettingsInterface = await this.userSettings.getSettings();
         if (!settings.vaultPath) {
             return [];
@@ -19,7 +26,20 @@ export class Graphs {
         else {
             const graphsPath = `${settings.vaultPath}/Mind Graphs`;
             if (fs.existsSync(graphsPath) && fs.lstatSync(graphsPath).isDirectory()) {
-                graphs = fs.readdirSync(graphsPath).filter(file => fs.lstatSync(`${graphsPath}/${file}`).isFile());
+                graphList = fs.readdirSync(graphsPath).filter(file => fs.lstatSync(`${graphsPath}/${file}`).isFile());
+            }
+        }
+        for (const graphName of graphList) {
+            const graph: Partial<GraphEntry> = { name: graphName };
+            const graphPath = `${settings.vaultPath}/Mind Graphs/${graphName}`;
+            try {
+                const graphData = fs.readFileSync(graphPath, "utf-8");
+                const graphJson: GraphData = JSON.parse(graphData);
+                graph.interpretation = graphJson.interpretation;
+                graph.lastModified = fs.statSync(graphPath).mtime.toISOString();
+                graphs.push(graph as GraphEntry);
+            } catch (error) {
+                console.error(`Error reading or parsing graph file ${graphPath}:`, error);
             }
         }
         return graphs;

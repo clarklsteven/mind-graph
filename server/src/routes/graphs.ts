@@ -49,7 +49,6 @@ router.post("/", async (_req, res) => {
 router.put("/:name", async (_req, res) => {
     const graphName = _req.params.name;
     const graph = _req.body.graph;
-    console.log("Updating graph:", graphName, graph);
     const updatedGraph = await graphs.updateGraph(graphName, graph);
     res.status(200).json({
         status: "ok",

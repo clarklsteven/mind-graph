@@ -52,3 +52,23 @@ body,
 .graph-area {
     flex: 1;
 }
+
+.graph-type-badge {
+    width: 24px;
+    height: 24px;
+
+    border-radius: 50%;
+
+    margin-right: 8px;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-weight: bold;
+    color: #fff;
+    padding: 4px;
+
+    background-color: #66cc66;
+    border: 1px solid #e0d8c8;
+}

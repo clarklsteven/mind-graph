@@ -1,3 +1,4 @@
+import { loadGraph } from "../../api/graphs";
 import type { GraphInteractionController } from "../../ui/interactions/graph-interaction-controller";
 import type { GraphRenderer } from "../../ui/renderers/graph-renderer";
 import { Interpretation } from "../interpretation/interpretation";
@@ -155,14 +156,13 @@ export class GraphCoordinator {
         URL.revokeObjectURL(url);
     };
 
-    async loadGraph(file: File, interpretationRegistry: Record<string, GraphInterpretation>) {
-        if (!file) return;
+    async loadGraph(name: string, interpretationRegistry: Record<string, GraphInterpretation>) {
+        if (!name) return;
 
-        const text = await file.text();
-        const data = JSON.parse(text);
+        const data = await loadGraph(name);
 
         if (this.graph) {
-            this.graph = this.graph.import(data);
+            this.graph = this.graph.import(data.graph);
         }
         this.layout = new Layout(this.graph!, 1000, 1000);
 

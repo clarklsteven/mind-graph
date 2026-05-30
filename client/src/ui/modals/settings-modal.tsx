@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Modal } from "./modal";
 import { getSettings, updateSettings, verifyVaultPath } from "../../api/user";
 import { asiguraPalette } from "../utils/asigura-pallete";
+import type { UserSettingsInterface } from "../../../../server/src/model/user-settings";
 
 export function SettingsModal({
     isOpen,
@@ -10,13 +11,12 @@ export function SettingsModal({
     isOpen: boolean;
     onClose: () => void;
 }) {
-    const [settings, setSettings] = useState<Record<string, unknown> | null>(null);
+    const [settings, setSettings] = useState<UserSettingsInterface | null>(null);
 
     useEffect(() => {
         if (!isOpen) return;
 
         getSettings().then(settings => {
-            console.log("Fetched settings:", settings);
             setSettings(settings);
         });
 
