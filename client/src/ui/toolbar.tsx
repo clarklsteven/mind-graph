@@ -9,7 +9,6 @@ import {
 
 type ToolbarProps = {
     onSave: () => void;
-    onLoad: () => void;
     onCreate: () => void;
     onSettings: () => void;
     onHelp: () => void;
@@ -18,7 +17,6 @@ type ToolbarProps = {
 
 export default function Toolbar({
     onSave,
-    onLoad,
     onCreate,
     onSettings,
     onHelp,

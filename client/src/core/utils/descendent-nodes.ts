@@ -12,7 +12,11 @@ export function getDescendantNodeIds(graph: Graph, rootNodeId: string): Set<stri
             .filter(edge => edge.from === currentId)
             .map(edge => edge.to);
 
-        stack.push(...childIds);
+        for (const childId of childIds) {
+            if (!result.has(childId)) {
+                stack.push(childId);
+            }
+        }
     }
 
     return result;

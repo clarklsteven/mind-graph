@@ -162,7 +162,7 @@ export class GraphCoordinator {
         const data = await loadGraph(name);
 
         if (this.graph) {
-            this.graph = this.graph.import(data.graph);
+            this.graph = this.graph.import(data);
         }
         this.layout = new Layout(this.graph!, 1000, 1000);
 

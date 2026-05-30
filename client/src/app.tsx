@@ -145,27 +145,6 @@ export default function App() {
         graphCoordinatorRef.current?.saveGraph();
     };
 
-    const handleLoadClick = () => {
-        fileInputRef.current?.click();
-    };
-
-    /*    const handleLoadGraph = async (
-            event: React.ChangeEvent<HTMLInputElement>
-        ) => {
-            const file = event.target.files?.[0];
-            await graphCoordinatorRef.current?.loadGraph(file!, interpretationRegistry);
-            setRendererForInterpretation(coordinator.getGraph()!.getInterpretation()!)
-            setInteractionControllerForInterpretation(coordinator.getGraph()!.getInterpretation()!)
-            setLayoutForInterpretation(coordinator.getGraph()!.getInterpretation()!);
-            setGraphVersion((v) => v + 1);
-    
-            // Reset the file input so the same file can be chosen again later
-            event.target.value = "";
-    
-            // Reset the indicator state since the new graph may have different indicators
-            setIndicatorState({});
-        };*/
-
     const handleLoadGraph = async (
         name: string
     ) => {
@@ -278,7 +257,6 @@ export default function App() {
         >
             <Toolbar
                 onSave={handleSaveGraph}
-                onLoad={handleLoadClick}
                 onCreate={handleOpenNewGraphModal}
                 onHelp={handleOpenHelpModal}
                 onSettings={handleOpenSettingsModal}

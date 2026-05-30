@@ -54,6 +54,22 @@ describe('Graph', () => {
         expect(graph.getEdges()).toHaveLength(0);
     });
 
+    it('should delete a node and its associated edges when the node is the target', () => {
+        const graph = new Graph();
+        const node1: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A", size: { width: 8, height: 8 } };
+        const node2: GraphNode = { id: '2', title: 'Node 2', weight: 1, position: { x: 0, y: 0 }, type: "Type B", size: { width: 8, height: 8 } };
+        const edge: Edge = { id: 'e1', from: '2', to: '1', type: "Relates To" };
+
+        graph.addNode(node1);
+        graph.addNode(node2);
+        graph.addEdge(edge);
+
+        graph.deleteNode('1');
+
+        expect(graph.getNode('1')).toBeUndefined();
+        expect(graph.getEdges()).toHaveLength(0);
+    });
+
     it('should add an edge', () => {
         const graph = new Graph();
         const node1: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A", size: { width: 8, height: 8 } };
@@ -147,6 +163,21 @@ describe('Graph', () => {
         expect(connected).toContainEqual(node3);
     });
 
+    it('should get connected nodes for incoming links', () => {
+        const graph = new Graph();
+        const node1: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A", size: { width: 8, height: 8 } };
+        const node2: GraphNode = { id: '2', title: 'Node 2', weight: 1, position: { x: 0, y: 0 }, type: "Type B", size: { width: 8, height: 8 } };
+        const edge: Edge = { id: 'e1', from: '2', to: '1', type: "Relates To" };
+
+        graph.addNode(node1);
+        graph.addNode(node2);
+        graph.addEdge(edge);
+
+        const connected = graph.getConnectedNodes('1');
+        expect(connected).toHaveLength(1);
+        expect(connected).toContainEqual(node2);
+    });
+
     it('should get connected edges', () => {
         const graph = new Graph();
         const node1: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A", size: { width: 8, height: 8 } };
@@ -167,6 +198,34 @@ describe('Graph', () => {
         expect(connectedEdges).toHaveLength(2);
         expect(connectedEdges).toContainEqual(edge1);
         expect(connectedEdges).toContainEqual(edge2);
+    });
+
+    it('should get connected edges for incoming links', () => {
+        const graph = new Graph();
+        const node1: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A", size: { width: 8, height: 8 } };
+        const node2: GraphNode = { id: '2', title: 'Node 2', weight: 1, position: { x: 0, y: 0 }, type: "Type B", size: { width: 8, height: 8 } };
+        const edge: Edge = { id: 'e1', from: '2', to: '1', type: "Relates To" };
+
+        graph.addNode(node1);
+        graph.addNode(node2);
+        graph.addEdge(edge);
+
+        const connectedEdges = graph.getConnectedEdges('1');
+        expect(connectedEdges).toHaveLength(1);
+        expect(connectedEdges).toContainEqual(edge);
+    });
+
+    it('should get connection count for incoming links', () => {
+        const graph = new Graph();
+        const node1: GraphNode = { id: '1', title: 'Node 1', weight: 1, position: { x: 0, y: 0 }, type: "Type A", size: { width: 8, height: 8 } };
+        const node2: GraphNode = { id: '2', title: 'Node 2', weight: 1, position: { x: 0, y: 0 }, type: "Type B", size: { width: 8, height: 8 } };
+        const edge: Edge = { id: 'e1', from: '2', to: '1', type: "Relates To" };
+
+        graph.addNode(node1);
+        graph.addNode(node2);
+        graph.addEdge(edge);
+
+        expect(graph.getConnectionCount('1')).toBe(1);
     });
 
     it('should get connection count', () => {
