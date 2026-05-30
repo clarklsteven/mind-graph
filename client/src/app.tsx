@@ -18,6 +18,7 @@ import MainArea from "./ui/main-area";
 import { SettingsModal } from "./ui/modals/settings-modal";
 import StatusBar from "./ui/statusbar";
 import { LoadGraphModal } from "./ui/modals/load-graph-modal";
+import { saveGraph } from "./api/graphs";
 
 export type Mode = "select" | "add" | "link" | "delete";
 
@@ -135,6 +136,8 @@ export default function App() {
         setSelectedEdgeId(null);
         setGraphVersion((v) => v + 1);
         setIsNewGraphModalOpen(false);
+
+        saveGraph(name, graphCoordinatorRef.current.getGraph()!.export());
     };
 
     const handleOpenNewGraphModal = () => {

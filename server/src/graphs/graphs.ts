@@ -46,7 +46,7 @@ export class Graphs {
     }
 
     async getGraph(name: string): Promise<GraphData | null> {
-        const settings = await this.userSettings.getSettings();
+        const settings = this.userSettings.getSettings();
         // Check for vault path and graph file existence, then read and parse the graph file to return a Graph object
         if (settings.vaultPath) {
             const graphPath = `${settings.vaultPath}/Mind Graphs/${name}.json`;
@@ -66,19 +66,20 @@ export class Graphs {
         return null;
     }
 
-    async createGraph(name: string, interpretationType: string): Promise<GraphData | null> {
-        const settings = await this.userSettings.getSettings();
+    async createGraph(graphData: GraphData): Promise<GraphData | null> {
+        const settings = this.userSettings.getSettings();
         // Check for vault path existence, and whether there is already a graph with the given name
         // If not, create a new graph file with the given name and return a Graph object
         if (settings.vaultPath) {
-            const graphPath = `${settings.vaultPath}/Mind Graphs/${name}.json`;
+            const graphName = graphData.name.replace(/\s+/g, "-");
+            const graphPath = `${settings.vaultPath}/Mind Graphs/${graphName}.json`;
             if (!fs.existsSync(graphPath)) {
                 // Create a new graph file
                 const graph: GraphData = {
-                    name,
-                    interpretation: interpretationType,
-                    nodes: [],
-                    edges: []
+                    name: graphData.name,
+                    interpretation: graphData.interpretation,
+                    nodes: graphData.nodes || [],
+                    edges: graphData.edges || []
                 };
                 fs.writeFileSync(graphPath, JSON.stringify(graph));
                 return graph;
@@ -88,7 +89,7 @@ export class Graphs {
     }
 
     async updateGraph(name: string, graph: GraphData): Promise<GraphData | null> {
-        const settings = await this.userSettings.getSettings();
+        const settings = this.userSettings.getSettings();
         // Check for vault path and graph file existence, then overwrite the graph file with the new graph data and return the updated Graph object
         if (settings.vaultPath) {
             const graphPath = `${settings.vaultPath}/Mind Graphs/${name}.json`;

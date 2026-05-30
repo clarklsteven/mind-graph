@@ -31,13 +31,19 @@ export async function loadGraph(name: string): Promise<GraphData> {
     return data.graph;
 }
 
-export function saveGraph(name: string, graphData: GraphData): Promise<{ success: boolean; error?: string }> {
-    return fetch(`http://localhost:3000/graphs/save`, {
+export async function saveGraph(name: string, graphData: GraphData): Promise<GraphEntry> {
+    const parsedName = name.replace(/\s+/g, "-").replace(/\.json$/, "");
+    console.log("Saving graph:", graphData);
+    await fetch(`http://localhost:3000/graphs`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({ name, graphData })
-    })
-        .then(response => response.json());
+        body: JSON.stringify({ name: parsedName, graphData })
+    });
+    return {
+        name: parsedName,
+        interpretation: graphData.interpretation,
+        lastModified: new Date().toISOString()
+    };
 }

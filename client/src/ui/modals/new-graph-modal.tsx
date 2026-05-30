@@ -60,13 +60,39 @@ export function NewGraphModal({
                 </select>
             </div>
 
-            <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px" }}>
-                <button onClick={onClose}>Cancel</button>
+            <div style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "flex-end",
+                gap: "8px",
+                marginTop: "12px"
+            }}>
+                <button
+                    onClick={onClose}
+                    style={{
+                        padding: "6px 12px",
+                        backgroundColor: "#e0d8c8",
+                        border: "none",
+                        borderRadius: "4px",
+                        cursor: "pointer"
+                    }}
+                >
+                    Cancel
+                </button>
                 <button
                     onClick={() => {
                         onCreate(name.trim() || "Untitled Graph", interpretationType);
                         onClose();
                     }}
+                    style={{
+                        padding: "6px 12px",
+                        backgroundColor: "#00332a",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: "4px",
+                        cursor: "pointer"
+                    }}
+
                 >
                     Create
                 </button>

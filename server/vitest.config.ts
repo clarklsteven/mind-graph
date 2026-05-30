@@ -14,10 +14,10 @@ export default defineConfig({
         "src/**/*.tsx"
       ],
       thresholds: {
-        statements: 92,
-        branches: 80,
+        statements: 93,
+        branches: 81,
         functions: 94,
-        lines: 92
+        lines: 93
       }
     },
     environment: 'jsdom',

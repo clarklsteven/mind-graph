@@ -14,7 +14,7 @@ describe('Graphs', () => {
         tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'mind-graph-'));
         graphsFolder = path.join(tempDir, 'Mind Graphs');
         fs.mkdirSync(graphsFolder, { recursive: true });
-        vi.spyOn(UserSettings.prototype, 'getSettings').mockResolvedValue({
+        vi.spyOn(UserSettings.prototype, 'getSettings').mockReturnValue({
             vaultPath: tempDir
         });
     });
@@ -25,7 +25,7 @@ describe('Graphs', () => {
     });
 
     it('returns an empty array when settings do not include a vault path', async () => {
-        vi.spyOn(UserSettings.prototype, 'getSettings').mockResolvedValue({});
+        vi.spyOn(UserSettings.prototype, 'getSettings').mockReturnValue({});
         const graphs = new Graphs();
 
         expect(await graphs.getGraphs()).toEqual([]);
@@ -76,9 +76,46 @@ describe('Graphs', () => {
         expect(await graphs.getGraph('missing')).toBeNull();
     });
 
+    it('returns null when getting a graph if the settings do not include a vault path', async () => {
+        vi.spyOn(UserSettings.prototype, 'getSettings').mockReturnValue({});
+        const graphs = new Graphs();
+
+        expect(await graphs.getGraph('example')).toBeNull();
+    });
+
+    it('returns null when creating a graph if the settings do not include a vault path', async () => {
+        vi.spyOn(UserSettings.prototype, 'getSettings').mockResolvedValue({});
+        const graphs = new Graphs();
+
+        expect(await graphs.createGraph({
+            name: 'example',
+            interpretation: 'demo',
+            nodes: [],
+            edges: []
+        })).toBeNull();
+    });
+
+    it('returns null when updating a graph if the settings do not include a vault path', async () => {
+        vi.spyOn(UserSettings.prototype, 'getSettings').mockReturnValue({});
+        const graphs = new Graphs();
+
+        expect(await graphs.updateGraph('example', {
+            name: 'example',
+            interpretation: 'demo',
+            nodes: [],
+            edges: []
+        })).toBeNull();
+    });
+
     it('creates a new graph file when none exists', async () => {
         const graphs = new Graphs();
-        const result = await graphs.createGraph('new-graph', 'thinking');
+        const graphData: GraphData = {
+            name: 'new-graph',
+            interpretation: 'thinking',
+            nodes: [],
+            edges: []
+        };
+        const result = await graphs.createGraph(graphData);
 
         expect(result).toEqual({
             name: 'new-graph',
@@ -131,5 +168,59 @@ describe('Graphs', () => {
 
         expect(result).toEqual(replacementGraph);
         expect(JSON.parse(fs.readFileSync(graphPath, 'utf-8'))).toEqual(replacementGraph);
+    });
+
+    it('logs and continues when a graph file contains invalid JSON during getGraphs', async () => {
+        const badPath = path.join(graphsFolder, 'bad.json');
+        fs.writeFileSync(badPath, '{ this is not: valid json }', 'utf-8');
+
+        const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => { });
+
+        const graphs = new Graphs();
+        const result = await graphs.getGraphs();
+
+        // the invalid file should be skipped and no graphs returned (since only bad file exists)
+        expect(result).toEqual([]);
+        expect(errorSpy).toHaveBeenCalled();
+        const calledWith = (errorSpy.mock.calls[0] && errorSpy.mock.calls[0][0]) || '';
+        expect(calledWith).toContain('Error reading or parsing graph file');
+        expect(calledWith).toContain(badPath);
+    });
+
+    it('logs and returns null when getGraph encounters invalid JSON', async () => {
+        const badPath = path.join(graphsFolder, 'broken.json');
+        fs.writeFileSync(badPath, '{ not valid json', 'utf-8');
+
+        const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => { });
+
+        const graphs = new Graphs();
+        const result = await graphs.getGraph('broken');
+
+        expect(result).toBeNull();
+        expect(errorSpy).toHaveBeenCalled();
+        const calledWith = (errorSpy.mock.calls[0] && errorSpy.mock.calls[0][0]) || '';
+        expect(calledWith).toContain('Error parsing graph file');
+        expect(calledWith).toContain(path.join(graphsFolder, 'broken.json'));
+    });
+
+    it('logs and returns null when updateGraph cannot parse the existing file', async () => {
+        const badPath = path.join(graphsFolder, 'existing.json');
+        fs.writeFileSync(badPath, '{ not valid json', 'utf-8');
+
+        const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => { });
+
+        const graphs = new Graphs();
+        const result = await graphs.updateGraph('existing', {
+            name: 'existing',
+            interpretation: 'demo',
+            nodes: [],
+            edges: []
+        });
+
+        expect(result).toBeNull();
+        expect(errorSpy).toHaveBeenCalled();
+        const calledWith = (errorSpy.mock.calls[0] && errorSpy.mock.calls[0][0]) || '';
+        expect(calledWith).toContain('Error parsing existing graph file');
+        expect(calledWith).toContain(badPath);
     });
 });

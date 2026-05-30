@@ -35,9 +35,8 @@ router.get("/:name", async (_req, res) => {
 
 // Create a new graph
 router.post("/", async (_req, res) => {
-    const graphName = _req.body.name;
-    const interpretationType = _req.body.interpretationType;
-    const newGraph = await graphs.createGraph(graphName, interpretationType);
+    const graphData = _req.body.graphData;
+    const newGraph = await graphs.createGraph(graphData);
     res.status(200).json({
         status: "ok",
         name: _req.body.name,
