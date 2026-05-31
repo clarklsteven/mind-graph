@@ -113,4 +113,22 @@ export class Graphs {
         }
         return null;
     }
+
+    validateGraphName(name: string): boolean {
+        // Check that the graph name is valid (e.g. does not contain invalid characters, is not too long, etc.)
+        // eslint-disable-next-line no-control-regex
+        const invalidChars = /[<>:"/\\|?*\x00-\x1F]/g;
+        if (invalidChars.test(name) || name.length === 0 || name.length > 255) {
+            return false;
+        }
+        // Check that the graph name does not parse to an empty string or just whitespace
+        if (name.trim().length === 0) {
+            return false;
+        }
+        // Check that the name does not start with a dot (.) or contain only dots, as this can cause issues with file systems
+        if (/^\.+$/.test(name) || name.startsWith('.')) {
+            return false;
+        }
+        return true;
+    }
 }

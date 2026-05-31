@@ -86,7 +86,11 @@ describe('graphs router', () => {
 
         const response = await request(app)
             .post('/graphs')
-            .send({ name: 'created', interpretationType: 'demo' });
+            .send({
+                name: 'created',
+                interpretationType: 'demo',
+                graphData: { name: 'created', interpretation: 'demo', nodes: [], edges: [] }
+            });
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({
@@ -123,6 +127,66 @@ describe('graphs router', () => {
                 nodes: [],
                 edges: []
             }
+        });
+    });
+
+    it('returns 400 when trying to create a graph without a name or interpretation type', async () => {
+        const response = await request(app)
+            .post('/graphs')
+            .send({ name: '', interpretationType: '' });
+
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({
+            status: 'error',
+            message: 'Graph data with a valid name is required'
+        });
+    });
+
+    it('returns 400 when trying to create a graph with an invalid name', async () => {
+        const response = await request(app)
+            .post('/graphs')
+            .send({
+                name: 'invalid/name',
+                interpretationType: 'demo',
+                graphData: { name: 'invalid/name', interpretation: 'demo', nodes: [], edges: [] }
+            });
+
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({
+            status: 'error',
+            message: 'Invalid graph name'
+        });
+    });
+
+    it('returns 400 when trying to create a graph with a name made of spaces', async () => {
+        const response = await request(app)
+            .post('/graphs')
+            .send({
+                name: '   ',
+                interpretationType: 'demo',
+                graphData: { name: '   ', interpretation: 'demo', nodes: [], edges: [] }
+            });
+
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({
+            status: 'error',
+            message: 'Invalid graph name'
+        });
+    });
+
+    it('returns 400 when trying to create a graph that starts with a dot', async () => {
+        const response = await request(app)
+            .post('/graphs')
+            .send({
+                name: '.hidden',
+                interpretationType: 'demo',
+                graphData: { name: '.hidden', interpretation: 'demo', nodes: [], edges: [] }
+            });
+
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({
+            status: 'error',
+            message: 'Invalid graph name'
         });
     });
 });

@@ -36,6 +36,20 @@ router.get("/:name", async (_req, res) => {
 // Create a new graph
 router.post("/", async (_req, res) => {
     const graphData = _req.body.graphData;
+    if (!graphData || !graphData.name) {
+        res.status(400).json({
+            status: "error",
+            message: "Graph data with a valid name is required"
+        });
+        return;
+    }
+    if (!graphs.validateGraphName(graphData.name)) {
+        res.status(400).json({
+            status: "error",
+            message: "Invalid graph name"
+        });
+        return;
+    }
     const newGraph = await graphs.createGraph(graphData);
     res.status(200).json({
         status: "ok",

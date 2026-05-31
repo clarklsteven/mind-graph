@@ -1,0 +1,16 @@
+{
+    "name": "system-tests",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "test": "npx playwright test",
+        "test:headed": "npx playwright test --headed",
+        "test:report": "npx playwright show-report",
+        "lint": "eslint ."
+    },
+    "devDependencies": {
+        "@playwright/test": "^1.44.0",
+        "@types/node": "^25.8.0",
+        "typescript": "^6.0.2"
+    }
+}

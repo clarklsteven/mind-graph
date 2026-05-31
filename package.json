@@ -3,7 +3,8 @@
   "private": true,
   "workspaces": [
     "client",
-    "server"
+    "server",
+    "system-tests"
   ],
   "scripts": {
     "client": "npm --workspace=client run dev",
@@ -11,9 +12,13 @@
     "dev": "concurrently \"npm run client\" \"npm run server\"",
     "test": "npm --workspaces run test",
     "test:coverage": "npm --workspaces run test:coverage",
+    "test:system": "npm --workspace=system-tests run test",
+    "test:system:headed": "npm --workspace=system-tests run test:headed",
     "lint": "npm --workspaces run lint",
     "verify": "npm run lint && npm run test:coverage",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test:server": "npm --workspace=server run server",
+    "test:client": "npm --workspace=client run build && npm --workspace=client run preview -- --host 127.0.0.1 --port 4173"
   },
   "devDependencies": {
     "@types/node": "^25.8.0",

@@ -82,6 +82,8 @@ export function SettingsModal({
                                 }}
                             >{splitSettingKey(key)}:</strong>
                             <input
+                                role="textbox"
+                                aria-label={splitSettingKey(key)}
                                 type="text"
                                 style={{
                                     flex: 1,
