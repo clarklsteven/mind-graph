@@ -35,6 +35,7 @@ export default function App() {
     const [interpretationRegistry, setInterpretationRegistry] = useState<Record<string, GraphInterpretation>>({});
     const [interpretationsLoaded, setInterpretationsLoaded] = useState(false);
     const [initialLoadComplete, setInitialLoadComplete] = useState(false);
+    const [autoSaveStatus, setAutoSaveStatus] = useState("Idle");
 
     useEffect(() => {
         const loadInterpretationsAsync = async () => {
@@ -47,7 +48,6 @@ export default function App() {
     }, [interpretationsLoaded]);
 
     const graphCoordinator: GraphCoordinator = new GraphCoordinator(new Interpretation({ interpretation_type: "none" } as GraphInterpretation));
-    const fileInputRef = useRef<HTMLInputElement>(null);
     const graphCoordinatorRef = useRef<GraphCoordinator>(graphCoordinator);
     const [graphVersion, setGraphVersion] = useState(0);
     const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
@@ -200,7 +200,11 @@ export default function App() {
             localStorage.setItem("mindgraph_current_active_graph", graphName);
             const graphData = graphCoordinatorRef.current?.getGraph()?.export();
             if (!graphData) return;
+            setAutoSaveStatus("Saving...");
             updateGraph(graphName, graphData);
+            const date = new Date();
+            const autoSaveTime = date.toLocaleTimeString();
+            setAutoSaveStatus(`Saved at ${autoSaveTime}`);
         }, 500); // half a second
 
         return () => clearTimeout(timeout);
@@ -299,14 +303,8 @@ export default function App() {
                 onDeleteSelectedEdge={handleDeleteSelectedEdge}
             />
 
-            <StatusBar />
-
-            <input
-                ref={fileInputRef}
-                type="file"
-                accept=".json,application/json"
-                style={{ display: "none" }}
-            //onChange={handleLoadGraph}
+            <StatusBar
+                autoSaveStatus={autoSaveStatus}
             />
 
             <NewGraphModal
