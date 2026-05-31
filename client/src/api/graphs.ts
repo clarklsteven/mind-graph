@@ -33,13 +33,28 @@ export async function loadGraph(name: string): Promise<GraphData> {
 
 export async function saveGraph(name: string, graphData: GraphData): Promise<GraphEntry> {
     const parsedName = name.replace(/\s+/g, "-").replace(/\.json$/, "");
-    console.log("Saving graph:", graphData);
     await fetch(`http://localhost:3000/graphs`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({ name: parsedName, graphData })
+    });
+    return {
+        name: parsedName,
+        interpretation: graphData.interpretation,
+        lastModified: new Date().toISOString()
+    };
+}
+
+export async function updateGraph(name: string, graphData: GraphData): Promise<GraphEntry> {
+    const parsedName = name.replace(/\s+/g, "-").replace(/\.json$/, "");
+    await fetch(`http://localhost:3000/graphs/${parsedName}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(graphData)
     });
     return {
         name: parsedName,

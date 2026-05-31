@@ -18,7 +18,7 @@ import MainArea from "./ui/main-area";
 import { SettingsModal } from "./ui/modals/settings-modal";
 import StatusBar from "./ui/statusbar";
 import { LoadGraphModal } from "./ui/modals/load-graph-modal";
-import { saveGraph } from "./api/graphs";
+import { saveGraph, updateGraph } from "./api/graphs";
 
 export type Mode = "select" | "add" | "link" | "delete";
 
@@ -196,8 +196,11 @@ export default function App() {
         if (!graphCoordinatorRef.current?.getGraph()) return;
 
         const timeout = setTimeout(() => {
-            const data: string = graphCoordinatorRef.current?.getGraph()?.serialise() || "";
-            localStorage.setItem("mindgraph_autosave", data);
+            const graphName: string = graphCoordinatorRef.current?.getGraph()?.getName() || "untitled";
+            localStorage.setItem("mindgraph_current_active_graph", graphName);
+            const graphData = graphCoordinatorRef.current?.getGraph()?.export();
+            if (!graphData) return;
+            updateGraph(graphName, graphData);
         }, 500); // half a second
 
         return () => clearTimeout(timeout);
@@ -205,43 +208,51 @@ export default function App() {
 
     /// On initial load, check for an autosave in local storage and load it if it exists
     useEffect(() => {
-        if (!interpretationsLoaded) return;
+        async function restoreActiveGraph() {
+            if (!interpretationsLoaded) return;
 
-        const saved = localStorage.getItem("mindgraph_autosave");
-        if (!saved) return;
+            const activeGraphName = localStorage.getItem("mindgraph_current_active_graph");
 
-        try {
-            const data: Graph = Graph.deserialise(saved);
-            const interpretation = interpretationRegistry[data.getInterpretation()];
-
-            if (!interpretation) {
-                console.warn(`No interpretation found for ${data.getInterpretation()} whilst restoring autosave`);
+            if (!activeGraphName) {
+                setInitialLoadComplete(true);
                 return;
             }
 
-            graphCoordinatorRef.current = new GraphCoordinator(new Interpretation(interpretation));
+            try {
+                await graphCoordinatorRef.current?.loadGraph(
+                    activeGraphName,
+                    interpretationRegistry
+                );
 
-            graphCoordinatorRef.current?.setGraph(data);
-            if (!graphCoordinatorRef.current?.getGraph()) {
-                console.error("Failed to import graph from autosave");
-                return;
+                const graph = graphCoordinatorRef.current?.getGraph();
+
+                if (!graph) {
+                    console.error("Failed to load active graph");
+                    return;
+                }
+
+                const interpretation = interpretationRegistry[graph.getInterpretation()];
+
+                if (!interpretation) {
+                    console.warn(
+                        `No interpretation found for ${graph.getInterpretation()} whilst restoring active graph`
+                    );
+                    return;
+                }
+
+                setRendererForInterpretation(interpretation.id);
+                setInteractionControllerForInterpretation(interpretation.id);
+                setLayoutForInterpretation(interpretation.id);
+
+                setGraphVersion(v => v + 1);
+            } catch (e) {
+                console.error("Failed to restore active graph", e);
+            } finally {
+                setInitialLoadComplete(true);
             }
-            const normalisedGraph = graphCoordinatorRef.current?.normaliseGraph(
-                coordinator.getGraph()!,
-                coordinator.getInterpretation().getInterpretation()!
-            );
-
-            graphCoordinatorRef.current?.setGraph(normalisedGraph);
-            setRendererForInterpretation(interpretation.id)
-            setInteractionControllerForInterpretation(interpretation.id)
-            setLayoutForInterpretation(interpretation.id);
-
-            setGraphVersion(v => v + 1);
-        } catch (e) {
-            console.error("Failed to restore autosave", e);
-        } finally {
-            setInitialLoadComplete(true);
         }
+
+        restoreActiveGraph();
     }, [interpretationsLoaded, interpretationRegistry]);
 
     // If the graph version changes then the node weights may need recalculating
