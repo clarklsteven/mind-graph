@@ -478,19 +478,21 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
     }
 
     return (
-        <canvas
-            ref={canvasRef}
-            onPointerDown={handlePointerDown}
-            onPointerMove={handlePointerMove}
-            onPointerUp={handlePointerUp}
-            onPointerLeave={handlePointerLeave}
+        <div className="graph-area">
+            <canvas
+                ref={canvasRef}
+                onPointerDown={handlePointerDown}
+                onPointerMove={handlePointerMove}
+                onPointerUp={handlePointerUp}
+                onPointerLeave={handlePointerLeave}
 
-            style={{
-                width: "100vw",
-                display: "block",
-                cursor: dragStateRef.current ? "grabbing" : "default",
-            }}
-        />
+                style={{
+                    width: "100vw",
+                    display: "block",
+                    cursor: dragStateRef.current ? "grabbing" : "default",
+                }}
+            />
+        </div>
     );
 
     function screenToGraph(x: number, y: number) {
