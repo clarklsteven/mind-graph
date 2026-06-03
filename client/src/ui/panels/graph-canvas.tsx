@@ -17,7 +17,7 @@ export type DragState = {
     offsetY: number;
 } | null;
 
-type Props = {
+export type GraphCanvasProps = {
     renderer: GraphRenderer;
     backgroundColor: string;
     layout: Layout;
@@ -32,6 +32,8 @@ type Props = {
     interpretation: GraphInterpretation | null;
     interactionController: GraphInteractionController | undefined;
     indicatorState: Record<string, boolean>;
+    addNodeType: string;
+    addEdgeType: string;
 }
 
 export type ViewTransform = {
@@ -54,7 +56,7 @@ type CanvasPointerLikeEvent = {
 
 export default function GraphCanvas({ backgroundColor, layout, graph, mode, graphVersion, setGraphVersion, renderer,
     selectedNodeId, setSelectedNodeId, selectedEdgeId, setSelectedEdgeId, interactionController,
-    indicatorState }: Props) {
+    indicatorState, addNodeType, addEdgeType }: GraphCanvasProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const dragStateRef = useRef<DragState>(null);
     const viewRef = useRef<ViewTransform>({ offsetX: 0, offsetY: 0, scale: 1 });
@@ -72,6 +74,7 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
         mode,
         indicatorState: indicatorStateRef.current,
     });
+    console.log("AddEdgeType in GraphCanvas: ", addEdgeType);
     graphStateRef.current.mode = mode;
     const nodeMeasurerRef = useRef<NodeMeasurer | null>(null);
     setNodeMeasurerBasedOnInterpretation(graph.getInterpretation());
@@ -371,7 +374,7 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
                 graph.addNode({
                     id: id,
                     title: "New Node",
-                    type: "Default",
+                    type: addNodeType !== "" ? addNodeType : "Default",
                     weight: 1,
                     position: {
                         x: graphPoint.x,

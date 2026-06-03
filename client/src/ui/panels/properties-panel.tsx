@@ -5,8 +5,9 @@ import { getDangerButtonStyle, getPropertyLabelStyle, getPropertyDisplayStyle, g
 import { useEffect, useRef } from "react";
 import type { GraphInterpretation } from "../../core/model/graph-interpretation";
 import type { NodeDefinition } from "../../core/model/node-definition";
+import { asiguraPalette } from "../utils/asigura-palette";
 
-type PropertiesPanelProps = {
+export type PropertiesPanelProps = {
     graph: Graph;
     selectedNodeId: string | null;
     selectedEdgeId: string | null;
@@ -141,8 +142,8 @@ export default function PropertiesPanel({
     return (
         <aside
             style={{
-                backgroundColor: "rgb(245, 239, 217)",
-                borderLeft: "1px solid rgb(210, 205, 190)",
+                backgroundColor: asiguraPalette["asigura-8"],
+                borderLeft: "1px solid " + asiguraPalette["asigura-7"],
                 padding: "16px",
                 boxSizing: "border-box",
                 width: "260px",

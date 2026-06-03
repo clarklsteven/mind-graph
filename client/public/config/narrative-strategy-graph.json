@@ -3,5 +3,37 @@
     "interpretation_type": "narrative-strategy-graph",
     "label": "Narrative Strategy Graph",
     "relationship_definitions": [],
-    "node_definitions": []
+    "node_definitions": [
+        {
+            "id": "goal",
+            "label": "Goal",
+            "iconId": "goal",
+            "isDefault": false,
+            "properties": [
+                {
+                    "id": "description",
+                    "label": "Description",
+                    "valueType": "paragraph",
+                    "required": false,
+                    "defaultValue": ""
+                }
+            ],
+            "completeness": {
+                "requiredFields": [
+                    "description"
+                ]
+            }
+        }
+    ],
+    "interpretation_palette": {
+        "nodePalettes": {
+            "goal": {
+                "baseDark": "#008000",
+                "baseLight": "#00cc00",
+                "selected": "#FFD700",
+                "hovered": "#DA70D6",
+                "linkStart": "#4B0082"
+            }
+        }
+    }
 }

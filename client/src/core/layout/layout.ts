@@ -79,6 +79,11 @@ export class Layout {
 
         let totalMovement = 0;
 
+        // Don't do anything if there is only one node, to avoid it moving for no reason.
+        if (nodes.length <= 1) {
+            return totalMovement;
+        }
+
         // Repulsion
         for (let i = 0; i < nodes.length; i++) {
             for (let j = i + 1; j < nodes.length; j++) {

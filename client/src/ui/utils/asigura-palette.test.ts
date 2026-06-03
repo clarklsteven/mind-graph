@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { asiguraPalette } from './asigura-pallete';
+import { asiguraPalette } from './asigura-palette';
 
 describe('asiguraPalette', () => {
     it('should export a palette object with named color values', () => {

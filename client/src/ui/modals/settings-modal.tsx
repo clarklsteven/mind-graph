@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Modal } from "./modal";
 import { getSettings, updateSettings, verifyVaultPath } from "../../api/user";
-import { asiguraPalette } from "../utils/asigura-pallete";
+import { asiguraPalette } from "../utils/asigura-palette";
 import type { UserSettingsInterface } from "../../../../server/src/model/user-settings";
 
 export function SettingsModal({

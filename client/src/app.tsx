@@ -10,6 +10,7 @@ import { GraphCoordinator } from "./core/graph-coordinator/graph-coordinator";
 import type { GraphRenderer } from "./ui/renderers/graph-renderer";
 import { DefaultRenderer } from "./ui/renderers/default-renderer";
 import { MindMapRenderer } from "./ui/renderers/mind-map-renderer";
+import { NarrativeStrategyRenderer } from "./ui/renderers/narrative-strategy-renderer";
 import { MindMapInteractionController } from "./ui/interactions/mind-map-interaction-controller";
 import { DefaultInteractionController } from "./ui/interactions/default-interaction-controller";
 import { MindMapLayout } from "./core/layout/mind-map-layout";
@@ -19,6 +20,7 @@ import { SettingsModal } from "./ui/modals/settings-modal";
 import StatusBar from "./ui/statusbar";
 import { LoadGraphModal } from "./ui/modals/load-graph-modal";
 import { saveGraph, updateGraph } from "./api/graphs";
+import { asiguraPalette } from "./ui/utils/asigura-palette";
 
 export type Mode = "select" | "add" | "link" | "delete";
 
@@ -71,6 +73,14 @@ export default function App() {
             case "mind-map-graph":
                 graphCoordinatorRef.current.setRenderer(
                     new MindMapRenderer(
+                        graphCoordinatorRef.current.getGraph()!,
+                        graphCoordinatorRef.current.getLayout()!,
+                        graphCoordinatorRef.current.getInterpretation()!.getInterpretation())
+                );
+                break;
+            case "narrative-strategy-graph":
+                graphCoordinatorRef.current.setRenderer(
+                    new NarrativeStrategyRenderer(
                         graphCoordinatorRef.current.getGraph()!,
                         graphCoordinatorRef.current.getLayout()!,
                         graphCoordinatorRef.current.getInterpretation()!.getInterpretation())
@@ -288,7 +298,7 @@ export default function App() {
                 setIndicatorState={setIndicatorState}
                 setMode={setMode}
                 renderer={graphCoordinatorRef.current.getRenderer() || rendererRef.current}
-                backgroundColor="rgb(255, 250, 231)"
+                backgroundColor={asiguraPalette["asigura-10"]}
                 layout={graphCoordinatorRef.current?.getLayout() || new Layout(new Graph(), 1000, 1000)}
                 graph={graphCoordinatorRef.current?.getGraph() || new Graph()}
                 graphVersion={graphVersion}
@@ -305,6 +315,7 @@ export default function App() {
 
             <StatusBar
                 autoSaveStatus={autoSaveStatus}
+                mode={mode}
             />
 
             <NewGraphModal

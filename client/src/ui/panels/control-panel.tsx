@@ -5,15 +5,19 @@ import { getControlPanelStyle, getGraphTitleStyle } from "../utils/styles";
 import ThinkingGraphControls from "./context-specific-panels/thinking-graph-controls";
 import DefaultControls from "./context-specific-panels/defaualt-controls";
 import NarrativeStrategyControls from "./context-specific-panels/narrative-strategy-controls";
+import { asiguraPalette } from "../utils/asigura-palette";
 
-
-type ControlPanelProps = {
+export type ControlPanelProps = {
     name: string;
     mode: Mode;
     interpretation: GraphInterpretation | null;
     indicatorState: Record<string, boolean>;
     setIndicatorState: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
     setMode: (mode: Mode) => void;
+    addNodeType: string;
+    setAddNodeType: (type: string) => void;
+    addEdgeType: string;
+    setAddEdgeType: (type: string) => void;
 };
 
 export default function ControlPanel({
@@ -23,6 +27,10 @@ export default function ControlPanel({
     indicatorState,
     setIndicatorState,
     setMode,
+    addNodeType,
+    setAddNodeType,
+    addEdgeType,
+    setAddEdgeType
 }: ControlPanelProps) {
     function contextSpecificControls(interpretationType: string | undefined): React.ReactNode {
         switch (interpretationType) {
@@ -39,7 +47,14 @@ export default function ControlPanel({
                 return DefaultControls();
                 break;
             case "narrative-strategy-graph":
-                return NarrativeStrategyControls();
+                return NarrativeStrategyControls({
+                    mode,
+                    setMode,
+                    addNodeType,
+                    setAddNodeType,
+                    addEdgeType,
+                    setAddEdgeType
+                });
                 break;
             default:
                 return null;
@@ -49,8 +64,8 @@ export default function ControlPanel({
     return (
         <aside
             style={{
-                backgroundColor: "rgb(245, 239, 217)",
-                borderRight: "1px solid rgb(210, 205, 190)",
+                backgroundColor: asiguraPalette["asigura-8"],
+                borderRight: "1px solid " + asiguraPalette["asigura-7"],
                 padding: "16px",
                 boxSizing: "border-box",
                 display: "flex",

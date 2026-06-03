@@ -1,3 +1,4 @@
+import React from "react";
 import type { Mode } from "../app";
 import type { Layout } from "../core/layout/layout";
 import type { Graph } from "../core/model/graph";
@@ -54,6 +55,9 @@ export default function MainArea({
     onDeleteSelectedNode,
     onDeleteSelectedEdge
 }: MainAreaProps) {
+    const [addNodeType, setAddNodeType] = React.useState<string>("default");
+    const [addEdgeType, setAddEdgeType] = React.useState<string>("default");
+
     return (
         <div className="main-area">
             <ControlPanel
@@ -63,6 +67,10 @@ export default function MainArea({
                 indicatorState={indicatorState}
                 setIndicatorState={setIndicatorState}
                 setMode={setMode}
+                addNodeType={addNodeType}
+                setAddNodeType={setAddNodeType}
+                addEdgeType={addEdgeType}
+                setAddEdgeType={setAddEdgeType}
             />
             <GraphCanvas
                 renderer={renderer}
@@ -79,6 +87,8 @@ export default function MainArea({
                 selectedEdgeId={selectedEdgeId}
                 setSelectedEdgeId={setSelectedEdgeId}
                 interactionController={interactionController}
+                addNodeType={addNodeType}
+                addEdgeType={addEdgeType}
             />
             <PropertiesPanel
                 graph={graph}

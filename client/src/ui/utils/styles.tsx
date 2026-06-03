@@ -1,14 +1,16 @@
+import { asiguraPalette } from "./asigura-palette";
+
 export function getButtonStyle(isActive: boolean): React.CSSProperties {
     return {
         width: "100%",
         padding: "10px 12px",
         textAlign: "center",
-        border: "1px solid rgb(160, 150, 140)",
+        border: "1px solid " + asiguraPalette["asigura-6"],
         borderRadius: "8px",
         backgroundColor: isActive
-            ? "rgb(101, 26, 44)"
-            : "rgb(255, 250, 231)",
-        color: isActive ? "rgb(255, 250, 231)" : "rgb(70, 50, 60)",
+            ? asiguraPalette["asigura-5"]
+            : asiguraPalette["asigura-7"],
+        color: isActive ? asiguraPalette["asigura-10"] : asiguraPalette["asigura-3"],
         cursor: "pointer",
         fontSize: "14px",
         fontWeight: 500,
@@ -19,9 +21,9 @@ export function getSecondaryButtonStyle(): React.CSSProperties {
     return {
         padding: "5px 12px",
         textAlign: "center",
-        border: "1px solid rgb(160, 150, 140)",
+        border: "1px solid " + asiguraPalette["asigura-6"],
         borderRadius: "8px",
-        backgroundColor: "rgb(255, 250, 231)",
+        backgroundColor: asiguraPalette["asigura-7"],
         color: "rgb(70, 50, 60)",
         cursor: "pointer",
         fontSize: "14px",
@@ -242,7 +244,7 @@ export function getMindGraphTitleStyle(): React.CSSProperties {
     return {
         fontSize: "20px",
         fontWeight: 700,
-        color: "#00332a",
+        color: asiguraPalette["asigura-1"],
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -254,9 +256,9 @@ export function getMindGraphTitleStyle(): React.CSSProperties {
 export function getGraphTitleStyle(): React.CSSProperties {
     return {
         display: "flex",
-        fontSize: "16px",
-        fontWeight: 500,
-        color: "#00332a",
+        fontSize: "18px",
+        fontWeight: 600,
+        color: asiguraPalette["asigura-1"],
         flexDirection: "column",
         alignItems: "center",
         gap: "8px",

@@ -6,6 +6,7 @@ import {
     Settings,
     CircleHelp
 } from "lucide-react";
+import { asiguraPalette } from "./utils/asigura-palette";
 
 type ToolbarProps = {
     onSave: () => void;
@@ -23,7 +24,7 @@ export default function Toolbar({
     onLoadGraph
 }: ToolbarProps) {
     return (
-        <div className="toolbar">
+        <div className="toolbar" style={{ backgroundColor: asiguraPalette["asigura-7"], borderBottom: "1px solid " + asiguraPalette["asigura-6"] }}>
             <div
                 style={{
                     display: "flex",

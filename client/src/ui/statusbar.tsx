@@ -2,12 +2,15 @@ import { useEffect, useState } from "react";
 import { Circle } from "lucide-react";
 import { getSettings, verifyVaultPath } from "../api/user";
 import type { UserSettingsInterface } from "../../../server/src/model/user-settings";
+import { asiguraPalette } from "./utils/asigura-palette";
+import type { Mode } from "../app";
 
 type StatusBarProps = {
     autoSaveStatus: string;
+    mode: Mode;
 };
 
-export default function StatusBar({ autoSaveStatus }: StatusBarProps) {
+export default function StatusBar({ autoSaveStatus, mode }: StatusBarProps) {
     const [isVaultAvailable, setIsVaultAvailable] = useState(false);
 
     useEffect(() => {
@@ -32,18 +35,32 @@ export default function StatusBar({ autoSaveStatus }: StatusBarProps) {
         loadVaultStatus();
     }, []);
 
+
     return (
         <div
             className="status-bar"
+            style={{
+                backgroundColor: asiguraPalette["asigura-7"],
+                borderTop: "1px solid " + asiguraPalette["asigura-6"],
+            }}
         >
             <div style={{
-                border: "1px solid rgb(210, 205, 190)",
+                border: "1px solid " + asiguraPalette["asigura-6"],
+                borderRadius: "4px",
+                padding: "2px 6px"
+            }}>
+                <span>Graph Mode: {mode.charAt(0).toUpperCase() + mode.slice(1)}</span>
+            </div>
+            <div style={{
+                border: "1px solid " + asiguraPalette["asigura-6"],
+                borderRadius: "4px",
                 padding: "2px 6px"
             }}>
                 <span>Autosave: {autoSaveStatus}</span>
             </div>
             <div style={{
-                border: "1px solid rgb(210, 205, 190)",
+                border: "1px solid " + asiguraPalette["asigura-6"],
+                borderRadius: "4px",
                 padding: "2px 6px"
             }}>
                 <span>
