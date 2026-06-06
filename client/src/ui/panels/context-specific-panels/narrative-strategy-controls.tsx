@@ -5,11 +5,15 @@ import {
     MousePointer, Plus
 } from "lucide-react";
 import type { Mode } from "../../../app";
-import GoalNodePreview from "../../utils/node-previews";
+import NodePreviews from "./node-previews";
+import EdgePreviews from "./edge-previews";
+import type { GraphInterpretation } from "../../../core/model/graph-interpretation";
+import { InterpretationPaletteManager } from "../../../core/model/palette";
 
 type NarrativeStrategyControlsProps = {
     mode: string;
     setMode: (mode: Mode) => void;
+    interpretation: GraphInterpretation | null;
     addNodeType: string;
     setAddNodeType: (type: string) => void;
     addEdgeType: string;
@@ -20,12 +24,32 @@ const NarrativeStrategyNodes = {
     goal: {
         shape: 'circle',
         color: 'green'
+    },
+    mission: {
+        shape: 'circle',
+        color: 'blue'
+    },
+    objective: {
+        shape: 'circle',
+        color: 'purple'
+    },
+    action: {
+        shape: 'circle',
+        color: 'red'
     }
+};
+
+const NarrativeStrategyLinks = {
+    leads_to: {
+        shape: 'line',
+        color: 'blue'
+    },
 };
 
 export default function NarrativeStrategyControls({
     mode,
     setMode,
+    interpretation,
     addNodeType,
     setAddNodeType,
     addEdgeType,
@@ -33,17 +57,45 @@ export default function NarrativeStrategyControls({
 }: NarrativeStrategyControlsProps) {
     const [activeTab, setActiveTab] = useState('nodes');
 
-    const nodeIconPreview = (type: string) => {
+    let palette: InterpretationPaletteManager | null = null;
+    if (interpretation && interpretation.interpretation_palette) {
+        palette = new InterpretationPaletteManager(interpretation.interpretation_palette);
+    }
+
+    const nodeIconPreview = (type: string, colour: string) => {
         switch (type) {
             case "goal":
-                return <GoalNodePreview />;
+                return <NodePreviews
+                    nodeType={"goal"}
+                    colour={palette?.getColourPaletteForNodeType("goal").baseLight || colour} />;
+            case "mission":
+                return <NodePreviews
+                    nodeType={"mission"}
+                    colour={palette?.getColourPaletteForNodeType("mission").baseLight || colour} />;
+            case "objective":
+                return <NodePreviews
+                    nodeType={"objective"}
+                    colour={palette?.getColourPaletteForNodeType("objective").baseLight || colour} />;
+            case "action":
+                return <NodePreviews
+                    nodeType={"action"}
+                    colour={palette?.getColourPaletteForNodeType("action").baseLight || colour} />;
             default:
                 return null;
         }
     };
 
+    const edgeIconPreview = (type: string) => {
+        switch (type) {
+            case "leads_to":
+                return <EdgePreviews
+                    edgeType={"leads_to"} />;
+            default:
+                return null;
+        }
+    }
+
     function renderNodesTab() {
-        console.log("NSC addEdgeType:", addEdgeType);
         return (
             <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", width: "100%" }}>
                 {Object.entries(NarrativeStrategyNodes).map(([type, style]) => (
@@ -75,7 +127,47 @@ export default function NarrativeStrategyControls({
                                 flex: "0 0 auto",
                             }}
                         >
-                            {nodeIconPreview(type)}
+                            {nodeIconPreview(type, style.color.toString())}
+                        </div>
+                        <span style={{ fontSize: "18px", color: asiguraPalette["asigura-1"] }}>
+                            {type.charAt(0).toUpperCase() + type.slice(1)}
+                        </span>
+                    </div>
+                ))}
+            </div>
+        );
+    }
+
+    function renderLinksTab() {
+        return (
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", width: "100%" }}>
+                {Object.entries(NarrativeStrategyLinks).map(([type]) => (
+                    <div
+                        key={type}
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "0.5rem",
+                            backgroundColor: mode === "link" && type === addEdgeType ? asiguraPalette["asigura-4"] : asiguraPalette["asigura-6"],
+                            border: "1px solid " + asiguraPalette["asigura-3"],
+                            padding: "0.5rem",
+                            width: "100%",
+                            boxSizing: "border-box",
+                        }}
+                        onClick={() => {
+                            if (mode === "link") {
+                                setAddEdgeType(type);
+                            }
+                        }}
+                    >
+                        <div
+                            style={{
+                                width: "36px",
+                                height: "24px",
+                                flex: "0 0 auto",
+                            }}
+                        >
+                            {edgeIconPreview(type)}
                         </div>
                         <span style={{ fontSize: "18px", color: asiguraPalette["asigura-1"] }}>
                             {type.charAt(0).toUpperCase() + type.slice(1)}
@@ -126,10 +218,16 @@ export default function NarrativeStrategyControls({
                     border: "1px solid " + asiguraPalette["asigura-7"],
                     borderRadius: "8px",
                     padding: "8px",
-                    backgroundColor: mode === "add" ? asiguraPalette["asigura-5"] : asiguraPalette["asigura-7"],
-                    color: mode === "add" ? asiguraPalette["asigura-10"] : asiguraPalette["asigura-3"],
+                    backgroundColor: mode !== "select" ? asiguraPalette["asigura-5"] : asiguraPalette["asigura-7"],
+                    color: mode !== "select" ? asiguraPalette["asigura-10"] : asiguraPalette["asigura-3"],
                 }}
-                    onClick={() => setMode("add")}
+                    onClick={() => {
+                        if (activeTab === "links") {
+                            setMode("link");
+                        } else {
+                            setMode("add");
+                        }
+                    }}
                 >
                     <Plus size={16} />
                 </button>
@@ -146,7 +244,7 @@ export default function NarrativeStrategyControls({
                 }}
             >
                 {activeTab === "nodes" && renderNodesTab()}
-                {activeTab === "links" && <div>Link styles coming soon...</div>}
+                {activeTab === "links" && renderLinksTab()}
             </div>
         </div>
     );

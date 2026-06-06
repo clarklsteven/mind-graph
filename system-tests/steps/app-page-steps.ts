@@ -12,3 +12,9 @@ export async function whenUserOpensSettings(app: AppPage) {
         return await app.openSettings();
     });
 }
+
+export async function whenUserOpensNewGraphDialog(app: AppPage) {
+    return await test.step("When the user opens the New Graph dialog", async () => {
+        return await app.openNewGraphDialog();
+    });
+}

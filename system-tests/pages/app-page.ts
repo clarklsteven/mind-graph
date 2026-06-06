@@ -1,6 +1,6 @@
 import type { Page } from "@playwright/test";
-import { expect } from "@playwright/test";
 import { SettingsDialogPage } from "./settings-page";
+import { NewGraphDialogPage } from "./new-graph-page";
 
 export class AppPage {
 
@@ -23,9 +23,8 @@ export class AppPage {
         return new SettingsDialogPage(this.page);
     }
 
-    async isSettingsVisible() {
-        await expect(
-            this.page.getByRole("dialog", { name: "Settings" })
-        ).toBeVisible();
+    async openNewGraphDialog() {
+        await this.page.getByRole("button", { name: "New Graph" }).click();
+        return new NewGraphDialogPage(this.page);
     }
 }

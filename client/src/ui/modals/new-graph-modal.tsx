@@ -36,6 +36,8 @@ export function NewGraphModal({
                 <div style={getPropertyLabelStyle()}>Graph Name</div>
                 <input
                     type="text"
+                    role="textbox"
+                    aria-label="Graph Name"
                     value={name}
                     style={getPropertyInputStyle()}
                     onChange={(e) => setName(e.target.value)}
@@ -46,6 +48,8 @@ export function NewGraphModal({
                 <div style={getPropertyLabelStyle()}>Interpretation</div>
                 <select
                     value={interpretationType}
+                    role="combobox"
+                    aria-label="Interpretation"
                     style={getPropertyInputStyle()}
                     onChange={(e) => setInterpretationType(e.target.value)}
                 >

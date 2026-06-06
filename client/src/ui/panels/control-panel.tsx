@@ -50,6 +50,7 @@ export default function ControlPanel({
                 return NarrativeStrategyControls({
                     mode,
                     setMode,
+                    interpretation,
                     addNodeType,
                     setAddNodeType,
                     addEdgeType,

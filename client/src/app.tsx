@@ -21,6 +21,7 @@ import StatusBar from "./ui/statusbar";
 import { LoadGraphModal } from "./ui/modals/load-graph-modal";
 import { saveGraph, updateGraph } from "./api/graphs";
 import { asiguraPalette } from "./ui/utils/asigura-palette";
+import { NarrativeStrategyLayout } from "./core/layout/narrative-strategy-layout";
 
 export type Mode = "select" | "add" | "link" | "delete";
 
@@ -117,6 +118,11 @@ export default function App() {
             case "mind-map-graph":
                 graphCoordinatorRef.current.setLayout(
                     new MindMapLayout(graphCoordinatorRef.current.getGraph()!, CANVASWIDTH, CANVASHEIGHT)
+                );
+                break;
+            case "narrative-strategy-graph":
+                graphCoordinatorRef.current.setLayout(
+                    new NarrativeStrategyLayout(graphCoordinatorRef.current.getGraph()!, CANVASWIDTH, CANVASHEIGHT)
                 );
                 break;
             default:

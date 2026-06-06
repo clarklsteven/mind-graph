@@ -134,6 +134,28 @@ export class NarrativeStrategyRenderer extends GraphRenderer {
         context.restore();
     }
 
+    drawNodeIcon(context: CanvasRenderingContext2D, x: number, y: number, size: number, type: string): void {
+        switch (type) {
+            case "goal":
+                this.nodeIconPalette.drawGoalIcon(context, x, y, size, asiguraPalette["asigura-10"]);
+                break;
+            case "mission":
+                this.nodeIconPalette.drawMissionIcon(context, x, y, size, asiguraPalette["asigura-10"]
+                );
+                break;
+            case "objective":
+                this.nodeIconPalette.drawObjectiveIcon(context, x, y, size, asiguraPalette["asigura-10"]
+                );
+                break;
+            case "action":
+                this.nodeIconPalette.drawActionIcon(context, x, y, size, asiguraPalette["asigura-10"]
+                );
+                break;
+            default:
+                break;
+        }
+    }
+
     drawNode(canvas: HTMLCanvasElement, graphState: GraphState, node: GraphNode): void {
         if (!canvas) return;
 
@@ -175,7 +197,7 @@ export class NarrativeStrategyRenderer extends GraphRenderer {
             context.stroke();
         }
 
-        this.nodeIconPalette.drawGoalIcon(context, screen.x, screen.y, radius * graphState.view.scale, asiguraPalette["asigura-10"]);
+        this.drawNodeIcon(context, screen.x, screen.y, radius * graphState.view.scale, node.type);
 
         // Incomplete indicator - a small red dot to the top-left of the node
         if (nodeDefinition && this.isNodeIncomplete(node, nodeDefinition, graphState.indicatorState)) {

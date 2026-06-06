@@ -2,12 +2,88 @@
     "id": "narrative-strategy-graph",
     "interpretation_type": "narrative-strategy-graph",
     "label": "Narrative Strategy Graph",
-    "relationship_definitions": [],
+    "relationship_definitions": [
+        {
+            "id": "leads_to",
+            "label": "Leads To",
+            "isDefault": false,
+            "directed": true,
+            "hierarchical": false,
+            "parentEnd": "target",
+            "childEnd": "source",
+            "singleParent": false,
+            "allowsCycles": false,
+            "sourceWeightConsidered": true,
+            "targetWeightConsidered": false,
+            "sourceWeightMultiplier": 0.5,
+            "targetWeightMultiplier": 0
+        }
+    ],
     "node_definitions": [
         {
             "id": "goal",
             "label": "Goal",
             "iconId": "goal",
+            "isDefault": false,
+            "properties": [
+                {
+                    "id": "description",
+                    "label": "Description",
+                    "valueType": "paragraph",
+                    "required": false,
+                    "defaultValue": ""
+                }
+            ],
+            "completeness": {
+                "requiredFields": [
+                    "description"
+                ]
+            }
+        },
+        {
+            "id": "mission",
+            "label": "Mission",
+            "iconId": "mission",
+            "isDefault": false,
+            "properties": [
+                {
+                    "id": "description",
+                    "label": "Description",
+                    "valueType": "paragraph",
+                    "required": false,
+                    "defaultValue": ""
+                }
+            ],
+            "completeness": {
+                "requiredFields": [
+                    "description"
+                ]
+            }
+        },
+        {
+            "id": "objective",
+            "label": "Objective",
+            "iconId": "objective",
+            "isDefault": false,
+            "properties": [
+                {
+                    "id": "description",
+                    "label": "Description",
+                    "valueType": "paragraph",
+                    "required": false,
+                    "defaultValue": ""
+                }
+            ],
+            "completeness": {
+                "requiredFields": [
+                    "description"
+                ]
+            }
+        },
+        {
+            "id": "action",
+            "label": "Action",
+            "iconId": "action",
             "isDefault": false,
             "properties": [
                 {
@@ -30,6 +106,27 @@
             "goal": {
                 "baseDark": "#008000",
                 "baseLight": "#00cc00",
+                "selected": "#FFD700",
+                "hovered": "#DA70D6",
+                "linkStart": "#4B0082"
+            },
+            "mission": {
+                "baseDark": "#000080",
+                "baseLight": "#0000CD",
+                "selected": "#FFD700",
+                "hovered": "#DA70D6",
+                "linkStart": "#4B0082"
+            },
+            "objective": {
+                "baseDark": "#800080",
+                "baseLight": "#CD00CD",
+                "selected": "#FFD700",
+                "hovered": "#DA70D6",
+                "linkStart": "#4B0082"
+            },
+            "action": {
+                "baseDark": "#800000",
+                "baseLight": "#CD0000",
                 "selected": "#FFD700",
                 "hovered": "#DA70D6",
                 "linkStart": "#4B0082"

@@ -338,8 +338,9 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
                 id: crypto.randomUUID(),
                 from: linkStartNodeId,
                 to: hitNode.id,
-                type: "Relates To",
+                type: addEdgeType !== "" ? addEdgeType : "Relates To",
             });
+            setGraphVersion(graphVersion + 1);
             setLinkStartNodeId(null);
             graphStateRef.current.linkStartNodeId = null;
         }
@@ -386,6 +387,7 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
                     },
                     size: { width: 8, height: 8 }
                 });
+                setGraphVersion(graphVersion + 1);
                 setSelectedNodeId(id);
                 graphStateRef.current.selectedNodeId = id;
             }
