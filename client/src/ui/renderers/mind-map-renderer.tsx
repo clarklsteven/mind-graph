@@ -6,12 +6,19 @@ import type { GraphInterpretation } from "../../core/model/graph-interpretation"
 import type { GraphNode } from "../../core/model/node";
 import type { Point } from "../../core/model/point";
 import type { GraphState } from "../graph-state";
+import type { FocusSet } from "../main-area";
 import { GraphRenderer } from "./graph-renderer";
 
 export class MindMapRenderer extends GraphRenderer {
 
     constructor(graph: Graph, layout: Layout, interpretation: GraphInterpretation) {
         super(graph, layout, interpretation);
+    }
+
+    setFocusSet(focusSet: FocusSet): void {
+        if (focusSet) {
+            // Do nothing 
+        }
     }
 
     drawEdge(canvas: HTMLCanvasElement, graphState: GraphState, edge: Edge): void {

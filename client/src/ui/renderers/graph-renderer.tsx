@@ -7,6 +7,7 @@ import type { NodeDefinition } from "../../core/model/node-definition";
 import type { ColourPalette } from "../../core/model/palette";
 import type { Point } from "../../core/model/point";
 import type { GraphState } from "../graph-state";
+import type { FocusSet } from "../main-area";
 
 export interface EdgeLabelPlacement {
     x: number;
@@ -30,6 +31,7 @@ export abstract class GraphRenderer {
     abstract drawLabel(canvas: HTMLCanvasElement, graphState: GraphState, node: GraphNode): void;
     abstract drawPreviewEdge(canvas: HTMLCanvasElement, graphState: GraphState): void;
     abstract hitTestNode(point: Point): GraphNode | null;
+    abstract setFocusSet(focusSet: FocusSet): void;
 
     graphToScreen(graphState: GraphState, x: number, y: number) {
         return {

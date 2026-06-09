@@ -6,7 +6,7 @@ import type { GraphCanvasProps } from "./panels/graph-canvas";
 import type { PropertiesPanelProps } from "./panels/properties-panel";
 import type { GraphRenderer } from "./renderers/graph-renderer";
 import type { Layout } from "../core/layout/layout";
-import type { Graph } from "../core/model/graph";
+import { Graph } from "../core/model/graph";
 
 vi.mock("./panels/control-panel", () => ({
     default: ({ name, mode, addNodeType, addEdgeType }: ControlPanelProps) => (
@@ -33,6 +33,7 @@ describe("MainArea", () => {
         const setGraphVersion = vi.fn();
         const setSelectedNodeId = vi.fn();
         const setSelectedEdgeId = vi.fn();
+        const graph: Graph = new Graph();
 
         render(
             <MainArea
@@ -45,7 +46,7 @@ describe("MainArea", () => {
                 renderer={{} as GraphRenderer}
                 backgroundColor="#fff"
                 layout={{} as Layout}
-                graph={{} as Graph}
+                graph={graph}
                 graphVersion={1}
                 setGraphVersion={setGraphVersion}
                 selectedNodeId="node-1"

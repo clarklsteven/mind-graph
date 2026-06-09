@@ -3,9 +3,10 @@ import type { Graph } from "../../core/model/graph";
 import type { GraphNode } from "../../core/model/node";
 import { getDangerButtonStyle, getPropertyLabelStyle, getPropertyDisplayStyle, getPropertyInputStyle, getPropertyDropdownStyle } from "../utils/styles";
 import { useEffect, useRef } from "react";
-import type { GraphInterpretation } from "../../core/model/graph-interpretation";
+import type { GraphInterpretation, InterpretationOptionSet } from "../../core/model/graph-interpretation";
 import type { NodeDefinition } from "../../core/model/node-definition";
 import { asiguraPalette } from "../utils/asigura-palette";
+import type { GraphLookupSet } from "../../core/model/graph-data";
 
 export type PropertiesPanelProps = {
     graph: Graph;
@@ -64,9 +65,11 @@ export default function PropertiesPanel({
     if (selectedNode && selectedNode.properties && nodeDefinition && nodeDefinition.properties && nodeDefinition.properties.length > 0) {
         propertiesComponents =
             nodeDefinition.properties.map((property) => {
-                const value = String(selectedNode.properties?.[property.id] ?? "");
+                let value = String(selectedNode.properties?.[property.id] ?? "");
+                if (property.defaultValue && value === "") value = property.defaultValue as string;
 
                 if (property.valueType === "string") {
+                    const readonly: boolean = property.editable !== undefined && !property.editable;
                     return (
                         <div>
                             <div
@@ -82,6 +85,7 @@ export default function PropertiesPanel({
                                     selectedNode.properties![property.id] = e.target.value;
                                     onGraphChanged();
                                 }}
+                                readOnly={readonly}
                             />
                         </div>
                     );
@@ -103,6 +107,41 @@ export default function PropertiesPanel({
                             />
                         </div>
                     );
+                } else if (property.valueType === "option") {
+                    // Get the property options
+                    let options: string[] = [];
+                    const currentValue: string = selectedNode.properties![property.id] as string;
+                    if (property.optionSource && property.optionSource.type === "interpretationOptionSet") {
+                        // Get the options from the interpretation
+                        const optionSet: InterpretationOptionSet | undefined = interpretation?.option_sets?.filter((optionSet: InterpretationOptionSet) => optionSet.id === property.id)[0];
+                        options = optionSet?.values ?? [];
+                    } else if (property.optionSource && property.optionSource.type === "graphLookupSet") {
+                        const optionSet: GraphLookupSet | undefined = graph.getLookupSets().filter((lookupSet: GraphLookupSet) => lookupSet.id === property.id)[0];
+                        options = optionSet?.values ?? [];
+                    }
+                    return (
+                        <div>
+                            <div
+                                key={property.id}
+                                style={getPropertyLabelStyle()}>
+                                {property.label}
+                            </div>
+                            <select
+                                value={currentValue}
+                                onChange={(e) => {
+                                    selectedNode.properties![property.id] = e.target.value;
+                                    onGraphChanged();
+                                }}
+                                style={getPropertyDropdownStyle()}
+                            >
+                                {(options ?? []).map((option: string) => (
+                                    <option key={option} value={option}>
+                                        {option.charAt(0).toUpperCase() + option.slice(1)}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )
                 }
 
                 return null;

@@ -13,11 +13,20 @@ export default defineConfig({
         "src/**/*.ts",
         "src/**/*.tsx"
       ],
+      exclude: [
+        "src/**/*.test.ts",
+        "src/**/*.test.tsx",
+        "src/main.tsx",
+        "src/vite-env.d.ts",
+        "src/**/*.d.ts",
+        "src/**/dist/**",
+        "src/**/coverage/**"
+      ],
       thresholds: {
-        statements: 25,
-        branches: 19,
-        functions: 38,
-        lines: 26
+        statements: 30,
+        branches: 20,
+        functions: 40,
+        lines: 31
       }
     },
     environment: 'jsdom',

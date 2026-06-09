@@ -1,12 +1,13 @@
 import type { GraphNode } from "./node";
 import type { Edge } from "./edge";
-import type { GraphData } from "./graph-data";
+import type { GraphData, GraphLookupSet } from "./graph-data";
 
 export class Graph {
   private name: string = "";
   private interpretation: string = "";
   private nodes: Map<string, GraphNode> = new Map();
   private edges: Map<string, Edge> = new Map();
+  private lookupSets: Map<string, GraphLookupSet> = new Map();
 
   getName(): string {
     return this.name;
@@ -94,12 +95,21 @@ export class Graph {
     this.interpretation = interpretation;
   }
 
+  addLookupSet(lookupSet: GraphLookupSet): void {
+    this.lookupSets.set(lookupSet.id, lookupSet);
+  }
+
+  getLookupSets(): GraphLookupSet[] {
+    return Array.from(this.lookupSets.values());
+  }
+
   export(): GraphData {
     return {
       name: this.name,
       interpretation: this.interpretation,
       nodes: Array.from(this.nodes.values()),
-      edges: Array.from(this.edges.values())
+      edges: Array.from(this.edges.values()),
+      lookupSets: Array.from(this.lookupSets.values())
     };
   }
 
@@ -123,6 +133,12 @@ export class Graph {
         throw new Error(`Edge ${edge.id} refers to missing to node: ${edge.to}`);
       }
       graph.addEdge(edge);
+    }
+
+    if (data.lookupSets) {
+      for (const lookupSet of data.lookupSets) {
+        graph.addLookupSet(lookupSet);
+      }
     }
 
     return graph;

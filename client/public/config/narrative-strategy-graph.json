@@ -32,11 +32,42 @@
                     "valueType": "paragraph",
                     "required": false,
                     "defaultValue": ""
+                },
+                {
+                    "id": "project",
+                    "label": "Project",
+                    "valueType": "option",
+                    "required": false,
+                    "defaultValue": "",
+                    "optionSource": {
+                        "type": "graphLookupSet",
+                        "optionSetId": "project"
+                    }
+                },
+                {
+                    "id": "status",
+                    "label": "Status",
+                    "valueType": "option",
+                    "required": true,
+                    "defaultValue": "pending",
+                    "optionSource": {
+                        "type": "interpretationOptionSet",
+                        "optionSetId": "status"
+                    }
+                },
+                {
+                    "id": "dimension",
+                    "label": "Dimension",
+                    "valueType": "string",
+                    "required": false,
+                    "editable": false,
+                    "defaultValue": "Aspirational"
                 }
             ],
             "completeness": {
                 "requiredFields": [
-                    "description"
+                    "description",
+                    "status"
                 ]
             }
         },
@@ -52,11 +83,42 @@
                     "valueType": "paragraph",
                     "required": false,
                     "defaultValue": ""
+                },
+                {
+                    "id": "project",
+                    "label": "Project",
+                    "valueType": "option",
+                    "required": false,
+                    "defaultValue": "",
+                    "optionSource": {
+                        "type": "graphLookupSet",
+                        "optionSetId": "project"
+                    }
+                },
+                {
+                    "id": "status",
+                    "label": "Status",
+                    "valueType": "option",
+                    "required": true,
+                    "defaultValue": "pending",
+                    "optionSource": {
+                        "type": "interpretationOptionSet",
+                        "optionSetId": "status"
+                    }
+                },
+                {
+                    "id": "dimension",
+                    "label": "Dimension",
+                    "valueType": "string",
+                    "required": false,
+                    "editable": false,
+                    "defaultValue": "Aspirational"
                 }
             ],
             "completeness": {
                 "requiredFields": [
-                    "description"
+                    "description",
+                    "status"
                 ]
             }
         },
@@ -72,11 +134,42 @@
                     "valueType": "paragraph",
                     "required": false,
                     "defaultValue": ""
+                },
+                {
+                    "id": "project",
+                    "label": "Project",
+                    "valueType": "option",
+                    "required": false,
+                    "defaultValue": "",
+                    "optionSource": {
+                        "type": "graphLookupSet",
+                        "optionSetId": "project"
+                    }
+                },
+                {
+                    "id": "status",
+                    "label": "Status",
+                    "valueType": "option",
+                    "required": true,
+                    "defaultValue": "pending",
+                    "optionSource": {
+                        "type": "interpretationOptionSet",
+                        "optionSetId": "status"
+                    }
+                },
+                {
+                    "id": "dimension",
+                    "label": "Dimension",
+                    "valueType": "string",
+                    "required": false,
+                    "editable": false,
+                    "defaultValue": "Narrative / Strategic"
                 }
             ],
             "completeness": {
                 "requiredFields": [
-                    "description"
+                    "description",
+                    "status"
                 ]
             }
         },
@@ -92,11 +185,42 @@
                     "valueType": "paragraph",
                     "required": false,
                     "defaultValue": ""
+                },
+                {
+                    "id": "project",
+                    "label": "Project",
+                    "valueType": "option",
+                    "required": false,
+                    "defaultValue": "",
+                    "optionSource": {
+                        "type": "graphLookupSet",
+                        "optionSetId": "project"
+                    }
+                },
+                {
+                    "id": "status",
+                    "label": "Status",
+                    "valueType": "option",
+                    "required": true,
+                    "defaultValue": "pending",
+                    "optionSource": {
+                        "type": "interpretationOptionSet",
+                        "optionSetId": "status"
+                    }
+                },
+                {
+                    "id": "dimension",
+                    "label": "Dimension",
+                    "valueType": "string",
+                    "required": false,
+                    "editable": false,
+                    "defaultValue": "Narrative / Strategic"
                 }
             ],
             "completeness": {
                 "requiredFields": [
-                    "description"
+                    "description",
+                    "status"
                 ]
             }
         }
@@ -132,5 +256,27 @@
                 "linkStart": "#4B0082"
             }
         }
-    }
+    },
+    "option_sets": [
+        {
+            "id": "status",
+            "label": "Status",
+            "values": [
+                "Done",
+                "Active",
+                "Pending"
+            ]
+        },
+        {
+            "id": "dimension",
+            "label": "Dimension",
+            "values": [
+                "Aspirational",
+                "Narrative / Strategic",
+                "Social",
+                "Situational",
+                "Instrumentation"
+            ]
+        }
+    ]
 }

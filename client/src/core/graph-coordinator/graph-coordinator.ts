@@ -120,6 +120,11 @@ export class GraphCoordinator {
             normalisedGraph.addEdge(normalisedEdge);
         }
 
+        // Add all the lookup sets
+        for (const lookupSet of graph.getLookupSets()) {
+            normalisedGraph.addLookupSet(lookupSet);
+        }
+
         return normalisedGraph;
     }
 

@@ -9,13 +9,19 @@ import { GraphRenderer } from "./graph-renderer";
 import type { Point } from "../../core/model/point";
 import { asiguraPalette } from "../utils/asigura-palette";
 import { NodeIconPalette } from "../utils/node-icon-palette";
+import type { FocusSet } from "../main-area";
 
 export class NarrativeStrategyRenderer extends GraphRenderer {
     private nodeIconPalette: NodeIconPalette;
+    private focusSet: FocusSet | undefined;
 
     constructor(graph: Graph, layout: Layout, interpretation: GraphInterpretation) {
         super(graph, layout, interpretation);
         this.nodeIconPalette = new NodeIconPalette();
+    }
+
+    setFocusSet(focusSet: FocusSet) {
+        this.focusSet = focusSet;
     }
 
     protected getNodeById(nodeId: string): GraphNode | undefined {
@@ -57,6 +63,9 @@ export class NarrativeStrategyRenderer extends GraphRenderer {
         const isSelected = edge.id === graphState.selectedEdgeId;
         const isDirectional = this.getRelationshipDefinition(edge)?.directed ?? false;
         const isDefaultEdgeType = this.getRelationshipDefinition(edge)?.isDefault ?? false;
+
+        const focusOpacity = Math.max(this.getNodeFocusOpacity(fromNode), this.getNodeFocusOpacity(toNode));
+        context.globalAlpha = focusOpacity;
 
         context.beginPath();
         context.moveTo(startX, startY);
@@ -101,6 +110,7 @@ export class NarrativeStrategyRenderer extends GraphRenderer {
                     ? "rgb(246, 7, 7)"
                     : "rgb(200, 200, 200)";
             context.fill();
+            context.restore();
         }
 
         const labelOpacity = this.getEdgeLabelOpacity(graphState.view.scale);
@@ -127,7 +137,7 @@ export class NarrativeStrategyRenderer extends GraphRenderer {
         context.fillStyle = "rgba(128, 128, 128, 0.0)";
         context.fillRect(x - boxWidth / 2, y - boxHeight / 2, boxWidth, boxHeight);
 
-        context.globalAlpha = labelOpacity;
+        context.globalAlpha = labelOpacity * focusOpacity;
         context.fillStyle = "#88af94";
         context.fillText(label, 0, 0);
         context.globalAlpha = 1.0;
@@ -156,6 +166,30 @@ export class NarrativeStrategyRenderer extends GraphRenderer {
         }
     }
 
+    private getNodeFocusOpacity(node: GraphNode): number {
+        const focusSet = this.focusSet ?? {};
+        const focusKeys = Object.keys(focusSet);
+
+        if (focusKeys.length === 0) {
+            return 1.0;
+        }
+
+        const matchesFocus = focusKeys.every((key) => {
+            const focusedValues = focusSet[key];
+
+            if (!focusedValues || focusedValues.length === 0) {
+                return true;
+            }
+
+            const nodeValue = node.properties?.[key];
+
+            return typeof nodeValue === "string"
+                && focusedValues.includes(nodeValue);
+        });
+
+        return matchesFocus ? 1.0 : 0.25;
+    }
+
     drawNode(canvas: HTMLCanvasElement, graphState: GraphState, node: GraphNode): void {
         if (!canvas) return;
 
@@ -169,6 +203,8 @@ export class NarrativeStrategyRenderer extends GraphRenderer {
         const isDefaultNodeType = this.getNodeDefinition(node)?.isDefault ?? false;
         const colourPalette = this.getInterpretationColourPalette(node);
 
+        const focusOpacity = this.getNodeFocusOpacity(node);
+        context.globalAlpha = focusOpacity;
         context.beginPath();
         const screen = this.graphToScreen(graphState, node.position.x, node.position.y);
         context.arc(screen.x, screen.y, radius * graphState.view.scale, 0, Math.PI * 2);
@@ -208,6 +244,7 @@ export class NarrativeStrategyRenderer extends GraphRenderer {
             context.fillStyle = "rgba(255, 0, 0, 0.6)";
             context.fill();
         }
+        context.restore();
     }
 
     drawLabel(canvas: HTMLCanvasElement, graphState: GraphState, node: GraphNode): void {
@@ -241,11 +278,13 @@ export class NarrativeStrategyRenderer extends GraphRenderer {
 
         // Text
         const labelOpacity = this.getNodeLabelOpacity(graphState.view.scale);
+        const focusOpacity = this.getNodeFocusOpacity(node);
+
 
         if (labelOpacity <= 0.05) {
             return;
         }
-        context.globalAlpha = labelOpacity;
+        context.globalAlpha = labelOpacity * focusOpacity;
         context.fillStyle = "#651A2C";
         context.fillText(node.title, x, y);
         context.globalAlpha = 1.0;

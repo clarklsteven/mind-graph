@@ -10,6 +10,7 @@ import type { GraphState } from "../graph-state";
 import type { GraphInteractionController } from "../interactions/graph-interaction-controller";
 import type { NodeMeasurer } from "../../core/layout/node-measurer";
 import { MindMapNodeMeasurer } from "../../core/layout/mind-map-node-measurer";
+import type { FocusSet } from "../main-area";
 
 export type DragState = {
     nodeId: string;
@@ -34,6 +35,7 @@ export type GraphCanvasProps = {
     indicatorState: Record<string, boolean>;
     addNodeType: string;
     addEdgeType: string;
+    focusSet: FocusSet;
 }
 
 export type ViewTransform = {
@@ -54,9 +56,24 @@ type CanvasPointerLikeEvent = {
     clientY: number;
 };
 
-export default function GraphCanvas({ backgroundColor, layout, graph, mode, graphVersion, setGraphVersion, renderer,
-    selectedNodeId, setSelectedNodeId, selectedEdgeId, setSelectedEdgeId, interactionController,
-    indicatorState, addNodeType, addEdgeType }: GraphCanvasProps) {
+export default function GraphCanvas({
+    backgroundColor,
+    layout,
+    graph,
+    mode,
+    graphVersion,
+    setGraphVersion,
+    renderer,
+    selectedNodeId,
+    setSelectedNodeId,
+    selectedEdgeId,
+    setSelectedEdgeId,
+    interactionController,
+    indicatorState,
+    addNodeType,
+    addEdgeType,
+    focusSet
+}: GraphCanvasProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const dragStateRef = useRef<DragState>(null);
     const viewRef = useRef<ViewTransform>({ offsetX: 0, offsetY: 0, scale: 1 });
@@ -74,10 +91,11 @@ export default function GraphCanvas({ backgroundColor, layout, graph, mode, grap
         mode,
         indicatorState: indicatorStateRef.current,
     });
-    console.log("AddEdgeType in GraphCanvas: ", addEdgeType);
     graphStateRef.current.mode = mode;
     const nodeMeasurerRef = useRef<NodeMeasurer | null>(null);
     setNodeMeasurerBasedOnInterpretation(graph.getInterpretation());
+    if (focusSet) renderer.setFocusSet(focusSet);
+    console.log(focusSet);
 
     function setNodeMeasurerBasedOnInterpretation(interpretationType: string) {
         if (!canvasRef.current) return;

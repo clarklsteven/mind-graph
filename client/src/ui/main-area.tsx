@@ -9,6 +9,8 @@ import GraphCanvas from "./panels/graph-canvas";
 import PropertiesPanel from "./panels/properties-panel";
 import type { GraphRenderer } from "./renderers/graph-renderer";
 
+export type FocusSet = Record<string, string[]>;
+
 type MainAreaProps = {
     name: string;
     mode: Mode;
@@ -57,11 +59,13 @@ export default function MainArea({
 }: MainAreaProps) {
     const [addNodeType, setAddNodeType] = React.useState<string>("default");
     const [addEdgeType, setAddEdgeType] = React.useState<string>("default");
+    const [focusSet, setFocusSet] = React.useState<FocusSet>({});
 
     return (
         <div className="main-area">
             <ControlPanel
                 name={name}
+                graphLookupSets={graph.getLookupSets()}
                 mode={mode}
                 interpretation={interpretation}
                 indicatorState={indicatorState}
@@ -71,6 +75,8 @@ export default function MainArea({
                 setAddNodeType={setAddNodeType}
                 addEdgeType={addEdgeType}
                 setAddEdgeType={setAddEdgeType}
+                focusSet={focusSet}
+                setFocusSet={setFocusSet}
             />
             <GraphCanvas
                 renderer={renderer}
@@ -89,6 +95,7 @@ export default function MainArea({
                 interactionController={interactionController}
                 addNodeType={addNodeType}
                 addEdgeType={addEdgeType}
+                focusSet={focusSet}
             />
             <PropertiesPanel
                 graph={graph}

@@ -6,9 +6,12 @@ import ThinkingGraphControls from "./context-specific-panels/thinking-graph-cont
 import DefaultControls from "./context-specific-panels/defaualt-controls";
 import NarrativeStrategyControls from "./context-specific-panels/narrative-strategy-controls";
 import { asiguraPalette } from "../utils/asigura-palette";
+import type { GraphLookupSet } from "../../core/model/graph-data";
+import type { FocusSet } from "../main-area";
 
 export type ControlPanelProps = {
     name: string;
+    graphLookupSets: GraphLookupSet[];
     mode: Mode;
     interpretation: GraphInterpretation | null;
     indicatorState: Record<string, boolean>;
@@ -18,10 +21,13 @@ export type ControlPanelProps = {
     setAddNodeType: (type: string) => void;
     addEdgeType: string;
     setAddEdgeType: (type: string) => void;
+    focusSet: FocusSet;
+    setFocusSet: React.Dispatch<React.SetStateAction<FocusSet>>;
 };
 
 export default function ControlPanel({
     name,
+    graphLookupSets,
     mode,
     interpretation,
     indicatorState,
@@ -30,7 +36,9 @@ export default function ControlPanel({
     addNodeType,
     setAddNodeType,
     addEdgeType,
-    setAddEdgeType
+    setAddEdgeType,
+    focusSet,
+    setFocusSet
 }: ControlPanelProps) {
     function contextSpecificControls(interpretationType: string | undefined): React.ReactNode {
         switch (interpretationType) {
@@ -48,13 +56,16 @@ export default function ControlPanel({
                 break;
             case "narrative-strategy-graph":
                 return NarrativeStrategyControls({
+                    graphLookupSets,
                     mode,
                     setMode,
                     interpretation,
                     addNodeType,
                     setAddNodeType,
                     addEdgeType,
-                    setAddEdgeType
+                    setAddEdgeType,
+                    focusSet,
+                    setFocusSet
                 });
                 break;
             default:

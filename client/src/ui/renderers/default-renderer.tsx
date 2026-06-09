@@ -8,11 +8,18 @@ import type { GraphState } from "../graph-state";
 import { GraphRenderer } from "./graph-renderer";
 import { NodeIconLibrary } from "../../core/model/node-icon-library";
 import type { Point } from "../../core/model/point";
+import type { FocusSet } from "../main-area";
 
 export class DefaultRenderer extends GraphRenderer {
 
     constructor(graph: Graph, layout: Layout, interpretation: GraphInterpretation) {
         super(graph, layout, interpretation);
+    }
+
+    setFocusSet(focusSet: FocusSet): void {
+        if (focusSet) {
+            // Do nothing 
+        }
     }
 
     protected getNodeById(nodeId: string): GraphNode | undefined {

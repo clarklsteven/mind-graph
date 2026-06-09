@@ -1,9 +1,15 @@
+export type PropertyOptionSource =
+    | { type: "interpretationOptionSet"; optionSetId: string }
+    | { type: "graphLookupSet"; lookupSetId: string };
+
 export interface NodePropertyDefinition {
     id: string;
     label: string;
-    valueType: "string" | "number" | "boolean" | "paragraph";
+    valueType: "string" | "number" | "boolean" | "paragraph" | "option";
     required: boolean;
+    editable?: boolean;
     defaultValue?: unknown;
+    optionSource?: PropertyOptionSource;
 }
 
 export interface NodeDefinition {

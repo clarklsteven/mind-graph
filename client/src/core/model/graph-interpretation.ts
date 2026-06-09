@@ -2,6 +2,12 @@ import type { NodeDefinition } from './node-definition';
 import type { InterpretationPalette } from './palette';
 import type { RelationshipDefinition } from './relationship-definition';
 
+export interface InterpretationOptionSet {
+    id: string;
+    label: string;
+    values: string[];
+}
+
 export interface InterpretationCapabilities {
     manualNodeCreation?: boolean;
     manualEdgeCreation?: boolean;
@@ -20,4 +26,5 @@ export interface GraphInterpretation {
     interpretation_palette?: InterpretationPalette;
     helpMarkdown?: string;
     capabilities?: InterpretationCapabilities;
+    option_sets?: InterpretationOptionSet[];
 }
