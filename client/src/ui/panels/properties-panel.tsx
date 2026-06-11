@@ -109,16 +109,17 @@ export default function PropertiesPanel({
                     );
                 } else if (property.valueType === "option") {
                     // Get the property options
-                    let options: string[] = [];
+                    let options: string[] = [""];
                     const currentValue: string = selectedNode.properties![property.id] as string;
                     if (property.optionSource && property.optionSource.type === "interpretationOptionSet") {
                         // Get the options from the interpretation
                         const optionSet: InterpretationOptionSet | undefined = interpretation?.option_sets?.filter((optionSet: InterpretationOptionSet) => optionSet.id === property.id)[0];
-                        options = optionSet?.values ?? [];
+                        options = ["", ...(optionSet?.values ?? [])];
                     } else if (property.optionSource && property.optionSource.type === "graphLookupSet") {
                         const optionSet: GraphLookupSet | undefined = graph.getLookupSets().filter((lookupSet: GraphLookupSet) => lookupSet.id === property.id)[0];
-                        options = optionSet?.values ?? [];
+                        options = ["", ...(optionSet?.values ?? [])];
                     }
+                    const currentOption = options.find((option: string) => option.toLowerCase() === currentValue.toLowerCase());
                     return (
                         <div>
                             <div
@@ -127,7 +128,7 @@ export default function PropertiesPanel({
                                 {property.label}
                             </div>
                             <select
-                                value={currentValue}
+                                value={currentOption}
                                 onChange={(e) => {
                                     selectedNode.properties![property.id] = e.target.value;
                                     onGraphChanged();

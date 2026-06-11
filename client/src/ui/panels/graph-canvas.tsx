@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import type { Graph } from "../../core/model/graph";
 import type { Layout } from "../../core/layout/layout";
 import type { Edge } from "../../core/model/edge";
-import type { Size } from "../../core/model/node";
+import type { GraphNode, Size } from "../../core/model/node";
 import type { Mode } from "../../app";
 import type { GraphInterpretation } from "../../core/model/graph-interpretation";
 import type { GraphRenderer } from "../renderers/graph-renderer";
@@ -11,6 +11,7 @@ import type { GraphInteractionController } from "../interactions/graph-interacti
 import type { NodeMeasurer } from "../../core/layout/node-measurer";
 import { MindMapNodeMeasurer } from "../../core/layout/mind-map-node-measurer";
 import type { FocusSet } from "../main-area";
+import type { NodeDefinition } from "../../core/model/node-definition";
 
 export type DragState = {
     nodeId: string;
@@ -68,6 +69,7 @@ export default function GraphCanvas({
     setSelectedNodeId,
     selectedEdgeId,
     setSelectedEdgeId,
+    interpretation,
     interactionController,
     indicatorState,
     addNodeType,
@@ -95,7 +97,16 @@ export default function GraphCanvas({
     const nodeMeasurerRef = useRef<NodeMeasurer | null>(null);
     setNodeMeasurerBasedOnInterpretation(graph.getInterpretation());
     if (focusSet) renderer.setFocusSet(focusSet);
-    console.log(focusSet);
+
+    function getNodeDefinition(type: string): NodeDefinition | null {
+        if (!interpretation) return null;
+        if (!interpretation.node_definitions) return null;
+
+        return interpretation.node_definitions.find(
+            def => def.id === type
+        ) || null;
+    };
+
 
     function setNodeMeasurerBasedOnInterpretation(interpretationType: string) {
         if (!canvasRef.current) return;
@@ -303,6 +314,47 @@ export default function GraphCanvas({
         return null;
     };
 
+    function createNodeFromDefinition(
+        id: string,
+        nodeDefinition: NodeDefinition,
+        x: number,
+        y: number
+    ): GraphNode {
+        return {
+            id,
+            title: "New Node",
+            type: nodeDefinition.id,
+            weight: 1,
+            position: {
+                x,
+                y
+            },
+            velocity: {
+                vx: 0,
+                vy: 0
+            },
+            size: {
+                width: 8,
+                height: 8
+            },
+            properties: createDefaultProperties(nodeDefinition)
+        };
+    }
+
+    function createDefaultProperties(
+        nodeDefinition: NodeDefinition
+    ): Record<string, unknown> {
+        const properties: Record<string, unknown> = {};
+
+        for (const property of nodeDefinition.properties ?? []) {
+            if (property.defaultValue !== undefined && property.defaultValue !== null) {
+                properties[property.id] = property.defaultValue;
+            }
+        }
+
+        return properties;
+    }
+
     const handlePointerDown = (
         event: React.PointerEvent<HTMLCanvasElement>
     ) => {
@@ -390,21 +442,32 @@ export default function GraphCanvas({
 
             if (mode === "add" && !hitNode) {
                 const id = crypto.randomUUID();
-                graph.addNode({
-                    id: id,
-                    title: "New Node",
-                    type: addNodeType !== "" ? addNodeType : "Default",
-                    weight: 1,
-                    position: {
-                        x: graphPoint.x,
-                        y: graphPoint.y,
-                    },
-                    velocity: {
-                        vx: 0,
-                        vy: 0,
-                    },
-                    size: { width: 8, height: 8 }
-                });
+                console.log("Adding node of type " + addNodeType);
+                if (addNodeType !== "") {
+                    const nodeDefinition = getNodeDefinition(addNodeType);
+                    console.log(nodeDefinition);
+                    if (nodeDefinition) {
+                        console.log(createNodeFromDefinition(id, nodeDefinition, graphPoint.x, graphPoint.y));
+                        graph.addNode(createNodeFromDefinition(id, nodeDefinition, graphPoint.x, graphPoint.y));
+                    }
+                }
+                else {
+                    graph.addNode({
+                        id: id,
+                        title: "New Node",
+                        type: "Default",
+                        weight: 1,
+                        position: {
+                            x: graphPoint.x,
+                            y: graphPoint.y,
+                        },
+                        velocity: {
+                            vx: 0,
+                            vy: 0,
+                        },
+                        size: { width: 8, height: 8 }
+                    });
+                }
                 setGraphVersion(graphVersion + 1);
                 setSelectedNodeId(id);
                 graphStateRef.current.selectedNodeId = id;

@@ -53,17 +53,39 @@ export class NarrativeStrategyLayout extends Layout {
         };
     }
 
+    applyStatusTimeForce(node: GraphNode): void {
+        const status = node.properties?.status;
+
+        node.velocity ??= { vx: 0, vy: 0 };
+
+        if (typeof status !== "string") {
+            return;
+        }
+
+        const strength = 0.5;
+
+        if (status.toLowerCase() === "done") {
+            node.velocity.vx -= strength;
+        } else if (status.toLowerCase() === "pending") {
+            node.velocity.vx += strength;
+        }
+    }
+
     stepSimulation(): number {
         const nodes = this.graph.getNodes();
         const edges = this.graph.getEdges();
+        const connectedNodes = this.getConnectedNodeIds();
 
         let totalMovement = 0;
 
         // Repulsion
         for (let i = 0; i < nodes.length; i++) {
+
             for (let j = i + 1; j < nodes.length; j++) {
                 const a = nodes[i];
                 const b = nodes[j];
+
+                if (!connectedNodes.has(a.id) || !connectedNodes.has(b.id)) continue;
 
                 a.velocity ??= { vx: 0, vy: 0 };
                 b.velocity ??= { vx: 0, vy: 0 };
@@ -91,6 +113,8 @@ export class NarrativeStrategyLayout extends Layout {
 
         // Apply a force to pull all nodes towards the horizontal line at averageY, with stronger force for nodes further from the line
         for (const node of nodes) {
+            if (!connectedNodes.has(node.id)) continue;
+
             node.velocity ??= { vx: 0, vy: 0 };
 
             const dy = averageY - node.position.y;
@@ -116,7 +140,9 @@ export class NarrativeStrategyLayout extends Layout {
             const distance = Math.sqrt(distSq);
 
             const idealLength = 90;
-            const springStrength = 0.005 * Math.sqrt(nodes.length);
+            let springStiffness = 0.005;
+            if (b.type === "goal" && a.type !== "goal") springStiffness = 0.002;
+            const springStrength = springStiffness * Math.sqrt(nodes.length);
 
             const force = springStrength * (distance - idealLength);
 
@@ -145,7 +171,7 @@ export class NarrativeStrategyLayout extends Layout {
 
         for (const node of nodes) {
             // Damp the velocity slighty to give things chance to settle
-            const damping = 0.75;
+            const damping = 0.25;
             const maxSpeed = 5;
             const minSpeed = 0.01;
 

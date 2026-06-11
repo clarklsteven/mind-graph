@@ -199,10 +199,10 @@ export default function NarrativeStrategyControls({
                     padding: "8px",
                     border: "1px solid " + asiguraPalette["asigura-7"],
                 }}>
-                    <button style={getButtonStyle(activeTab === 'nodes')} onClick={() => setActiveTab('nodes')}>
+                    <button style={getButtonStyle(activeTab === 'nodes')} onClick={() => { setActiveTab('nodes'); setMode("select"); }}>
                         Nodes
                     </button>
-                    <button style={getButtonStyle(activeTab === 'links')} onClick={() => setActiveTab('links')}>
+                    <button style={getButtonStyle(activeTab === 'links')} onClick={() => { setActiveTab('links'); setMode("select"); }}>
                         Links
                     </button>
                 </div>
