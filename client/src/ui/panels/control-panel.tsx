@@ -86,9 +86,12 @@ export default function ControlPanel({
                 minWidth: "220px",
                 gap: "12px",
             }}
+            data-testid="control-panel"
         >
             <div style={getControlPanelStyle()}>
-                <div style={getGraphTitleStyle()}
+                <div
+                    style={getGraphTitleStyle()}
+                    data-testid="graph-name"
                 >
                     {name || "Untitled Graph"}
                 </div>

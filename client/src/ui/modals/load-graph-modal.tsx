@@ -74,6 +74,7 @@ export function LoadGraphModal({
                     border: "1px solid #e0d8c8",
                     cursor: "pointer"
                 }}
+                data-testid="graph-card"
                 onClick={() => setSelectedGraph(graphName)}
                 onDoubleClick={() => {
                     onLoad(graphName);
@@ -102,7 +103,9 @@ export function LoadGraphModal({
                                 fontSize: "18px",
                                 fontWeight: "bold",
                                 color: "#005545"
-                            }}>
+                            }}
+                            data-testid="card-graph-name"
+                        >
                             {name}
                         </div>
                         <div

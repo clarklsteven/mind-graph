@@ -1,6 +1,8 @@
 import type { Page } from "@playwright/test";
 import { SettingsDialogPage } from "./settings-page";
 import { NewGraphDialogPage } from "./new-graph-page";
+import { LoadGraphDialogPage } from "./load-graph-page";
+import { ControlPanel } from "./control-panel";
 
 export class AppPage {
 
@@ -27,4 +29,15 @@ export class AppPage {
         await this.page.getByRole("button", { name: "New Graph" }).click();
         return new NewGraphDialogPage(this.page);
     }
+
+    async openLoadGraphDialog() {
+        await this.page.getByRole("button", { name: "Load Graph" }).click();
+        return new LoadGraphDialogPage(this.page);
+    }
+
+    async controlPanel() {
+        this.page.getByTestId("control-panel");
+        return new ControlPanel(this.page);
+    }
+
 }
