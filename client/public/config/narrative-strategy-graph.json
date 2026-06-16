@@ -77,6 +77,14 @@
                     "required": false,
                     "editable": false,
                     "defaultValue": "Aspirational"
+                },
+                {
+                    "id": "tags",
+                    "label": "Tags",
+                    "valueType": "list",
+                    "required": false,
+                    "editable": false,
+                    "defaultValue": []
                 }
             ],
             "completeness": {
@@ -128,6 +136,14 @@
                     "required": false,
                     "editable": false,
                     "defaultValue": "Aspirational"
+                },
+                {
+                    "id": "tags",
+                    "label": "Tags",
+                    "valueType": "list",
+                    "required": false,
+                    "editable": false,
+                    "defaultValue": []
                 }
             ],
             "completeness": {
@@ -173,12 +189,31 @@
                     }
                 },
                 {
+                    "id": "chapter",
+                    "label": "Chapter",
+                    "valueType": "option",
+                    "required": false,
+                    "defaultValue": "",
+                    "optionSource": {
+                        "type": "graphLookupSet",
+                        "optionSetId": "chapter"
+                    }
+                },
+                {
                     "id": "dimension",
                     "label": "Dimension",
                     "valueType": "string",
                     "required": false,
                     "editable": false,
                     "defaultValue": "Narrative / Strategic"
+                },
+                {
+                    "id": "tags",
+                    "label": "Tags",
+                    "valueType": "list",
+                    "required": false,
+                    "editable": false,
+                    "defaultValue": []
                 }
             ],
             "completeness": {
@@ -224,12 +259,31 @@
                     }
                 },
                 {
+                    "id": "chapter",
+                    "label": "Chapter",
+                    "valueType": "option",
+                    "required": false,
+                    "defaultValue": "",
+                    "optionSource": {
+                        "type": "graphLookupSet",
+                        "optionSetId": "chapter"
+                    }
+                },
+                {
                     "id": "dimension",
                     "label": "Dimension",
                     "valueType": "string",
                     "required": false,
                     "editable": false,
                     "defaultValue": "Narrative / Strategic"
+                },
+                {
+                    "id": "tags",
+                    "label": "Tags",
+                    "valueType": "list",
+                    "required": false,
+                    "editable": false,
+                    "defaultValue": []
                 }
             ],
             "completeness": {

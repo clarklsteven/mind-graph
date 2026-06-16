@@ -49,6 +49,10 @@ body,
 .right-panel {
     flex: 0 0 300px;
     min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
 }
 
 .graph-area {
@@ -75,4 +79,16 @@ body,
 
     background-color: #66cc66;
     border: 1px solid #e0d8c8;
+}
+
+.properties-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-bottom: 1rem;
+}
+
+.properties-actions {
+  flex-shrink: 0;
+  padding: 1rem;
 }

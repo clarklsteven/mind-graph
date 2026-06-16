@@ -310,7 +310,6 @@ export default function NarrativeStrategyControls({
                             style={{ accentColor: asiguraPalette["asigura-1"] }}
                             onClick={() => toggleFocusValue("project", project)}
                             checked={isFocused("project", project)}
-
                         />
                         <label htmlFor={project}>{project}</label>
                     </div>
@@ -365,6 +364,50 @@ export default function NarrativeStrategyControls({
         );
     }
 
+    function renderChapterOptions() {
+        const chapters = graphLookupSets.filter((lookup: GraphLookupSet) => lookup.id === "chapter")[0].values;
+        return (
+            <div style={{ display: "flex", flexDirection: "column" }}>
+                {chapters.map((chapter: string) => (
+                    <div key={chapter}>
+                        <input
+                            type="checkbox"
+                            id={chapter}
+                            name="chapter"
+                            value={chapter}
+                            style={{ accentColor: asiguraPalette["asigura-1"] }}
+                            onClick={() => toggleFocusValue("chapter", chapter)}
+                            checked={isFocused("chapter", chapter)}
+                        />
+                        <label htmlFor={chapter}>{chapter}</label>
+                    </div>
+                ))}
+            </div>
+        );
+    }
+
+    function renderTagsOptions() {
+        const tags = graphLookupSets.filter((lookup: GraphLookupSet) => lookup.id === "tags")[0].values;
+        return (
+            <div style={{ display: "flex", flexDirection: "column" }}>
+                {tags.map((tag: string) => (
+                    <div key={tag}>
+                        <input
+                            type="checkbox"
+                            id={tag}
+                            name="tag"
+                            value={tag}
+                            style={{ accentColor: asiguraPalette["asigura-1"] }}
+                            onClick={() => toggleFocusValue("tags", tag)}
+                            checked={isFocused("tags", tag)}
+                        />
+                        <label htmlFor={tag}>{tag}</label>
+                    </div>
+                ))}
+            </div>
+        );
+    }
+
     function renderFocusControls() {
         return (
             <div>
@@ -407,6 +450,28 @@ export default function NarrativeStrategyControls({
                             Dimension:
                         </div>
                         {renderDimensionOptions()}
+                    </div>
+                    <div style={{
+                        border: "1px solid " + asiguraPalette["asigura-7"],
+                        display: "flex",
+                        flexDirection: "column",
+                        padding: "4px"
+                    }}>
+                        <div style={getPropertyLabelStyle()}>
+                            Chapter:
+                        </div>
+                        {renderChapterOptions()}
+                    </div>
+                    <div style={{
+                        border: "1px solid " + asiguraPalette["asigura-7"],
+                        display: "flex",
+                        flexDirection: "column",
+                        padding: "4px"
+                    }}>
+                        <div style={getPropertyLabelStyle()}>
+                            Tags:
+                        </div>
+                        {renderTagsOptions()}
                     </div>
                 </div>
             </div>

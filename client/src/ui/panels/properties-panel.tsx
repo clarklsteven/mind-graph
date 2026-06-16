@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import type { Graph } from "../../core/model/graph";
 import type { GraphNode } from "../../core/model/node";
 import { getDangerButtonStyle, getPropertyLabelStyle, getPropertyDisplayStyle, getPropertyInputStyle, getPropertyDropdownStyle } from "../utils/styles";
@@ -41,6 +41,7 @@ export default function PropertiesPanel({
             undefined : undefined;
 
     const titleInputRef = useRef<HTMLInputElement>(null);
+    const [listTextState, setListTextState] = useState<Record<string, string>>({});
 
     useEffect(() => {
         if (!selectedNodeId) return;
@@ -53,6 +54,33 @@ export default function PropertiesPanel({
             input.select();
         });
     }, [selectedNodeId]);
+
+    const updateNodeProperty = (propertyName: string, listValue: string[]) => {
+        if (selectedNode && selectedNode.properties) {
+            selectedNode.properties[propertyName] = listValue;
+        }
+    };
+
+    const updateListLookup = (listName: string, listValue: string[]) => {
+        graph.updateLookupSet(listName, listValue);
+    }
+
+    const commitListProperty = (stateKey: string) => {
+        const textValue = listTextState[stateKey] ?? "";
+
+        const listValue = Array.from(
+            new Set(
+                textValue
+                    .split(",")
+                    .map(item => item.trim())
+                    .filter(Boolean)
+            )
+        );
+
+        updateNodeProperty(stateKey.split(":")[1], listValue);
+        updateListLookup(stateKey.split(":")[1], listValue);
+        onGraphChanged();
+    };
 
     const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (!selectedNode) return;
@@ -71,7 +99,7 @@ export default function PropertiesPanel({
                 if (property.valueType === "string") {
                     const readonly: boolean = property.editable !== undefined && !property.editable;
                     return (
-                        <div>
+                        <div key={property.id}>
                             <div
                                 key={property.id}
                                 style={getPropertyLabelStyle()}>
@@ -91,7 +119,7 @@ export default function PropertiesPanel({
                     );
                 } else if (property.valueType === "paragraph") {
                     return (
-                        <div>
+                        <div key={property.id}>
                             <div
                                 key={property.id}
                                 style={getPropertyLabelStyle()}>
@@ -121,7 +149,7 @@ export default function PropertiesPanel({
                     }
                     const currentOption = options.find((option: string) => option.toLowerCase() === currentValue.toLowerCase());
                     return (
-                        <div>
+                        <div key={property.id}>
                             <div
                                 key={property.id}
                                 style={getPropertyLabelStyle()}>
@@ -143,6 +171,33 @@ export default function PropertiesPanel({
                             </select>
                         </div>
                     )
+                } else if (property.valueType === "list") {
+                    const stateKey = `${selectedNode.id}:${property.id}`;
+                    const currentValue =
+                        listTextState[stateKey] ??
+                        ((selectedNode.properties![property.id] as string[] | undefined) ?? []).join(", ");
+
+                    return (
+                        <div key={property.id}>
+                            <div
+                                key={property.id}
+                                style={getPropertyLabelStyle()}>
+                                {property.label}
+                            </div>
+                            <input
+                                type="text"
+                                value={currentValue}
+                                style={getPropertyInputStyle()}
+                                onChange={(e) =>
+                                    setListTextState({
+                                        ...listTextState,
+                                        [stateKey]: e.target.value,
+                                    })
+                                }
+                                onBlur={() => commitListProperty(stateKey)}
+                            />
+                        </div>
+                    );
                 }
 
                 return null;
@@ -181,6 +236,7 @@ export default function PropertiesPanel({
 
     return (
         <aside
+            className="right-panel"
             style={{
                 backgroundColor: asiguraPalette["asigura-8"],
                 borderLeft: "1px solid " + asiguraPalette["asigura-7"],
@@ -204,6 +260,7 @@ export default function PropertiesPanel({
 
             {selectedNode ? (
                 <div
+                    className="properties-content"
                     style={{
                         display: "flex",
                         flexDirection: "column",
@@ -238,14 +295,6 @@ export default function PropertiesPanel({
                     </div>
                     {nodeType}
                     {propertiesComponents}
-                    <div style={{ marginTop: "auto", paddingTop: "16px" }}>
-                        <button
-                            onClick={onDeleteSelectedNode}
-                            style={getDangerButtonStyle()}
-                        >
-                            Delete Node
-                        </button>
-                    </div>
                 </div>
             ) : theSelectedEdge ? (
                 <div
@@ -278,14 +327,7 @@ export default function PropertiesPanel({
                                     {def.label}
                                 </option>
                             ))}
-                        </select>                    </div>
-                    <div style={{ marginTop: "auto", paddingTop: "16px" }}>
-                        <button
-                            onClick={onDeleteSelectedEdge}
-                            style={getDangerButtonStyle()}
-                        >
-                            Delete Edge
-                        </button>
+                        </select>
                     </div>
                 </div>
             ) : (
@@ -297,6 +339,33 @@ export default function PropertiesPanel({
                 >
                     No node selected
                 </div>
+            )}
+            {selectedNode ? (
+                <div
+                    className="properties-actions"
+                    style={{ marginTop: "auto", paddingTop: "16px" }}
+                >
+                    <button
+                        onClick={onDeleteSelectedNode}
+                        style={getDangerButtonStyle()}
+                    >
+                        Delete Node
+                    </button>
+                </div>
+            ) : theSelectedEdge ? (
+                <div
+                    className="properties-actions"
+                    style={{ marginTop: "auto", paddingTop: "16px" }}
+                >
+                    <button
+                        onClick={onDeleteSelectedEdge}
+                        style={getDangerButtonStyle()}
+                    >
+                        Delete Edge
+                    </button>
+                </div>
+            ) : (
+                <div />
             )}
         </aside>
     );

@@ -183,8 +183,19 @@ export class NarrativeStrategyRenderer extends GraphRenderer {
 
             const nodeValue = node.properties?.[key];
 
-            return typeof nodeValue === "string"
-                && focusedValues.includes(nodeValue);
+            let focused = false;
+
+            if (typeof nodeValue === "string"
+                && focusedValues.includes(nodeValue)) {
+                focused = true;
+            }
+
+            if (Array.isArray(nodeValue)
+                && nodeValue.some(value => focusedValues.includes(value))) {
+                focused = true;
+            }
+
+            return focused;
         });
 
         return matchesFocus ? 1.0 : 0.25;

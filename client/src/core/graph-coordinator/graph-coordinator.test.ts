@@ -205,4 +205,24 @@ describe('GraphCoordinator', () => {
         expect(coordinator.getGraph()?.getName()).toBe('loaded');
         expect(coordinator.getInterpretation().getInterpretation().interpretation_type).toBe('test-type');
     });
+
+    it('sets the interpretation type on request', async () => {
+        const coordinator = new GraphCoordinator(new Interpretation({
+            id: 'test',
+            interpretation_type: 'test-type',
+            label: 'Test',
+            relationship_definitions: [],
+            node_definitions: []
+        }));
+        expect(coordinator.getInterpretation().getInterpretation().id).toBe("test");
+        const interpretation = new Interpretation({
+            id: 'test2',
+            interpretation_type: 'test-type',
+            label: 'Test2',
+            relationship_definitions: [],
+            node_definitions: []
+        });
+        coordinator.setInterpretation(interpretation);
+        expect(coordinator.getInterpretation().getInterpretation().id).toBe("test2");
+    });
 });

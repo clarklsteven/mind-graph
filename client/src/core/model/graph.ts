@@ -103,6 +103,17 @@ export class Graph {
     return Array.from(this.lookupSets.values());
   }
 
+  getLookupSet(id: string): GraphLookupSet | undefined {
+    return this.lookupSets.get(id);
+  }
+
+  updateLookupSet(id: string, list: string[]): void {
+    const lookupSet = this.getLookupSet(id);
+    if (lookupSet) {
+      lookupSet.values = list;
+    }
+  }
+
   export(): GraphData {
     return {
       name: this.name,

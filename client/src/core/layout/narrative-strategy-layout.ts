@@ -71,6 +71,11 @@ export class NarrativeStrategyLayout extends Layout {
         }
     }
 
+    getChapterNumber(chapter: string): number | null {
+        if (!chapter || chapter === "") return null;
+        return parseInt(chapter.split(' ')[1]);
+    }
+
     stepSimulation(): number {
         const nodes = this.graph.getNodes();
         const edges = this.graph.getEdges();
@@ -78,12 +83,15 @@ export class NarrativeStrategyLayout extends Layout {
 
         let totalMovement = 0;
 
-        // Repulsion
+        // Repulsion & attraction
         for (let i = 0; i < nodes.length; i++) {
+            const a: GraphNode = nodes[i];
+            const aChapter: string = a.properties ? a.properties["chapter"] as string : "";
+
 
             for (let j = i + 1; j < nodes.length; j++) {
-                const a = nodes[i];
-                const b = nodes[j];
+                const b: GraphNode = nodes[j];
+                const bChapter: string = b.properties ? b.properties["chapter"] as string : "";
 
                 if (!connectedNodes.has(a.id) || !connectedNodes.has(b.id)) continue;
 
@@ -105,6 +113,33 @@ export class NarrativeStrategyLayout extends Layout {
                 a.velocity.vy -= fy;
                 b.velocity.vx += fx;
                 b.velocity.vy += fy;
+
+                // Chapter forces
+                // Check if the nodes have Chapter properties.
+                // If they are the same chapter, pull them closer together.
+                // If they are different chapters, push them apart with higher numbered chapters being pushed right.
+                const aChapterNumber: number | null = aChapter !== "" ? this.getChapterNumber(aChapter) : null;
+                const bChapterNumber: number | null = bChapter !== "" ? this.getChapterNumber(bChapter) : null;
+
+                if (!aChapterNumber || !bChapterNumber) continue;
+
+                const chapterForce = 1;
+
+                if (aChapterNumber === bChapterNumber) {
+                    const cfx = (dx / distance) * chapterForce;
+                    const cfy = (dy / distance) * chapterForce / 5;
+                    a.velocity.vx += cfx;
+                    a.velocity.vy += cfy;
+                    b.velocity.vx -= cfx;
+                    b.velocity.vy -= cfy;
+                } else {
+                    const cfx = (dx / distance) * chapterForce;
+                    //const cfy = (dy / distance) * chapterForce / 5;
+                    if (aChapterNumber > bChapterNumber && a.position.x > b.position.x) {
+                        a.velocity.vx -= cfx;
+                        b.velocity.vx += cfx;
+                    }
+                }
             }
         }
 
@@ -153,19 +188,12 @@ export class NarrativeStrategyLayout extends Layout {
             a.velocity.vy += fy;
             b.velocity.vx -= fx;
             b.velocity.vy -= fy;
-        }
 
-        for (const edge of edges) {
-            const a = nodes.find((node) => node.id === edge.from);
-            const b = nodes.find((node) => node.id === edge.to);
-
-            if (!a || !b) continue;
             // Make sure the connected nodes are linked from left to right to give a clearer structure to the graph
-            a.velocity ??= { vx: 0, vy: 0 };
-            b.velocity ??= { vx: 0, vy: 0 };
+            const linkForce = 1;
             if (a.position.x + this.horizontalSpacing >= b.position.x) {
-                a.velocity.vx -= 0.8;
-                b.velocity.vx += 0.8;
+                a.velocity.vx -= linkForce;
+                b.velocity.vx += linkForce;
             }
         }
 
