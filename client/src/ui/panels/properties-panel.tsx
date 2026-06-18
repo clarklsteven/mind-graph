@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import type { Graph } from "../../core/model/graph";
 import type { GraphNode } from "../../core/model/node";
-import { getDangerButtonStyle, getPropertyLabelStyle, getPropertyDisplayStyle, getPropertyInputStyle, getPropertyDropdownStyle } from "../utils/styles";
+import { getPropertyLabelStyle, getPropertyInputStyle, getPropertyDropdownStyle, getPropertyDisplayStyle, getDangerButtonStyle } from "../utils/styles";
 import { useEffect, useRef } from "react";
 import type { GraphInterpretation, InterpretationOptionSet } from "../../core/model/graph-interpretation";
 import type { NodeDefinition } from "../../core/model/node-definition";
-import { asiguraPalette } from "../utils/asigura-palette";
 import type { GraphLookupSet } from "../../core/model/graph-data";
+import { asiguraPalette } from "../utils/asigura-palette";
+import ListEditor from "../components/list-editor";
 
 export type PropertiesPanelProps = {
     graph: Graph;
@@ -41,7 +42,7 @@ export default function PropertiesPanel({
             undefined : undefined;
 
     const titleInputRef = useRef<HTMLInputElement>(null);
-    const [listTextState, setListTextState] = useState<Record<string, string>>({});
+    const [listTextState, setListTextState] = useState<Record<string, string[]>>({});
 
     useEffect(() => {
         if (!selectedNodeId) return;
@@ -62,23 +63,23 @@ export default function PropertiesPanel({
     };
 
     const updateListLookup = (listName: string, listValue: string[]) => {
+        console.log(listName);
+        console.log(listValue);
         graph.updateLookupSet(listName, listValue);
     }
 
-    const commitListProperty = (stateKey: string) => {
-        const textValue = listTextState[stateKey] ?? "";
+    const commitListProperty = (stateKey: string, list: string[]) => {
+        const cleanedList = list.map(m => m.replace(/ /g, ""));
 
-        const listValue = Array.from(
-            new Set(
-                textValue
-                    .split(",")
-                    .map(item => item.trim())
-                    .filter(Boolean)
-            )
-        );
+        setListTextState(current => ({
+            ...current,
+            [stateKey]: cleanedList,
+        }));
 
-        updateNodeProperty(stateKey.split(":")[1], listValue);
-        updateListLookup(stateKey.split(":")[1], listValue);
+        const propertyId = stateKey.split(":")[1];
+
+        updateNodeProperty(propertyId, cleanedList);
+        updateListLookup(propertyId, cleanedList);
         onGraphChanged();
     };
 
@@ -173,9 +174,11 @@ export default function PropertiesPanel({
                     )
                 } else if (property.valueType === "list") {
                     const stateKey = `${selectedNode.id}:${property.id}`;
-                    const currentValue =
+                    const currentValue: string[] =
                         listTextState[stateKey] ??
-                        ((selectedNode.properties![property.id] as string[] | undefined) ?? []).join(", ");
+                        ((selectedNode.properties![property.id] as string[] | undefined) ?? []);
+                    const availableListItems = graph.getLookupSet(property.id);
+                    console.log(availableListItems);
 
                     return (
                         <div key={property.id}>
@@ -184,17 +187,11 @@ export default function PropertiesPanel({
                                 style={getPropertyLabelStyle()}>
                                 {property.label}
                             </div>
-                            <input
-                                type="text"
-                                value={currentValue}
-                                style={getPropertyInputStyle()}
-                                onChange={(e) =>
-                                    setListTextState({
-                                        ...listTextState,
-                                        [stateKey]: e.target.value,
-                                    })
-                                }
-                                onBlur={() => commitListProperty(stateKey)}
+                            <ListEditor
+                                list={currentValue}
+                                availableListItems={graph.getLookupSet("tags")?.values ?? []}
+                                onChange={(list: string[]) => commitListProperty(stateKey, list)}
+                                onBlur={(list: string[]) => commitListProperty(stateKey, list)}
                             />
                         </div>
                     );

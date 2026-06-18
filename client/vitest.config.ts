@@ -23,10 +23,10 @@ export default defineConfig({
         "src/**/coverage/**"
       ],
       thresholds: {
-        statements: 31,
-        branches: 21,
-        functions: 41,
-        lines: 32
+        statements: 32,
+        branches: 22,
+        functions: 43,
+        lines: 33
       }
     },
     environment: 'jsdom',

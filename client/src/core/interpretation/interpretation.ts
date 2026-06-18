@@ -24,7 +24,7 @@ export class Interpretation {
                     const otherNode = graph.getNode(otherNodeId);
                     if (!otherNode) continue;
 
-                    const relationshipDef = this.interpretation.relationship_definitions.find(def => def.id === edge.type);
+                    const relationshipDef = this.interpretation.relationship_definitions!.find(def => def.id === edge.type);
                     if (!relationshipDef) continue;
                     if (relationshipDef.sourceWeightConsidered && edge.to === node.id) {
                         newWeight += (otherNode.weight || 1) * (relationshipDef.sourceWeightMultiplier || 1);

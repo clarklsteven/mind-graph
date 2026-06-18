@@ -110,7 +110,12 @@ export class Graph {
   updateLookupSet(id: string, list: string[]): void {
     const lookupSet = this.getLookupSet(id);
     if (lookupSet) {
-      lookupSet.values = list;
+      for (const item of list) {
+        if (!lookupSet.values.includes(item)) {
+          lookupSet.values.push(item);
+        }
+      }
+      lookupSet.values.sort();
     }
   }
 

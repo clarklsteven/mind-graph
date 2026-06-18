@@ -102,7 +102,7 @@ export abstract class GraphRenderer {
     }
 
     getRelationshipDefinition(edge: Edge) {
-        if (!this.interpretation) return null;
+        if (!this.interpretation || !this.interpretation.relationship_definitions) return null;
 
         return this.interpretation.relationship_definitions.find(
             def => def.id === edge.type
