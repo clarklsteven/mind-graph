@@ -85,6 +85,14 @@
                     "required": false,
                     "editable": false,
                     "defaultValue": []
+                },
+                {
+                    "id": "references",
+                    "label": "References",
+                    "valueType": "reference",
+                    "required": false,
+                    "editable": false,
+                    "defaultValue": []
                 }
             ],
             "completeness": {
@@ -141,6 +149,14 @@
                     "id": "tags",
                     "label": "Tags",
                     "valueType": "list",
+                    "required": false,
+                    "editable": false,
+                    "defaultValue": []
+                },
+                {
+                    "id": "references",
+                    "label": "References",
+                    "valueType": "reference",
                     "required": false,
                     "editable": false,
                     "defaultValue": []
@@ -214,6 +230,14 @@
                     "required": false,
                     "editable": false,
                     "defaultValue": []
+                },
+                {
+                    "id": "references",
+                    "label": "References",
+                    "valueType": "reference",
+                    "required": false,
+                    "editable": false,
+                    "defaultValue": []
                 }
             ],
             "completeness": {
@@ -281,6 +305,14 @@
                     "id": "tags",
                     "label": "Tags",
                     "valueType": "list",
+                    "required": false,
+                    "editable": false,
+                    "defaultValue": []
+                },
+                {
+                    "id": "references",
+                    "label": "References",
+                    "valueType": "reference",
                     "required": false,
                     "editable": false,
                     "defaultValue": []

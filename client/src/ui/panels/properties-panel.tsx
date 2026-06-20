@@ -8,6 +8,8 @@ import type { NodeDefinition } from "../../core/model/node-definition";
 import type { GraphLookupSet } from "../../core/model/graph-data";
 import { asiguraPalette } from "../utils/asigura-palette";
 import ListEditor from "../components/list-editor";
+import ReferenceEditor from "../components/reference-editor";
+import type { ArtifactReference } from "../../core/model/artefact-reference";
 
 export type PropertiesPanelProps = {
     graph: Graph;
@@ -89,6 +91,13 @@ export default function PropertiesPanel({
         selectedNode.title = event.target.value;
         onGraphChanged();
     };
+
+    const commitReferenceChange = (propertyId: string, newReferenceList: ArtifactReference[]) => {
+        if (selectedNode && selectedNode.properties && selectedNode.properties[propertyId]) {
+            selectedNode.properties[propertyId] = [...newReferenceList];
+            onGraphChanged();
+        }
+    }
 
     let propertiesComponents: React.ReactNode = (<div>No properties</div>);
     if (selectedNode && selectedNode.properties && nodeDefinition && nodeDefinition.properties && nodeDefinition.properties.length > 0) {
@@ -178,7 +187,6 @@ export default function PropertiesPanel({
                         listTextState[stateKey] ??
                         ((selectedNode.properties![property.id] as string[] | undefined) ?? []);
                     const availableListItems = graph.getLookupSet(property.id);
-                    console.log(availableListItems);
 
                     return (
                         <div key={property.id}>
@@ -189,9 +197,25 @@ export default function PropertiesPanel({
                             </div>
                             <ListEditor
                                 list={currentValue}
-                                availableListItems={graph.getLookupSet("tags")?.values ?? []}
+                                availableListItems={availableListItems?.values ?? []}
                                 onChange={(list: string[]) => commitListProperty(stateKey, list)}
                                 onBlur={(list: string[]) => commitListProperty(stateKey, list)}
+                            />
+                        </div>
+                    );
+                } else if (property.valueType === "reference") {
+                    const referenceList = selectedNode.properties ?
+                        selectedNode.properties[property.id] as ArtifactReference[] : [];
+                    return (
+                        <div key={property.id}>
+                            <div
+                                key={property.id}
+                                style={getPropertyLabelStyle()}>
+                                {property.label}
+                            </div>
+                            <ReferenceEditor
+                                referenceList={referenceList}
+                                onChange={(referenceList: ArtifactReference[]) => commitReferenceChange(property.id, referenceList)}
                             />
                         </div>
                     );
@@ -239,10 +263,11 @@ export default function PropertiesPanel({
                 borderLeft: "1px solid " + asiguraPalette["asigura-7"],
                 padding: "16px",
                 boxSizing: "border-box",
-                width: "260px",
-                minWidth: "260px",
+                width: "280px",
+                minWidth: "280px",
                 display: "flex",
                 flexDirection: "column",
+                gap: "4px"
             }}
         >
             <h2

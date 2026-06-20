@@ -85,10 +85,30 @@ body,
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  padding-bottom: 1rem;
+  padding: 4px;
+  border: 1px solid #BFCDAD;
 }
 
 .properties-actions {
   flex-shrink: 0;
   padding: 1rem;
+  border: 1px solid #BFCDAD;
+}
+
+.properties-content::-webkit-scrollbar {
+    width: 12px;
+}
+
+.properties-content::-webkit-scrollbar-track {
+    background: #d6d6b8;
+    border-radius: 6px;
+}
+
+.properties-content::-webkit-scrollbar-thumb {
+    background: #8ca98b;
+    border-radius: 6px;
+}
+
+.properties-content::-webkit-scrollbar-thumb:hover {
+    background: #6f8f6e;
 }

@@ -5,7 +5,7 @@ export type PropertyOptionSource =
 export interface NodePropertyDefinition {
     id: string;
     label: string;
-    valueType: "string" | "number" | "boolean" | "paragraph" | "option" | "list";
+    valueType: "string" | "number" | "boolean" | "paragraph" | "option" | "list" | "reference";
     required: boolean;
     editable?: boolean;
     defaultValue?: unknown;
