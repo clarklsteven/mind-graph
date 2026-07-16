@@ -2,6 +2,7 @@ import express from "express";
 import graphsRouter from "./routes/graphs";
 import healthcheckRouter from "./routes/healthcheck";
 import userRouter from "./routes/user";
+import schemaRouter from "./routes/schema";
 import cors from "cors";
 import { pathToFileURL } from "url";
 
@@ -12,6 +13,7 @@ app.use(express.json());
 app.use("/graphs", graphsRouter);
 app.use("/healthcheck", healthcheckRouter);
 app.use("/user", userRouter);
+app.use("/schemas", schemaRouter);
 
 const port = 3000;
 const isMain = import.meta.url === pathToFileURL(process.argv[1]).href;

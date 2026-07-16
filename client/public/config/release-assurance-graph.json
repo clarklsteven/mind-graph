@@ -2,6 +2,7 @@
     "id": "release-assurance-graph",
     "interpretation_type": "release-assurance-graph",
     "label": "Release Assurance Graph",
+    "schema_type": "application",
     "relationship_definitions": [],
     "node_definitions": []
 }

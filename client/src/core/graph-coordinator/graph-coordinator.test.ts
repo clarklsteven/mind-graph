@@ -33,7 +33,8 @@ describe('GraphCoordinator', () => {
             id: 'test',
             interpretation_type: 'test-type',
             label: 'Test',
-            relationship_definitions: []
+            relationship_definitions: [],
+            schema_type: "application"
         });
 
         const coordinator = GraphCoordinator.createGraph('My Graph', interpretation);
@@ -67,7 +68,8 @@ describe('GraphCoordinator', () => {
                     isDefault: true,
                     properties: [{ id: 'title', label: 'Title', valueType: 'string', required: false }]
                 }
-            ]
+            ],
+            schema_type: "application"
         }));
 
         const sourceGraph = new Graph();
@@ -95,7 +97,8 @@ describe('GraphCoordinator', () => {
                     singleParent: null,
                     allowsCycles: null
                 }
-            ]
+            ],
+            schema_type: ''
         };
 
         const normalised = coordinator.normaliseGraph(sourceGraph, interpretation);
@@ -125,7 +128,8 @@ describe('GraphCoordinator', () => {
                 singleParent: null,
                 allowsCycles: null
             }],
-            node_definitions: [{ id: 'default-node', label: 'Default Node', isDefault: true, properties: [] }]
+            node_definitions: [{ id: 'default-node', label: 'Default Node', isDefault: true, properties: [] }],
+            schema_type: "application"
         }));
 
         const sourceGraph = new Graph();
@@ -147,7 +151,8 @@ describe('GraphCoordinator', () => {
                 childEnd: null,
                 singleParent: null,
                 allowsCycles: null
-            }]
+            }],
+            schema_type: ''
         };
 
         const normalised = coordinator.normaliseGraph(sourceGraph, interpretation);
@@ -162,7 +167,8 @@ describe('GraphCoordinator', () => {
             interpretation_type: 'test-type',
             label: 'Test',
             relationship_definitions: [],
-            node_definitions: []
+            node_definitions: [],
+            schema_type: "application"
         }));
 
         coordinator.getGraph()?.setName('Untitled Graph');
@@ -189,7 +195,8 @@ describe('GraphCoordinator', () => {
             interpretation_type: 'test-type',
             label: 'Test',
             node_definitions: [{ id: 'node-type', label: 'Node Type', isDefault: true }],
-            relationship_definitions: []
+            relationship_definitions: [],
+            schema_type: ''
         };
 
         const coordinator = new GraphCoordinator(new Interpretation({
@@ -197,7 +204,8 @@ describe('GraphCoordinator', () => {
             interpretation_type: 'initial-type',
             label: 'Initial',
             relationship_definitions: [],
-            node_definitions: []
+            node_definitions: [],
+            schema_type: "application"
         }));
 
         await coordinator.loadGraph('loaded', { 'test-type': interpretation });
@@ -212,7 +220,8 @@ describe('GraphCoordinator', () => {
             interpretation_type: 'test-type',
             label: 'Test',
             relationship_definitions: [],
-            node_definitions: []
+            node_definitions: [],
+            schema_type: "application"
         }));
         expect(coordinator.getInterpretation().getInterpretation().id).toBe("test");
         const interpretation = new Interpretation({
@@ -220,7 +229,8 @@ describe('GraphCoordinator', () => {
             interpretation_type: 'test-type',
             label: 'Test2',
             relationship_definitions: [],
-            node_definitions: []
+            node_definitions: [],
+            schema_type: "application"
         });
         coordinator.setInterpretation(interpretation);
         expect(coordinator.getInterpretation().getInterpretation().id).toBe("test2");

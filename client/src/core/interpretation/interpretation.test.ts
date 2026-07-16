@@ -11,6 +11,7 @@ describe('Interpretation', () => {
             interpretation_type: 'test',
             node_definitions: [],
             relationship_definitions: [],
+            schema_type: ''
         };
 
         const interpretation = new Interpretation(interpretationData);
@@ -51,6 +52,7 @@ describe('Interpretation', () => {
                     allowsCycles: null
                 },
             ],
+            schema_type: ''
         };
 
         const interpretation = new Interpretation(interpretationData);

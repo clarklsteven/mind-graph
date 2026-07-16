@@ -2,6 +2,7 @@
     "id": "concept-graph",
     "interpretation_type": "concept-graph",
     "label": "Concept Graph",
+    "schema_type": "application",
     "relationship_definitions": [
         {
             "id": "relates-to",

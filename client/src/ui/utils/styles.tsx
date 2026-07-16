@@ -101,6 +101,7 @@ export function getModalOverlayStyle(): React.CSSProperties {
         top: 0,
         left: 0,
         width: "100vw",
+        height: "100vh",
         backgroundColor: "rgba(0, 0, 0, 0.35)",
         display: "flex",
         alignItems: "center",
@@ -109,11 +110,11 @@ export function getModalOverlayStyle(): React.CSSProperties {
     };
 }
 
-export function getModalContentStyle(): React.CSSProperties {
+export function getModalContentStyle(width?: string): React.CSSProperties {
     return {
-        width: "480px",
+        width: width || "480px",
         maxWidth: "90vw",
-        maxHeight: "80vh",
+        maxHeight: "90vh",
         overflowY: "auto",
         backgroundColor: "#fffaf0",
         border: "1px solid #d6c7a1",

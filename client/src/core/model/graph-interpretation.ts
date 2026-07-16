@@ -21,6 +21,7 @@ export interface GraphInterpretation {
     id: string;
     interpretation_type: string;
     label: string;
+    schema_type: string;
     relationship_definitions?: RelationshipDefinition[];
     node_definitions?: NodeDefinition[];
     interpretation_palette?: InterpretationPalette;

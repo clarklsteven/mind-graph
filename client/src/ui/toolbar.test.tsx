@@ -11,6 +11,7 @@ describe("Toolbar", () => {
                 onSettings={vi.fn()}
                 onHelp={vi.fn()}
                 onLoadGraph={vi.fn()}
+                onCreateFlexibleSchema={vi.fn()}
             />
         );
 
@@ -28,6 +29,7 @@ describe("Toolbar", () => {
         const onSettings = vi.fn();
         const onHelp = vi.fn();
         const onLoadGraph = vi.fn();
+        const onCreateFlexibleSchema = vi.fn();
 
         render(
             <Toolbar
@@ -36,6 +38,7 @@ describe("Toolbar", () => {
                 onSettings={onSettings}
                 onHelp={onHelp}
                 onLoadGraph={onLoadGraph}
+                onCreateFlexibleSchema={onCreateFlexibleSchema}
             />
         );
 

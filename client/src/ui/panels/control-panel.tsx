@@ -8,6 +8,7 @@ import NarrativeStrategyControls from "./context-specific-panels/narrative-strat
 import { asiguraPalette } from "../utils/asigura-palette";
 import type { GraphLookupSet } from "../../core/model/graph-data";
 import type { FocusSet } from "../main-area";
+import FlexibleControls from "./context-specific-panels/flexible-controls";
 
 export type ControlPanelProps = {
     name: string;
@@ -41,6 +42,11 @@ export default function ControlPanel({
     setFocusSet
 }: ControlPanelProps) {
     function contextSpecificControls(interpretationType: string | undefined): React.ReactNode {
+        const schemaType = interpretation?.schema_type;
+        if (schemaType === "flexible") {
+            interpretationType = "flexible";
+        }
+
         switch (interpretationType) {
             case "thinking-graph":
                 return ThinkingGraphControls({
@@ -50,10 +56,8 @@ export default function ControlPanel({
                     setIndicatorState,
                     setMode,
                 });
-                break;
             case "mind-map-graph":
                 return DefaultControls();
-                break;
             case "narrative-strategy-graph":
                 return NarrativeStrategyControls({
                     graphLookupSets,
@@ -67,7 +71,17 @@ export default function ControlPanel({
                     focusSet,
                     setFocusSet
                 });
-                break;
+            case "flexible":
+                return FlexibleControls({
+                    graphLookupSets,
+                    mode,
+                    setMode,
+                    interpretation,
+                    addNodeType,
+                    setAddNodeType,
+                    addEdgeType,
+                    setAddEdgeType
+                });
             default:
                 return null;
         }

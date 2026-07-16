@@ -94,25 +94,43 @@ describe('ReferenceEditor', () => {
         expect(openSpy).toHaveBeenCalledWith('https://example.com', '_blank');
     });
 
-    it('updates window.location.href when opening an obsidian reference', async () => {
+    it("updates window.location.href when opening an obsidian reference", async () => {
+        const user = userEvent.setup();
         const onChange = vi.fn();
         const originalLocation = window.location;
-        delete (window as any).location;
-        (window as any).location = { href: '' };
 
-        render(<ReferenceEditor referenceList={references} onChange={onChange} />);
-
-        const item = screen.getByText('Obsidian Note').closest('div');
-        expect(item).toBeTruthy();
-
-        const buttons = within(item as HTMLElement).getAllByRole('button');
-        await userEvent.click(buttons[0]);
-
-        expect(window.location.href).toBe('obsidian://path');
-
-        Object.defineProperty(window, 'location', {
+        Object.defineProperty(window, "location", {
             configurable: true,
-            value: originalLocation,
+            value: {
+                href: "",
+            } as Location,
         });
+
+        try {
+            render(
+                <ReferenceEditor
+                    referenceList={references}
+                    onChange={onChange}
+                />
+            );
+
+            const item = screen
+                .getByText("Obsidian Note")
+                .closest("div");
+
+            expect(item).not.toBeNull();
+
+            const buttons = within(item as HTMLElement)
+                .getAllByRole("button");
+
+            await user.click(buttons[0]);
+
+            expect(window.location.href).toBe("obsidian://path");
+        } finally {
+            Object.defineProperty(window, "location", {
+                configurable: true,
+                value: originalLocation,
+            });
+        }
     });
 });

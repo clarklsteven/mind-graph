@@ -12,5 +12,12 @@ export async function loadInterpretations(): Promise<Record<string, GraphInterpr
         })
     );
 
+    const flexibleSchemasResponse = await fetch("http://localhost:3000/schemas");
+    const flexibleSchemasJson = await flexibleSchemasResponse.json();
+    const flexibleSchemas: GraphInterpretation[] = flexibleSchemasJson.schemas;
+    flexibleSchemas.map((schema) => {
+        entries.push([schema.interpretation_type, schema]);
+    })
+
     return Object.fromEntries(entries);
 }

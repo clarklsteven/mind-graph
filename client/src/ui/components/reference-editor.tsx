@@ -141,7 +141,7 @@ export default function ReferenceEditor({
                 >Add Reference</button>
             </div>
             {
-                referenceList.map(item => (
+                referenceList ? referenceList.map(item => (
                     <div key={item.label} className="reference-card"
 
                         style={{
@@ -206,7 +206,7 @@ export default function ReferenceEditor({
                             </button>
                         </div>
                     </div>
-                ))
+                )) : <div />
             }
             <NewReferenceModal
                 isOpen={isNewReferenceModalOpen}

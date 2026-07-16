@@ -2,6 +2,7 @@
     "id": "thinking-graph",
     "interpretation_type": "thinking-graph",
     "label": "Thinking Graph",
+    "schema_type": "application",
     "relationship_definitions": [
         {
             "id": "untyped",

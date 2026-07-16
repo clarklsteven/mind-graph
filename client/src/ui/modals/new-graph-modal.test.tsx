@@ -7,12 +7,13 @@ type GraphInterpretation = {
     id: string;
     interpretation_type: string;
     label: string;
+    schema_type: string;
 };
 
 describe('NewGraphModal', () => {
     const interpretations: GraphInterpretation[] = [
-        { id: 'thinking-graph', interpretation_type: 'thinking-graph', label: 'Thinking Graph' },
-        { id: 'narrative-strategy-graph', interpretation_type: 'narrative-strategy-graph', label: 'Narrative Strategy' },
+        { id: 'thinking-graph', interpretation_type: 'thinking-graph', label: 'Thinking Graph', schema_type: "application" },
+        { id: 'narrative-strategy-graph', interpretation_type: 'narrative-strategy-graph', label: 'Narrative Strategy', schema_type: "application" },
     ];
 
     it('renders the modal with default values when open', () => {

@@ -2,6 +2,7 @@
     "id": "root-cause-analysis-graph",
     "interpretation_type": "root-cause-analysis-graph",
     "label": "Root Cause Analysis Graph",
+    "schema_type": "application",
     "relationship_definitions": [],
     "node_definitions": []
 }

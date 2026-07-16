@@ -4,7 +4,8 @@ import {
     FolderOpen,
     Save,
     Settings,
-    CircleHelp
+    CircleHelp,
+    SquareLibrary
 } from "lucide-react";
 import { asiguraPalette } from "./utils/asigura-palette";
 
@@ -14,6 +15,7 @@ type ToolbarProps = {
     onSettings: () => void;
     onHelp: () => void;
     onLoadGraph: () => void;
+    onCreateFlexibleSchema: () => void;
 };
 
 export default function Toolbar({
@@ -21,7 +23,8 @@ export default function Toolbar({
     onCreate,
     onSettings,
     onHelp,
-    onLoadGraph
+    onLoadGraph,
+    onCreateFlexibleSchema
 }: ToolbarProps) {
     return (
         <div className="toolbar" style={{ backgroundColor: asiguraPalette["asigura-7"], borderBottom: "1px solid " + asiguraPalette["asigura-6"] }}>
@@ -52,6 +55,12 @@ export default function Toolbar({
                     style={getSecondaryButtonStyle()}
                     title={"Save Graph"}>
                     <Save size={16} />
+                </button>
+                <button
+                    onClick={onCreateFlexibleSchema}
+                    style={getSecondaryButtonStyle()}
+                    title={"Create Flexible Schema"}>
+                    <SquareLibrary size={16} />
                 </button>
             </div>
             <div

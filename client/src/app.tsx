@@ -22,6 +22,7 @@ import { LoadGraphModal } from "./ui/modals/load-graph-modal";
 import { saveGraph, updateGraph } from "./api/graphs";
 import { asiguraPalette } from "./ui/utils/asigura-palette";
 import { NarrativeStrategyLayout } from "./core/layout/narrative-strategy-layout";
+import CreateFlexibleSchemaModal from "./ui/modals/create-flexible-schema-modal";
 
 export type Mode = "select" | "add" | "link" | "delete";
 
@@ -34,6 +35,7 @@ export default function App() {
     const [isInterpretationHelpModalOpen, setIsInterpretationHelpModalOpen] = useState(false);
     const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
     const [isLoadGraphModalOpen, setIsLoadGraphModalOpen] = useState(false);
+    const [isCreateFlexibleSchemaModalOpen, setIsCreateFlexibleSchemaModalOpen] = useState(false);
     const [indicatorState, setIndicatorState] = useState<Record<string, boolean>>({});
     const [interpretationRegistry, setInterpretationRegistry] = useState<Record<string, GraphInterpretation>>({});
     const [interpretationsLoaded, setInterpretationsLoaded] = useState(false);
@@ -70,6 +72,13 @@ export default function App() {
     };
 
     const setRendererForInterpretation = (interpretationType: string) => {
+        const interpretation = interpretationRegistry[interpretationType];
+
+        if (interpretation.schema_type === "flexible") {
+            // Set the interpretation type to default so we get the right renderer
+            interpretationType = "default";
+        }
+
         switch (interpretationType) {
             case "mind-map-graph":
                 graphCoordinatorRef.current.setRenderer(
@@ -99,6 +108,13 @@ export default function App() {
     }
 
     const setInteractionControllerForInterpretation = (interpretationType: string) => {
+        const interpretation = interpretationRegistry[interpretationType];
+
+        if (interpretation.schema_type === "flexible") {
+            // Set the interpretation type to default so we get the right renderer
+            interpretationType = "default";
+        }
+
         switch (interpretationType) {
             case "mind-map-graph":
                 graphCoordinatorRef.current.setInteractionController(
@@ -114,6 +130,13 @@ export default function App() {
     }
 
     const setLayoutForInterpretation = (interpretationType: string) => {
+        const interpretation = interpretationRegistry[interpretationType];
+
+        if (interpretation.schema_type === "flexible") {
+            // Set the interpretation type to default so we get the right renderer
+            interpretationType = "default";
+        }
+
         switch (interpretationType) {
             case "mind-map-graph":
                 graphCoordinatorRef.current.setLayout(
@@ -206,6 +229,11 @@ export default function App() {
         setIsLoadGraphModalOpen(true);
     }
 
+    const handleOpenCreateFlexibleSchemaModal = () => {
+        // Open the modal for creating a flexible schema
+        setIsCreateFlexibleSchemaModalOpen(true);
+    }
+
     // Autosave graph to local storage on changes, with debouncing
     useEffect(() => {
         if (!initialLoadComplete) return;
@@ -295,6 +323,7 @@ export default function App() {
                 onHelp={handleOpenHelpModal}
                 onSettings={handleOpenSettingsModal}
                 onLoadGraph={handleOpenLoadGraphModal}
+                onCreateFlexibleSchema={handleOpenCreateFlexibleSchemaModal}
             />
             <MainArea
                 name={graphCoordinatorRef.current?.getGraph()?.getName() || "Untitled Graph"}
@@ -346,6 +375,15 @@ export default function App() {
                 isOpen={isLoadGraphModalOpen}
                 onClose={() => setIsLoadGraphModalOpen(false)}
                 onLoad={(name) => handleLoadGraph(name)}
+            />
+
+            <CreateFlexibleSchemaModal
+                isOpen={isCreateFlexibleSchemaModalOpen}
+                onClose={() => setIsCreateFlexibleSchemaModalOpen(false)}
+                onCreate={(schemaName) => {
+                    // Create a new flexible schema graph with the given name
+                    handleConfirmCreateNewGraph(schemaName, "default");
+                }}
             />
         </div>
     );

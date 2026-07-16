@@ -12,15 +12,16 @@ type ModalProps = {
     title: string;
     onClose: () => void;
     children: React.ReactNode;
+    width?: string; // Optional width prop
 };
 
-export function Modal({ isOpen, title, onClose, children }: ModalProps) {
+export function Modal({ isOpen, title, onClose, children, width }: ModalProps) {
     if (!isOpen) return null;
 
     return (
         <div style={getModalOverlayStyle()} onClick={onClose} role="dialog" aria-label={title}>
             <div
-                style={getModalContentStyle()}
+                style={getModalContentStyle(width)}
                 onClick={(e) => e.stopPropagation()}
             >
                 <div style={getModalHeaderStyle()}>

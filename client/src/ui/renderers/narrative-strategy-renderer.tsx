@@ -65,7 +65,13 @@ export class NarrativeStrategyRenderer extends GraphRenderer {
         const isDefaultEdgeType = this.getRelationshipDefinition(edge)?.isDefault ?? false;
 
         const focusOpacity = Math.max(this.getNodeFocusOpacity(fromNode), this.getNodeFocusOpacity(toNode));
-        context.globalAlpha = focusOpacity;
+        const statusOpacity = Math.max(this.getNodeStatusOpacity(fromNode), this.getNodeStatusOpacity(toNode));
+        if (this.focusActive()) {
+            context.globalAlpha = focusOpacity;
+        }
+        else {
+            context.globalAlpha = statusOpacity;
+        }
 
         context.beginPath();
         context.moveTo(startX, startY);
@@ -137,7 +143,12 @@ export class NarrativeStrategyRenderer extends GraphRenderer {
         context.fillStyle = "rgba(128, 128, 128, 0.0)";
         context.fillRect(x - boxWidth / 2, y - boxHeight / 2, boxWidth, boxHeight);
 
-        context.globalAlpha = labelOpacity * focusOpacity;
+        if (this.focusActive()) {
+            context.globalAlpha = labelOpacity * focusOpacity;
+        }
+        else {
+            context.globalAlpha = labelOpacity * statusOpacity;
+        }
         context.fillStyle = "#88af94";
         context.fillText(label, 0, 0);
         context.globalAlpha = 1.0;
@@ -164,6 +175,17 @@ export class NarrativeStrategyRenderer extends GraphRenderer {
             default:
                 break;
         }
+    }
+
+    private focusActive(): boolean {
+        const focusSet = this.focusSet ?? {};
+        const focusKeys = Object.keys(focusSet);
+
+        if (focusKeys.length === 0) {
+            return false;
+        }
+        return true;
+
     }
 
     private getNodeFocusOpacity(node: GraphNode): number {
@@ -201,6 +223,12 @@ export class NarrativeStrategyRenderer extends GraphRenderer {
         return matchesFocus ? 1.0 : 0.25;
     }
 
+    private getNodeStatusOpacity(node: GraphNode): number {
+        const status = node.properties?.["status"];
+
+        return status === "Done" ? 0.25 : 1.0;
+    }
+
     drawNode(canvas: HTMLCanvasElement, graphState: GraphState, node: GraphNode): void {
         if (!canvas) return;
 
@@ -215,7 +243,12 @@ export class NarrativeStrategyRenderer extends GraphRenderer {
         const colourPalette = this.getInterpretationColourPalette(node);
 
         const focusOpacity = this.getNodeFocusOpacity(node);
-        context.globalAlpha = focusOpacity;
+        if (this.focusActive()) {
+            context.globalAlpha = focusOpacity;
+        }
+        else {
+            context.globalAlpha = this.getNodeStatusOpacity(node);
+        }
         context.beginPath();
         const screen = this.graphToScreen(graphState, node.position.x, node.position.y);
         context.arc(screen.x, screen.y, radius * graphState.view.scale, 0, Math.PI * 2);
@@ -290,12 +323,17 @@ export class NarrativeStrategyRenderer extends GraphRenderer {
         // Text
         const labelOpacity = this.getNodeLabelOpacity(graphState.view.scale);
         const focusOpacity = this.getNodeFocusOpacity(node);
-
+        const statusOpacity = this.getNodeStatusOpacity(node);
 
         if (labelOpacity <= 0.05) {
             return;
         }
-        context.globalAlpha = labelOpacity * focusOpacity;
+        if (this.focusActive()) {
+            context.globalAlpha = labelOpacity * focusOpacity;
+        }
+        else {
+            context.globalAlpha = labelOpacity * statusOpacity;
+        }
         context.fillStyle = "#651A2C";
         context.fillText(node.title, x, y);
         context.globalAlpha = 1.0;

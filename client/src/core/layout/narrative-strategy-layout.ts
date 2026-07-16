@@ -132,13 +132,21 @@ export class NarrativeStrategyLayout extends Layout {
                     a.velocity.vy += cfy;
                     b.velocity.vx -= cfx;
                     b.velocity.vy -= cfy;
-                } else {
-                    const cfx = (dx / distance) * chapterForce;
-                    //const cfy = (dy / distance) * chapterForce / 5;
-                    if (aChapterNumber > bChapterNumber && a.position.x > b.position.x) {
-                        a.velocity.vx -= cfx;
-                        b.velocity.vx += cfx;
-                    }
+                }
+                const chapterSpacing = 100;
+
+                if (aChapterNumber !== bChapterNumber) {
+                    const chapterForce = 0.02;
+                    const chapterDelta = aChapterNumber - bChapterNumber;
+
+                    const desiredDx = chapterDelta * chapterSpacing;
+                    const actualDx = a.position.x - b.position.x;
+
+                    const error = desiredDx - actualDx;
+                    const correction = error * chapterForce;
+
+                    a.velocity.vx += correction;
+                    b.velocity.vx -= correction;
                 }
             }
         }
@@ -192,16 +200,20 @@ export class NarrativeStrategyLayout extends Layout {
             // Make sure the connected nodes are linked from left to right to give a clearer structure to the graph
             const linkForce = 1;
             if (a.position.x + this.horizontalSpacing >= b.position.x) {
-                a.velocity.vx -= linkForce;
-                b.velocity.vx += linkForce;
+                a.velocity.vx -= linkForce * 2;
+                b.velocity.vx += linkForce * 2;
+            }
+            if (a.position.x >= b.position.x) {
+                a.velocity.vx -= linkForce * 3;
+                b.velocity.vx += linkForce * 3;
             }
         }
 
         for (const node of nodes) {
             // Damp the velocity slighty to give things chance to settle
-            const damping = 0.25;
-            const maxSpeed = 5;
-            const minSpeed = 0.01;
+            const damping = 0.2;
+            const maxSpeed = 10;
+            const minSpeed = 0.2;
 
             node.velocity ??= { vx: 0, vy: 0 };
             node.velocity.vx *= damping;

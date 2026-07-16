@@ -2,6 +2,7 @@
     "id": "mind-map-graph",
     "interpretation_type": "mind-map-graph",
     "label": "Mind Map Graph",
+    "schema_type": "application",
     "relationship_definitions": [
         {
             "id": "parent-child",
