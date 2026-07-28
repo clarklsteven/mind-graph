@@ -16,7 +16,7 @@ body,
 
 .toolbar {
     height: 48px;
-    background-color: rgb(245, 239, 217);
+    background-color: #BFCDAD;
     border-bottom: 1px solid rgb(210, 205, 190);
     display: flex;
     flex-direction: row;
@@ -33,12 +33,19 @@ body,
 
 .status-bar {
     flex: 0 0 20px;
-    background-color: rgb(245, 239, 217);
-    border-top: 1px solid rgb(210, 205, 190);
+    background-color: #BFCDAD;
+    border-top: 1px solid #9FB99C;
     display: flex;
-    align-items: right;
-    justify-content: right;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
     padding: 3px 8px;
+}
+
+.status-bar-pill {
+    border: 1px solid #9FB99C;
+    border-radius: 4px;
+    padding: 2px 6px;
 }
 
 .left-panel {
@@ -61,6 +68,16 @@ body,
     overflow: hidden;
 }
 
+.graph-canvas {
+    width: 100vw;
+    display: block;
+    cursor: default;
+}
+
+.graph-canvas-grabbing {
+    cursor: grabbing;
+}
+
 .graph-type-badge {
     width: 24px;
     height: 24px;
@@ -79,6 +96,108 @@ body,
 
     background-color: #66cc66;
     border: 1px solid #e0d8c8;
+}
+
+.control-button {
+    width: 100%;
+    padding: 10px 12px;
+    text-align: center;
+    border: 1px solid rgb(210, 205, 190);
+    border-radius: 8px;
+    background-color: rgb(245, 239, 217);
+    color: rgb(70, 50, 60);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.control-button-active {
+    background-color: rgb(207, 223, 180);
+    color: rgb(50, 70, 35);
+}
+
+.control-button-secondary {
+    padding: 5px 12px;
+    text-align: center;
+    border: 1px solid rgb(210, 205, 190);
+    border-radius: 8px;
+    background-color: rgb(245, 239, 217);
+    color: rgb(70, 50, 60);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.toolbar-button {
+    padding: 5px 12px;
+    text-align: center;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid #80A58A;
+    background-color: #9FB99C;
+    color: rgb(50, 70, 35);
+}
+
+.toolbar-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    padding: 8px;
+    align-items: center;
+}
+
+.toolbar-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: rgb(70, 50, 60);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 8px;
+    margin-top: 12px;
+    flex: 1;
+}
+
+.panel-section {
+    border: 1px solid #e0d8c8;
+    border-radius: 8px;
+    padding: 8px;
+    background-color: #fffae7;
+}
+
+.panel-section-stretchy {
+    flex-grow: 10;
+}
+
+.panel-section-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #7a6a4f;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.panel-section-content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.indicator-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.indicator-option {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: rgb(70, 50, 60);
 }
 
 .properties-content {
@@ -111,4 +230,71 @@ body,
 
 .properties-content::-webkit-scrollbar-thumb:hover {
     background: #6f8f6e;
+}
+
+.flexible-schema-collection {
+    flex: 1;
+    border: 1px solid #9FB99C;
+    border-radius: 4px;
+    padding: 6px;
+    background: #EFEBC7;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-height: 150px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.flexible-schema-collection::-webkit-scrollbar {
+    width: 6px;
+}
+
+.flexible-schema-collection::-webkit-scrollbar-track {
+    background: #d6d6b8;
+    border-radius: 6px;
+}
+
+.flexible-schema-collection::-webkit-scrollbar-thumb {
+    background: #8ca98b;
+    border-radius: 6px;
+}
+
+.flexible-schema-collection::-webkit-scrollbar-thumb:hover {
+    background: #6f8f6e;
+}
+
+.flexible-schema-collection-button {
+    border: 1px solid #9FB99C;
+    border-radius: 4px;
+    width: 100%;
+    padding: 4px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.flexible-schema-collection-button-active {
+    background-color: #80A58A;
+    color: #FFFFE7;
+}
+
+.flexible-schema-collection-button-secondary {
+    background-color: #BFCDAD;
+    color: #407D68;
+}
+
+.flexible-schema-collection-entry {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    border: 1px solid #9FB99C;
+    border-radius: 4px;
+    padding: 2px;
+    background-color: #DFE1BE;
+}
+
+.flexible-schema-collection-entry-active {
+    background-color: #80A58A;
 }

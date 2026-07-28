@@ -74,4 +74,41 @@ describe('schema router', () => {
 
         });
     });
+
+    it('creates a schema and returns the saved schema', async () => {
+        const savedSchema = {
+            id: 'alpha',
+            label: 'alpha',
+            interpretation_type: 'alpha',
+            schema_type: 'flexible',
+            node_definitions: [],
+            relationship_definitions: []
+        };
+
+        vi.spyOn(Schemas.prototype, 'createSchema').mockResolvedValue(savedSchema);
+
+        const response = await request(app)
+            .post('/schemas')
+            .send({ schema: savedSchema });
+
+        expect(response.status).toBe(201);
+        expect(response.body).toEqual({
+            status: 'ok',
+            schema: savedSchema
+        });
+    });
+
+    it('returns a failure response when schema creation fails', async () => {
+        vi.spyOn(Schemas.prototype, 'createSchema').mockResolvedValue(null);
+
+        const response = await request(app)
+            .post('/schemas')
+            .send({ schema: { label: 'alpha' } });
+
+        expect(response.status).toBe(500);
+        expect(response.body).toEqual({
+            status: 'failed',
+            message: 'Failed to create new flexible schema'
+        });
+    });
 });

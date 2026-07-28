@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import FlexibleControls from "./flexible-controls";
+import type { GraphInterpretation } from "../../../core/model/graph-interpretation";
 
 describe("FlexibleControls", () => {
     it("renders the creation controls with interpretation content", () => {
@@ -12,7 +13,7 @@ describe("FlexibleControls", () => {
                 interpretation={{
                     node_definitions: [{ id: "idea", label: "Idea" }],
                     relationship_definitions: [{ id: "connects", label: "Connects" }],
-                } as any}
+                } as GraphInterpretation}
                 addNodeType=""
                 setAddNodeType={vi.fn()}
                 addEdgeType=""

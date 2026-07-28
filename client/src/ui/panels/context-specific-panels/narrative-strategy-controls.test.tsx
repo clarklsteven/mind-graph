@@ -1,6 +1,8 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import NarrativeStrategyControls from "./narrative-strategy-controls";
+import type { GraphInterpretation } from "../../../core/model/graph-interpretation";
+import type { GraphLookupSet } from "../../../core/model/graph-data";
 
 describe("NarrativeStrategyControls", () => {
     it("renders create controls and switches to focus options", () => {
@@ -12,12 +14,12 @@ describe("NarrativeStrategyControls", () => {
                     { id: "project", values: ["Alpha", "Beta"] },
                     { id: "chapter", values: ["Intro"] },
                     { id: "tags", values: ["tag-1"] },
-                ] as any}
+                ] as GraphLookupSet[]}
                 mode="select"
                 setMode={vi.fn()}
                 interpretation={{
                     option_sets: [{ id: "status", values: ["Open", "Done"] }, { id: "dimension", values: ["Tactical"] }],
-                } as any}
+                } as GraphInterpretation}
                 addNodeType=""
                 setAddNodeType={vi.fn()}
                 addEdgeType=""
@@ -46,10 +48,10 @@ describe("NarrativeStrategyControls", () => {
                     { id: "project", values: ["Alpha"] },
                     { id: "chapter", values: ["Intro"] },
                     { id: "tags", values: ["tag-1"] },
-                ] as any}
+                ] as GraphLookupSet[]}
                 mode="select"
                 setMode={vi.fn()}
-                interpretation={{ option_sets: [] } as any}
+                interpretation={{ option_sets: [] } as unknown as GraphInterpretation}
                 addNodeType=""
                 setAddNodeType={vi.fn()}
                 addEdgeType=""

@@ -1,10 +1,10 @@
-import { render, screen } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import EdgePreviews from "./edge-previews";
 
 describe("EdgePreviews", () => {
     beforeEach(() => {
-        const mockContext = {
+        const mockContext: Partial<CanvasRenderingContext2D> = {
             clearRect: vi.fn(),
             beginPath: vi.fn(),
             arc: vi.fn(),
@@ -20,7 +20,7 @@ describe("EdgePreviews", () => {
             lineWidth: 1,
         };
 
-        vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(mockContext as any);
+        vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(mockContext as CanvasRenderingContext2D);
     });
 
     it("renders a canvas for the requested edge type", () => {

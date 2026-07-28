@@ -10,6 +10,23 @@ export class Schemas {
         this.userSettings = new UserSettings();
     }
 
+    async createSchema(schema: GraphInterpretation): Promise<GraphInterpretation | null> {
+        const settings = this.userSettings.getSettings();
+        // Check for vault path existence, and whether there is already a schema with the given name
+        // If not, create a new schema file with the given name and return a GraphInterpretation object
+        if (settings.vaultPath) {
+            const schemaName = schema.label.replace(/\s+/g, "-");
+            const schemaDirectory = `${settings.vaultPath}/Mind Graphs/Flexible Schemas`;
+            const schemaPath = `${schemaDirectory}/${schemaName}.json`;
+            if (!fs.existsSync(schemaPath)) {
+                fs.mkdirSync(schemaDirectory, { recursive: true });
+                fs.writeFileSync(schemaPath, JSON.stringify(schema));
+                return schema;
+            }
+        }
+        return null;
+    }
+
     async getSchemas(): Promise<GraphInterpretation[]> {
         let schemaList: string[] = [];
         const schemas: GraphInterpretation[] = [];

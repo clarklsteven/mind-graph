@@ -5,7 +5,7 @@ import { Layout } from "./layout";
 export class NarrativeStrategyLayout extends Layout {
     protected isStable: boolean = true;
     protected lastAverageMovement: number = 0;
-    private horizontalSpacing: number = 200;
+    private horizontalSpacing: number = 250;
 
     constructor(graph: Graph, width: number, height: number) {
         super(graph, width, height);
@@ -133,7 +133,7 @@ export class NarrativeStrategyLayout extends Layout {
                     b.velocity.vx -= cfx;
                     b.velocity.vy -= cfy;
                 }
-                const chapterSpacing = 100;
+                const chapterSpacing = 150;
 
                 if (aChapterNumber !== bChapterNumber) {
                     const chapterForce = 0.02;
@@ -183,7 +183,7 @@ export class NarrativeStrategyLayout extends Layout {
             const distance = Math.sqrt(distSq);
 
             const idealLength = 90;
-            let springStiffness = 0.005;
+            let springStiffness = 0.004;
             if (b.type === "goal" && a.type !== "goal") springStiffness = 0.002;
             const springStrength = springStiffness * Math.sqrt(nodes.length);
 

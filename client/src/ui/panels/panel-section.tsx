@@ -1,5 +1,4 @@
 import React from "react";
-import { getPanelSectionContentStyle, getPanelSectionStyle, getPanelSectionTitleStyle, getStretchyPanelSectionStyle } from "../utils/styles";
 
 type PanelSectionProps = {
     title?: string;
@@ -8,13 +7,13 @@ type PanelSectionProps = {
 
 export function PanelSection({ title, children }: PanelSectionProps) {
     return (
-        <div style={getPanelSectionStyle()}>
+        <div className="panel-section">
             {title && (
-                <div style={getPanelSectionTitleStyle()}>
+                <div className="panel-section-title">
                     {title}
                 </div>
             )}
-            <div style={getPanelSectionContentStyle()}>
+            <div className="panel-section-content">
                 {children}
             </div>
         </div>
@@ -23,13 +22,13 @@ export function PanelSection({ title, children }: PanelSectionProps) {
 
 export function StretchyPanelSection({ title, children }: PanelSectionProps) {
     return (
-        <div style={getStretchyPanelSectionStyle()}>
+        <div className="panel-section panel-section-stretchy">
             {title && (
-                <div style={getPanelSectionTitleStyle()}>
+                <div className="panel-section-title">
                     {title}
                 </div>
             )}
-            <div style={getPanelSectionContentStyle()}>
+            <div className="panel-section-content">
                 {children}
             </div>
         </div>

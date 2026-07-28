@@ -6,7 +6,6 @@ interface LoadGraphResponse {
     graph: GraphData;
 }
 
-
 export type GraphEntry = {
     name: string;
     interpretation: string;

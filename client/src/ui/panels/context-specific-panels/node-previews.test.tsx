@@ -1,10 +1,10 @@
-import { render, screen } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import NodePreviews from "./node-previews";
 
 describe("NodePreviews", () => {
     beforeEach(() => {
-        const mockContext = {
+        const mockContext: Partial<CanvasRenderingContext2D> = {
             clearRect: vi.fn(),
             beginPath: vi.fn(),
             arc: vi.fn(),
@@ -20,7 +20,7 @@ describe("NodePreviews", () => {
             lineWidth: 1,
         };
 
-        vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(mockContext as any);
+        vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(mockContext as CanvasRenderingContext2D);
     });
 
     it("renders a canvas for the requested node type", () => {

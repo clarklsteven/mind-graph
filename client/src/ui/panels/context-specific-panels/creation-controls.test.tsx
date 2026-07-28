@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import CreationControls from "./creation-controls";
+import type { GraphInterpretation } from "../../../core/model/graph-interpretation";
 
 describe("CreationControls", () => {
     it("renders node and relationship options and updates the selected type", () => {
@@ -15,7 +16,7 @@ describe("CreationControls", () => {
                 interpretation={{
                     node_definitions: [{ id: "idea", label: "Idea" }],
                     relationship_definitions: [{ id: "connects", label: "Connects" }],
-                } as any}
+                } as GraphInterpretation}
                 addNodeType=""
                 setAddNodeType={setAddNodeType}
                 addEdgeType=""
@@ -44,7 +45,7 @@ describe("CreationControls", () => {
                 interpretation={{
                     node_definitions: [],
                     relationship_definitions: [{ id: "connects", label: "Connects" }],
-                } as any}
+                } as unknown as GraphInterpretation}
                 addNodeType=""
                 setAddNodeType={vi.fn()}
                 addEdgeType=""

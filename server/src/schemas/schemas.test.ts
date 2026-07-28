@@ -26,6 +26,40 @@ describe('Schemas', () => {
         await expect(schemaService.getSchema('missing.json')).resolves.toBeNull();
     });
 
+    it('creates a schema file when a vault path is configured', async () => {
+        const schemaDir = path.join(tempDir, 'Mind Graphs', 'Flexible Schemas');
+        const schema = {
+            id: 'alpha',
+            interpretation_type: 'alpha',
+            label: 'Alpha Schema',
+            schema_type: 'flexible',
+            node_definitions: [],
+            relationship_definitions: []
+        };
+
+        vi.spyOn(UserSettings.prototype, 'getSettings').mockReturnValue({ vaultPath: tempDir });
+
+        await expect(schemaService.createSchema(schema)).resolves.toEqual(schema);
+
+        expect(fs.existsSync(path.join(schemaDir, 'Alpha-Schema.json'))).toBe(true);
+        expect(JSON.parse(fs.readFileSync(path.join(schemaDir, 'Alpha-Schema.json'), 'utf-8'))).toEqual(schema);
+    });
+
+    it('returns null when no vault path is configured for schema creation', async () => {
+        const schema = {
+            id: 'alpha',
+            interpretation_type: 'alpha',
+            label: 'Alpha Schema',
+            schema_type: 'flexible',
+            node_definitions: [],
+            relationship_definitions: []
+        };
+
+        vi.spyOn(UserSettings.prototype, 'getSettings').mockReturnValue({ vaultPath: undefined });
+
+        await expect(schemaService.createSchema(schema)).resolves.toBeNull();
+    });
+
     it('loads schema files from the flexible schemas directory', async () => {
         const schemaDir = path.join(tempDir, 'Mind Graphs', 'Flexible Schemas');
         fs.mkdirSync(schemaDir, { recursive: true });

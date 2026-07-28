@@ -1,4 +1,3 @@
-import { getMindGraphTitleStyle, getSecondaryButtonStyle } from "./utils/styles";
 import {
     FilePlus,
     FolderOpen,
@@ -7,7 +6,6 @@ import {
     CircleHelp,
     SquareLibrary
 } from "lucide-react";
-import { asiguraPalette } from "./utils/asigura-palette";
 
 type ToolbarProps = {
     onSave: () => void;
@@ -27,65 +25,49 @@ export default function Toolbar({
     onCreateFlexibleSchema
 }: ToolbarProps) {
     return (
-        <div className="toolbar" style={{ backgroundColor: asiguraPalette["asigura-7"], borderBottom: "1px solid " + asiguraPalette["asigura-6"] }}>
-            <div
-                style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    gap: "8px",
-                    padding: "8px"
-                }}
-            >
+        <div className="toolbar">
+            <div className="toolbar-actions">
                 <button
                     onClick={onCreate}
-                    style={getSecondaryButtonStyle()}
+                    className="toolbar-button"
                     title={"New Graph"}
                 >
                     <FilePlus size={16} />
                 </button>
                 <button
                     onClick={onLoadGraph}
-                    style={getSecondaryButtonStyle()}
+                    className="toolbar-button"
                     title={"Load Graph"}
                 >
                     <FolderOpen size={16} />
                 </button>
                 <button
                     onClick={onSave}
-                    style={getSecondaryButtonStyle()}
+                    className="toolbar-button"
                     title={"Save Graph"}>
                     <Save size={16} />
                 </button>
                 <button
                     onClick={onCreateFlexibleSchema}
-                    style={getSecondaryButtonStyle()}
+                    className="toolbar-button"
                     title={"Create Flexible Schema"}>
                     <SquareLibrary size={16} />
                 </button>
             </div>
-            <div
-                style={getMindGraphTitleStyle()}
-            >
+            <div className="toolbar-title">
                 Mind Graph
             </div>
-            <div
-                style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    gap: "8px",
-                    padding: "8px"
-                }}
-            >
+            <div className="toolbar-actions">
                 <button
                     onClick={onSettings}
-                    style={getSecondaryButtonStyle()}
+                    className="toolbar-button"
                     title={"Settings"}
                 >
                     <Settings size={16} />
                 </button>
                 <button
                     onClick={onHelp}
-                    style={getSecondaryButtonStyle()}
+                    className="toolbar-button"
                     title={"Help"}
                 >
                     <CircleHelp size={16} />

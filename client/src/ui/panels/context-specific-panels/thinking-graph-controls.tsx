@@ -2,7 +2,6 @@ import React from "react";
 import type { Mode } from "../../../app";
 import type { GraphInterpretation } from "../../../core/model/graph-interpretation";
 import { PanelSection, StretchyPanelSection } from "../panel-section";
-import { getButtonStyle } from "../../utils/styles";
 
 
 type ThinkingGraphControlsProps = {
@@ -39,11 +38,11 @@ export default function ThinkingGraphControls({
 
         if (requiredFields.size > 0) {
             indicatorComponents = (
-                <div>
+                <div className="indicator-list">
                     Missing Properties:
                     {[...requiredFields].map(field => (
-                        <div key={field}>
-                            <label key={field}>
+                        <div className="indicator-item" key={field}>
+                            <label className="indicator-option">
                                 <input
                                     type="checkbox"
                                     checked={indicatorState[field] ?? false}
@@ -72,7 +71,7 @@ export default function ThinkingGraphControls({
     const addNodes: React.ReactNode = (
         <button
             onClick={() => setMode("add")}
-            style={getButtonStyle(mode === "add")}
+            className={`control-button${mode === "add" ? " control-button-active" : ""}`}
         >
             Add Node
         </button>
@@ -81,7 +80,7 @@ export default function ThinkingGraphControls({
     const linkNodes: React.ReactNode = (
         <button
             onClick={() => setMode("link")}
-            style={getButtonStyle(mode === "link")}
+            className={`control-button${mode === "link" ? " control-button-active" : ""}`}
         >
             Link Nodes
         </button>
@@ -92,7 +91,7 @@ export default function ThinkingGraphControls({
             <PanelSection>
                 <button
                     onClick={() => setMode("select")}
-                    style={getButtonStyle(mode === "select")}
+                    className={`control-button${mode === "select" ? " control-button-active" : ""}`}
                 >
                     Select
                 </button>

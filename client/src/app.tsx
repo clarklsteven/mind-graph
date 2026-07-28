@@ -20,6 +20,7 @@ import { SettingsModal } from "./ui/modals/settings-modal";
 import StatusBar from "./ui/statusbar";
 import { LoadGraphModal } from "./ui/modals/load-graph-modal";
 import { saveGraph, updateGraph } from "./api/graphs";
+import { createFlexibleSchema } from "./api/schemas";
 import { asiguraPalette } from "./ui/utils/asigura-palette";
 import { NarrativeStrategyLayout } from "./core/layout/narrative-strategy-layout";
 import CreateFlexibleSchemaModal from "./ui/modals/create-flexible-schema-modal";
@@ -234,6 +235,12 @@ export default function App() {
         setIsCreateFlexibleSchemaModalOpen(true);
     }
 
+    const handleCreateFlexibleSchema = (schema: GraphInterpretation | null) => {
+        if (schema) {
+            createFlexibleSchema(schema);
+        }
+    }
+
     // Autosave graph to local storage on changes, with debouncing
     useEffect(() => {
         if (!initialLoadComplete) return;
@@ -378,11 +385,12 @@ export default function App() {
             />
 
             <CreateFlexibleSchemaModal
+                schemas={Object.values(interpretationRegistry)}
                 isOpen={isCreateFlexibleSchemaModalOpen}
                 onClose={() => setIsCreateFlexibleSchemaModalOpen(false)}
-                onCreate={(schemaName) => {
+                onCreate={(schema: GraphInterpretation | null) => {
                     // Create a new flexible schema graph with the given name
-                    handleConfirmCreateNewGraph(schemaName, "default");
+                    handleCreateFlexibleSchema(schema);
                 }}
             />
         </div>

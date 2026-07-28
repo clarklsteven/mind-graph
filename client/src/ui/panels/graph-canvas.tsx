@@ -572,11 +572,7 @@ export default function GraphCanvas({
                 onPointerUp={handlePointerUp}
                 onPointerLeave={handlePointerLeave}
 
-                style={{
-                    width: "100vw",
-                    display: "block",
-                    cursor: dragStateRef.current ? "grabbing" : "default",
-                }}
+                className={dragStateRef.current ? "graph-canvas graph-canvas-grabbing" : "graph-canvas"}
             />
         </div>
     );
