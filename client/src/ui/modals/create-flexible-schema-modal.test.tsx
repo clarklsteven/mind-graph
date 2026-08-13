@@ -3,6 +3,8 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import CreateFlexibleSchemaModal from "./create-flexible-schema-modal";
 import type { GraphInterpretation } from "../../core/model/graph-interpretation";
+import type { NodeDefinition } from "../../core/model/node-definition";
+import type { RelationshipDefinition } from "../../core/model/relationship-definition";
 
 describe("CreateFlexibleSchemaModal", () => {
     const schemas: GraphInterpretation[] = [
@@ -11,8 +13,8 @@ describe("CreateFlexibleSchemaModal", () => {
             interpretation_type: "mind-map",
             label: "Mind Map",
             schema_type: "flexible",
-            node_definitions: [{ label: "Idea", color: "#000000" } as any],
-            relationship_definitions: [{ label: "Related" } as any]
+            node_definitions: [{ id: "a", label: "Idea", color: "#000000" } as NodeDefinition],
+            relationship_definitions: [{ label: "Related" } as RelationshipDefinition]
         }
     ];
 

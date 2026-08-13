@@ -1,6 +1,8 @@
+@import "./styles/asigura-palette.css";
+
 html,
 body,
-#root {
+:root {
     margin: 0;
     padding: 0;
     width: 100%;
@@ -16,7 +18,7 @@ body,
 
 .toolbar {
     height: 48px;
-    background-color: #BFCDAD;
+    background-color: var(--asigura-7);
     border-bottom: 1px solid rgb(210, 205, 190);
     display: flex;
     flex-direction: row;
@@ -33,8 +35,8 @@ body,
 
 .status-bar {
     flex: 0 0 20px;
-    background-color: #BFCDAD;
-    border-top: 1px solid #9FB99C;
+    background-color: var(--asigura-7);
+    border-top: 1px solid var(--asigura-6);
     display: flex;
     align-items: center;
     justify-content: flex-end;
@@ -43,7 +45,7 @@ body,
 }
 
 .status-bar-pill {
-    border: 1px solid #9FB99C;
+    border: 1px solid var(--asigura-6);
     border-radius: 4px;
     padding: 2px 6px;
 }
@@ -135,8 +137,8 @@ body,
     cursor: pointer;
     font-size: 14px;
     font-weight: 500;
-    border: 1px solid #80A58A;
-    background-color: #9FB99C;
+    border: 1px solid var(--asigura-5);
+    background-color: var(--asigura-6);
     color: rgb(50, 70, 35);
 }
 
@@ -205,13 +207,13 @@ body,
   min-height: 0;
   overflow-y: auto;
   padding: 4px;
-  border: 1px solid #BFCDAD;
+  border: 1px solid var(--asigura-7);
 }
 
 .properties-actions {
   flex-shrink: 0;
   padding: 1rem;
-  border: 1px solid #BFCDAD;
+  border: 1px solid var(--asigura-7);
 }
 
 .properties-content::-webkit-scrollbar {
@@ -232,12 +234,58 @@ body,
     background: #6f8f6e;
 }
 
-.flexible-schema-collection {
-    flex: 1;
-    border: 1px solid #9FB99C;
+.flexible-schema-workspace {
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+    margin-top: 12px;
+    border: 1px solid var(--asigura-6);
+    border-radius: 6px;
+    padding: 6px;
+    min-height: 400px;
+    min-width: 600px;
+    background-color: var(--asigura-10);
+}
+
+.flexible-schema-triptich-panel {
+    flex: 0.33;
+    border: 1px solid var(--asigura-6);
     border-radius: 4px;
     padding: 6px;
-    background: #EFEBC7;
+    background-color: var(--asigura-10);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.flexible-schema-sub-panel {
+    flex: 1;
+    border: 1px solid var(--asigura-6);
+    border-radius: 4px;
+    padding: 6px;
+    background: var(--asigura-9);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.flexible-schema-content {
+    flex: 1;
+    border: 1px solid var(--asigura-6);
+    border-radius: 4px;
+    padding: 6px;
+    background-color: var(--asigura-8pt5);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.flexible-schema-collection {
+    flex: 1;
+    border: 1px solid var(--asigura-6);
+    border-radius: 4px;
+    padding: 6px;
+    background: var(--asigura-8pt5);
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -265,7 +313,7 @@ body,
 }
 
 .flexible-schema-collection-button {
-    border: 1px solid #9FB99C;
+    border: 1px solid var(--asigura-6);
     border-radius: 4px;
     width: 100%;
     padding: 4px;
@@ -276,25 +324,25 @@ body,
 }
 
 .flexible-schema-collection-button-active {
-    background-color: #80A58A;
-    color: #FFFFE7;
+    background-color: var(--asigura-5);
+    color: var(--asigura-10);
 }
 
 .flexible-schema-collection-button-secondary {
-    background-color: #BFCDAD;
-    color: #407D68;
+    background-color: var(--asigura-7);
+    color: var(--asigura-3);
 }
 
 .flexible-schema-collection-entry {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    border: 1px solid #9FB99C;
+    border: 1px solid var(--asigura-6);
     border-radius: 4px;
     padding: 2px;
-    background-color: #DFE1BE;
+    background-color: var(--asigura-8);
 }
 
 .flexible-schema-collection-entry-active {
-    background-color: #80A58A;
+    background-color: var(--asigura-5);
 }

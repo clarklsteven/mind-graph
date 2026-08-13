@@ -6,6 +6,9 @@ import type { GraphInterpretation } from "../../core/model/graph-interpretation"
 import type { NodeDefinition } from "../../core/model/node-definition";
 import type { RelationshipDefinition } from "../../core/model/relationship-definition";
 
+type PropertySource = "library" | "schema";
+type PropertyKind = "node" | "edge";
+
 type CreateFlexibleSchemaModalProps = {
     schemas: GraphInterpretation[];
     isOpen: boolean;
@@ -19,6 +22,9 @@ export default function CreateFlexibleSchemaModal({ schemas, isOpen, onClose, on
     const [nodeEdgeMode, setNodeEdgeMode] = useState("nodes");
     const [selectedLibraryNode, setSelectedLibraryNode] = useState("");
     const [selectedLibraryEdge, setSelectedLibraryEdge] = useState("");
+    const [selectedSchemaNode, setSelectedSchemaNode] = useState("");
+    const [selectedSchemaEdge, setSelectedSchemaEdge] = useState("");
+    const [visibleProperties, setVisibleProperties] = useState<string[]>([]);
     const [flexibleSchema, setFlexibleSchema] = useState<GraphInterpretation | null>(null);
 
     if (isOpen && !flexibleSchema) {
@@ -30,6 +36,67 @@ export default function CreateFlexibleSchemaModal({ schemas, isOpen, onClose, on
             node_definitions: [],
             relationship_definitions: []
         });
+    }
+
+    function choosePropertySet(source: PropertySource, kind: PropertyKind, name: string): string[] {
+        const propertyList: string[] = [];
+
+        if (source === "library") {
+            console.log(selectedLibrarySchema);
+            const schema = schemas.find((schema: GraphInterpretation) => schema.id === selectedLibrarySchema)
+            if (!schema) {
+                console.error("Can't find selected library schema.");
+                return [];
+            }
+            if (kind === "node" && !schema.node_definitions) {
+                console.error("Selected library schema has no node definitions.");
+                return [];
+            }
+            if (kind === "edge" && !schema.relationship_definitions) {
+                console.error("Selected library schema has no relationship definitions.");
+                return [];
+            }
+            if (kind === "node") {
+                const nodeDef = schema.node_definitions!.find((def: NodeDefinition) => def.label === name);
+                if (!nodeDef) {
+                    console.error("Can't find selected library schema node.");
+                    return [];
+                }
+                for (const prop of nodeDef.properties ?? []) {
+                    propertyList.push(prop.label);
+                }
+            }
+            else if (kind === "edge") {
+                return [];
+            }
+            else {
+                console.error("Unknown property kind.");
+            }
+        }
+        else if (source === "schema") {
+            if (kind === "node") {
+                const nodeDef = flexibleSchema?.node_definitions!.find((def: NodeDefinition) => def.label === name);
+                if (!nodeDef) {
+                    console.error("Can't find selected flexible schema node.");
+                    return [];
+                }
+                for (const prop of nodeDef.properties ?? []) {
+                    propertyList.push(prop.label);
+                }
+            }
+            else if (kind === "edge") {
+                return [];
+            }
+            else {
+                console.error("Unknown property kind.");
+            }
+        }
+        else {
+            console.error("Unknown property source");
+        }
+
+        console.log(propertyList);
+        return propertyList;
     }
 
     function updateSchemaName(name: string): void {
@@ -127,44 +194,10 @@ export default function CreateFlexibleSchemaModal({ schemas, isOpen, onClose, on
                     style={getPropertyInputStyle()}
                 />
             </div>
-            <div style={{
-                display: "flex",
-                flexDirection: "row",
-                gap: "4px",
-                marginTop: "12px",
-                border: "1px solid " + asiguraPalette["asigura-6"],
-                borderRadius: "6px",
-                padding: "6px",
-                minHeight: "400px",
-                minWidth: "600px",
-                backgroundColor: asiguraPalette["asigura-10"],
-            }}
-            >
-                <div
-                    style={{
-                        flex: 0.33,
-                        border: "1px solid " + asiguraPalette["asigura-6"],
-                        borderRadius: "4px",
-                        padding: "6px",
-                        backgroundColor: asiguraPalette["asigura-10"],
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "4px",
-                    }}
-                >
-                    <div
-                        style={{
-                            flex: 1,
-                            border: "1px solid " + asiguraPalette["asigura-6"],
-                            borderRadius: "4px",
-                            padding: "6px",
-                            backgroundColor: asiguraPalette["asigura-9"],
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: "4px",
-                        }}
-                    >
-                        <span style={getPropertyLabelStyle()}>Library</span>
+            <div className="flexible-schema-workspace">
+                <div className="flexible-schema-triptich-panel">
+                    <span style={getPropertyLabelStyle()}>Library</span>
+                    <div className="flexible-schema-sub-panel">
                         <div className="flexible-schema-collection" >
                             {schemas.map((schema: GraphInterpretation) => (
                                 <div className={`flexible-schema-collection-entry ${selectedLibrarySchema === schema.id ? "flexible-schema-collection-entry-active" : ""}`}
@@ -210,7 +243,14 @@ export default function CreateFlexibleSchemaModal({ schemas, isOpen, onClose, on
                                 nodeEdgeMode === "nodes" ?
                                     getSelectedSchemaNodeList()?.map((node) =>
                                         <div className={`flexible-schema-collection-entry ${selectedLibraryNode === node ? "flexible-schema-collection-entry-active" : ""}`}
-                                            onClick={() => setSelectedLibraryNode(node)}
+                                            onClick={() => {
+                                                setSelectedLibraryNode(node);
+                                                setSelectedLibraryEdge("");
+                                                setSelectedSchemaNode("");
+                                                setSelectedSchemaEdge("");
+                                                setVisibleProperties(choosePropertySet("library", "node", node));
+                                            }
+                                            }
                                         >{node}
                                             <button
                                                 style={{
@@ -220,13 +260,24 @@ export default function CreateFlexibleSchemaModal({ schemas, isOpen, onClose, on
                                                 }}
                                                 onClick={() => {
                                                     setSelectedLibraryNode(node);
+                                                    setSelectedLibraryEdge("");
+                                                    setSelectedSchemaNode("");
+                                                    setSelectedSchemaEdge("");
                                                     addNodeType(getSelectedNodeDefinition(node));
+                                                    setVisibleProperties(choosePropertySet("library", "node", node));
                                                 }}
                                             >+</button>
                                         </div>) :
                                     getSelectedSchemaEdgeList()?.map((edge) =>
                                         <div className={`flexible-schema-collection-entry ${selectedLibraryEdge === edge ? "flexible-schema-collection-entry-active" : ""}`}
-                                            onClick={() => setSelectedLibraryEdge(edge)}
+                                            onClick={() => {
+                                                setSelectedLibraryEdge(edge);
+                                                setSelectedLibraryNode("");
+                                                setSelectedSchemaNode("");
+                                                setSelectedSchemaEdge("");
+                                                setVisibleProperties(choosePropertySet("library", "edge", edge));
+
+                                            }}
                                         >{edge}
                                             <button
                                                 style={{
@@ -237,37 +288,16 @@ export default function CreateFlexibleSchemaModal({ schemas, isOpen, onClose, on
                                                 onClick={() => {
                                                     setSelectedLibraryEdge(edge);
                                                     addEdgeType(getSelectedEdgeDefinition(edge));
+                                                    setVisibleProperties(choosePropertySet("library", "edge", edge));
                                                 }}
                                             >+</button>
                                         </div>)}
                         </div>
                     </div>
                 </div>
-                <div
-                    style={{
-                        flex: 0.34,
-                        border: "1px solid " + asiguraPalette["asigura-6"],
-                        borderRadius: "4px",
-                        padding: "6px",
-                        backgroundColor: asiguraPalette["asigura-10"],
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "4px",
-                    }}
-                >
+                <div className="flexible-schema-triptich-panel">
                     <span style={getPropertyLabelStyle()}>New Schema</span>
-                    <div
-                        style={{
-                            flex: 1,
-                            border: "1px solid " + asiguraPalette["asigura-6"],
-                            borderRadius: "4px",
-                            padding: "6px",
-                            backgroundColor: asiguraPalette["asigura-9"],
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: "4px",
-                        }}
-                    >
+                    <div className="flexible-schema-sub-panel">
                         <span style={getPropertyLabelStyle()}>Nodes</span>
                         <div style={{
                             flex: 1,
@@ -282,22 +312,20 @@ export default function CreateFlexibleSchemaModal({ schemas, isOpen, onClose, on
                             {flexibleSchema === null || flexibleSchema.node_definitions === undefined ?
                                 <div></div> :
                                 flexibleSchema.node_definitions.map((def: NodeDefinition) =>
-                                    <div className="flexible-schema-collection-entry">{def.label}</div>
+                                    <div
+                                        className={`flexible-schema-collection-entry ${selectedSchemaNode === def.label ? "flexible-schema-collection-entry-active" : ""}`}
+                                        onClick={() => {
+                                            setSelectedLibraryNode("");
+                                            setSelectedLibraryEdge("");
+                                            setSelectedSchemaNode(def.label);
+                                            setSelectedSchemaEdge("");
+                                            setVisibleProperties(choosePropertySet("schema", "node", def.label));
+                                        }}
+                                    >{def.label}</div>
                                 )}
                         </div>
                     </div>
-                    <div
-                        style={{
-                            flex: 0.5,
-                            border: "1px solid " + asiguraPalette["asigura-6"],
-                            borderRadius: "4px",
-                            padding: "6px",
-                            backgroundColor: asiguraPalette["asigura-9"],
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: "4px",
-                        }}
-                    >
+                    <div className="flexible-schema-sub-panel">
                         <span style={getPropertyLabelStyle()}>Edges</span>
                         <div style={{
                             flex: 1,
@@ -312,35 +340,29 @@ export default function CreateFlexibleSchemaModal({ schemas, isOpen, onClose, on
                             {flexibleSchema === null || flexibleSchema.relationship_definitions === undefined ?
                                 <div></div> :
                                 flexibleSchema.relationship_definitions.map((def: RelationshipDefinition) =>
-                                    <div className="flexible-schema-collection-entry">{def.label}</div>
+                                    <div
+                                        className={`flexible-schema-collection-entry ${selectedSchemaEdge === def.label ? "flexible-schema-collection-entry-active" : ""}`}
+                                        onClick={() => {
+                                            setSelectedLibraryNode("");
+                                            setSelectedLibraryEdge("");
+                                            setSelectedSchemaNode("");
+                                            setSelectedSchemaEdge(def.label);
+                                            setVisibleProperties(choosePropertySet("schema", "edge", def.label));
+
+                                        }}
+                                    >{def.label}</div>
                                 )}
 
                         </div>
                     </div>
                 </div>
-                <div
-                    style={{
-                        flex: 0.33,
-                        border: "1px solid " + asiguraPalette["asigura-6"],
-                        borderRadius: "4px",
-                        padding: "6px",
-                        backgroundColor: asiguraPalette["asigura-10"],
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "4px",
-                    }}
-                >
+                <div className="flexible-schema-triptich-panel">
                     <span style={getPropertyLabelStyle()}>Properties</span>
-                    <div style={{
-                        flex: 1,
-                        border: "1px solid " + asiguraPalette["asigura-6"],
-                        borderRadius: "4px",
-                        padding: "6px",
-                        backgroundColor: asiguraPalette["asigura-9"],
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "4px",
-                    }}>Property list</div>
+                    <div className="flexible-schema-sub-panel">
+                        <div className="flexible-schema-content">
+                            {visibleProperties.map((prop: string) => (
+                                <div className="flexible-schema-collection-entry">{prop}</div>))}</div>
+                    </div>
                 </div>
             </div>
             <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", gap: "8px", marginTop: "12px" }}>
