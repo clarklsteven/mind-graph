@@ -168,6 +168,18 @@ export default function CreateFlexibleSchemaModal({ schemas, isOpen, onClose, on
         }
     }
 
+    function removeNodeType(nodeLabel: string): void {
+        if (flexibleSchema) {
+            let tmpNodeDefs = flexibleSchema.node_definitions?.filter((def: NodeDefinition) => def.label !== nodeLabel);
+            if (tmpNodeDefs === undefined)
+                tmpNodeDefs = [];
+            setFlexibleSchema({
+                ...flexibleSchema,
+                node_definitions: [...tmpNodeDefs]
+            });
+        }
+    }
+
     function addEdgeType(edge: RelationshipDefinition | null): void {
         if (flexibleSchema && edge) {
             setFlexibleSchema({
@@ -176,6 +188,18 @@ export default function CreateFlexibleSchemaModal({ schemas, isOpen, onClose, on
                     ...flexibleSchema.relationship_definitions ?? [],
                     edge
                 ]
+            });
+        }
+    }
+
+    function removeEdgeType(edgeLabel: string): void {
+        if (flexibleSchema) {
+            let tmpNodeDefs = flexibleSchema.relationship_definitions?.filter((def: RelationshipDefinition) => def.label !== edgeLabel);
+            if (tmpNodeDefs === undefined)
+                tmpNodeDefs = [];
+            setFlexibleSchema({
+                ...flexibleSchema,
+                relationship_definitions: [...tmpNodeDefs]
             });
         }
     }
@@ -253,11 +277,7 @@ export default function CreateFlexibleSchemaModal({ schemas, isOpen, onClose, on
                                             }
                                         >{node}
                                             <button
-                                                style={{
-                                                    border: "1px solid " + asiguraPalette["asigura-6"],
-                                                    borderRadius: "4px",
-                                                    backgroundColor: asiguraPalette["asigura-7"],
-                                                }}
+                                                className="flexible-schema-collection-item-button"
                                                 onClick={() => {
                                                     setSelectedLibraryNode(node);
                                                     setSelectedLibraryEdge("");
@@ -280,11 +300,7 @@ export default function CreateFlexibleSchemaModal({ schemas, isOpen, onClose, on
                                             }}
                                         >{edge}
                                             <button
-                                                style={{
-                                                    border: "1px solid " + asiguraPalette["asigura-6"],
-                                                    borderRadius: "4px",
-                                                    backgroundColor: asiguraPalette["asigura-7"],
-                                                }}
+                                                className="flexible-schema-collection-item-button"
                                                 onClick={() => {
                                                     setSelectedLibraryEdge(edge);
                                                     addEdgeType(getSelectedEdgeDefinition(edge));
@@ -321,7 +337,18 @@ export default function CreateFlexibleSchemaModal({ schemas, isOpen, onClose, on
                                             setSelectedSchemaEdge("");
                                             setVisibleProperties(choosePropertySet("schema", "node", def.label));
                                         }}
-                                    >{def.label}</div>
+                                    >{def.label}
+                                        <button
+                                            className="flexible-schema-collection-item-button"
+                                            onClick={() => {
+                                                setSelectedSchemaNode("");
+                                                setVisibleProperties([]);
+                                                removeNodeType(def.label);
+                                            }}
+                                        >
+                                            -
+                                        </button>
+                                    </div>
                                 )}
                         </div>
                     </div>
@@ -350,7 +377,17 @@ export default function CreateFlexibleSchemaModal({ schemas, isOpen, onClose, on
                                             setVisibleProperties(choosePropertySet("schema", "edge", def.label));
 
                                         }}
-                                    >{def.label}</div>
+                                    >{def.label}
+                                        <button
+                                            className="flexible-schema-collection-item-button"
+                                            onClick={() => {
+                                                removeEdgeType(def.label);
+                                            }
+                                            }
+                                        >
+                                            -
+                                        </button>
+                                    </div>
                                 )}
 
                         </div>

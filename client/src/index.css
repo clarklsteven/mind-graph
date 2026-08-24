@@ -333,6 +333,12 @@ body,
     color: var(--asigura-3);
 }
 
+.flexible-schema-collection-item-button {
+    border: 1px solid  var(--asigura-6);
+    border-radius: 4px;
+    background-color: var(--asigura-7);
+}
+
 .flexible-schema-collection-entry {
     display: flex;
     flex-direction: row;
