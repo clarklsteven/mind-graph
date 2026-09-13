@@ -442,12 +442,9 @@ export default function GraphCanvas({
 
             if (mode === "add" && !hitNode) {
                 const id = crypto.randomUUID();
-                console.log("Adding node of type " + addNodeType);
                 if (addNodeType !== "") {
                     const nodeDefinition = getNodeDefinition(addNodeType);
-                    console.log(nodeDefinition);
                     if (nodeDefinition) {
-                        console.log(createNodeFromDefinition(id, nodeDefinition, graphPoint.x, graphPoint.y));
                         graph.addNode(createNodeFromDefinition(id, nodeDefinition, graphPoint.x, graphPoint.y));
                     }
                 }

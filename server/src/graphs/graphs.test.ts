@@ -223,4 +223,36 @@ describe('Graphs', () => {
         expect(calledWith).toContain('Error parsing existing graph file');
         expect(calledWith).toContain(badPath);
     });
+
+    it('soft-deletes a graph if it exists', async () => {
+        const graphs = new Graphs();
+        const graphData: GraphData = {
+            name: 'new-graph',
+            interpretation: 'thinking',
+            nodes: [],
+            edges: []
+        };
+        const result = await graphs.createGraph(graphData);
+
+        expect(result).toEqual({
+            name: 'new-graph',
+            interpretation: 'thinking',
+            nodes: [],
+            edges: []
+        });
+        expect(fs.existsSync(path.join(graphsFolder, 'new-graph.json'))).toBe(true);
+
+        const deleteResult = await graphs.deleteGraph("new-graph");
+        expect(deleteResult).toEqual(200);
+        const deletedDirectoryExists = fs.existsSync(graphsFolder + "/.deleted");
+        expect(deletedDirectoryExists).toBe(true);
+        const deletedFileExists = fs.existsSync(graphsFolder + "/.deleted/new-graph.json");
+        expect(deletedFileExists).toBe(true);
+    });
+
+    it('returns 404 if the graph to be deleted does not exist', async () => {
+        const graphs = new Graphs();
+        const deleteResult = await graphs.deleteGraph("wibble");
+        expect(deleteResult).toEqual(404);
+    });
 });

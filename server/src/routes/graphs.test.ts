@@ -189,4 +189,30 @@ describe('graphs router', () => {
             message: 'Invalid graph name'
         });
     });
+
+    it('deletes an existing graph', async () => {
+        vi.spyOn(Graphs.prototype, 'deleteGraph').mockResolvedValue(200);
+
+        const response = await request(app)
+            .delete('/graphs/bob');
+
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({
+            status: 'ok',
+            name: 'bob'
+        })
+    });
+
+    it('returns an error if the graph does not exist', async () => {
+        vi.spyOn(Graphs.prototype, 'deleteGraph').mockResolvedValue(404);
+
+        const response = await request(app)
+            .delete('/graphs/bob');
+
+        expect(response.status).toBe(404);
+        expect(response.body).toEqual({
+            status: 'error',
+            name: 'bob'
+        })
+    });
 });

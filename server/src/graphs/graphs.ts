@@ -131,4 +131,27 @@ export class Graphs {
         }
         return true;
     }
+
+    async deleteGraph(name: string): Promise<number> {
+        // Check that the graph exists
+        const settings: UserSettingsInterface = await this.userSettings.getSettings();
+        let graphPath = "";
+        if (settings.vaultPath) {
+            graphPath = `${settings.vaultPath}/Mind Graphs/${name}.json`;
+            if (!fs.existsSync(graphPath) || !fs.lstatSync(graphPath).isFile()) {
+                return 404;
+            }
+        }
+
+        // Check that the deleted graphs directory exists
+        const deletedDirectoryPath = `${settings.vaultPath}/Mind Graphs/.deleted`;
+        if (!fs.existsSync(deletedDirectoryPath)) {
+            fs.mkdirSync(deletedDirectoryPath);
+        }
+
+        // Move the graph to the deleted graphs directory
+        const newGraphPath = `${deletedDirectoryPath}/${name}.json`;
+        fs.renameSync(graphPath, newGraphPath);
+        return 200;
+    }
 }

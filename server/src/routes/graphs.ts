@@ -70,4 +70,15 @@ router.put("/:name", async (_req, res) => {
     });
 });
 
+// Delete a graph
+// Soft delete by moving the graph file somewhere else
+router.delete("/:name", async (_req, res) => {
+    const graphName = _req.params.name;
+    const statusCode: number = await graphs.deleteGraph(graphName);
+    res.status(statusCode).json({
+        status: statusCode === 200 ? "ok" : "error",
+        name: graphName
+    });
+})
+
 export default router;

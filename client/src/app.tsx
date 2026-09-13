@@ -174,10 +174,10 @@ export default function App() {
         }
         setSelectedNodeId(null);
         setSelectedEdgeId(null);
-        setGraphVersion((v) => v + 1);
         setIsNewGraphModalOpen(false);
 
         saveGraph(name, graphCoordinatorRef.current.getGraph()!.export());
+        setGraphVersion((v) => v + 1);
     };
 
     const handleOpenNewGraphModal = () => {

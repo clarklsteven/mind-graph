@@ -1,18 +1,18 @@
-import type { Page } from "@playwright/test";
+import type { Locator } from "@playwright/test";
 
 export class ControlPanel {
 
-    private page: Page;
+    private panel: Locator;
 
-    constructor(page: Page) {
-        this.page = page;
+    constructor(panel: Locator) {
+        this.panel = panel;
     }
 
     getPage() {
-        return this.page;
+        return this.panel;
     }
 
     currentLoadedGraph() {
-        return this.page.getByTestId("graph-name").innerText();
+        return this.panel.getByTestId("graph-name").innerText();
     }
 }

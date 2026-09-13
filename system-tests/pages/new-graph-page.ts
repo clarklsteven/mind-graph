@@ -1,34 +1,34 @@
-import type { Page } from "@playwright/test";
+import type { Locator } from "@playwright/test";
 
 export class NewGraphDialogPage {
 
-    private page: Page;
+    private dialog: Locator;
 
-    constructor(page: Page) {
-        this.page = page;
+    constructor(dialog: Locator) {
+        this.dialog = dialog;
     }
 
     getPage() {
-        return this.page;
+        return this.dialog;
     }
 
     isVisible() {
-        return this.page.getByRole("dialog", { name: "Create New Graph" }).isVisible();
+        return this.dialog.getByRole("dialog", { name: "Create New Graph" }).isVisible();
     }
 
     graphNameInput() {
-        return this.page.getByRole("textbox", { name: "Graph Name" });
+        return this.dialog.getByRole("textbox", { name: "Graph Name" });
     }
 
     interpretationInput() {
-        return this.page.getByRole("combobox", { name: "Interpretation" });
+        return this.dialog.getByRole("combobox", { name: "Interpretation" });
     }
 
     createButton() {
-        return this.page.getByRole("button", { name: "Create" });
+        return this.dialog.getByRole("button", { name: "Create" });
     }
 
     cancelButton() {
-        return this.page.getByRole("button", { name: "Cancel" });
+        return this.dialog.getByRole("button", { name: "Cancel" });
     }
 }

@@ -42,7 +42,6 @@ export default function CreateFlexibleSchemaModal({ schemas, isOpen, onClose, on
         const propertyList: string[] = [];
 
         if (source === "library") {
-            console.log(selectedLibrarySchema);
             const schema = schemas.find((schema: GraphInterpretation) => schema.id === selectedLibrarySchema)
             if (!schema) {
                 console.error("Can't find selected library schema.");
@@ -95,7 +94,6 @@ export default function CreateFlexibleSchemaModal({ schemas, isOpen, onClose, on
             console.error("Unknown property source");
         }
 
-        console.log(propertyList);
         return propertyList;
     }
 
@@ -329,7 +327,7 @@ export default function CreateFlexibleSchemaModal({ schemas, isOpen, onClose, on
                                 <div></div> :
                                 flexibleSchema.node_definitions.map((def: NodeDefinition) =>
                                     <div
-                                        className={`flexible-schema-collection-entry ${selectedSchemaNode === def.label ? "flexible-schema-collection-entry-active" : ""}`}
+                                        className={`flexible-schema-collection-entry ${selectedSchemaNode === def.label ? "flexible-schema-collection-button-active" : ""}`}
                                         onClick={() => {
                                             setSelectedLibraryNode("");
                                             setSelectedLibraryEdge("");
@@ -396,6 +394,7 @@ export default function CreateFlexibleSchemaModal({ schemas, isOpen, onClose, on
                 <div className="flexible-schema-triptich-panel">
                     <span style={getPropertyLabelStyle()}>Properties</span>
                     <div className="flexible-schema-sub-panel">
+                        <div><button className={`flexible-schema-collection-button flexible-schema-collection-button-active`}>Add Property</button></div>
                         <div className="flexible-schema-content">
                             {visibleProperties.map((prop: string) => (
                                 <div className="flexible-schema-collection-entry">{prop}</div>))}</div>

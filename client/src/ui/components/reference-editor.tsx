@@ -57,7 +57,6 @@ export default function ReferenceEditor({
     }
 
     function openReference(referenceLabel: string) {
-        console.log("Asked to open the reference for: " + referenceLabel);
         const reference = referenceList.find((reference: ArtifactReference) => reference.label === referenceLabel);
         if (!reference) {
             console.warn("Reference not found for label: " + referenceLabel);

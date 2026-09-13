@@ -65,8 +65,6 @@ export default function PropertiesPanel({
     };
 
     const updateListLookup = (listName: string, listValue: string[]) => {
-        console.log(listName);
-        console.log(listValue);
         graph.updateLookupSet(listName, listValue);
     }
 

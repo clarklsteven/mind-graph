@@ -14,6 +14,9 @@ const config: PlaywrightTestConfig = {
         ignoreHTTPSErrors: true,
         video: "retain-on-failure",
         trace: "retain-on-failure",
+        launchOptions: {
+            slowMo: 0
+        }
     },
     projects: [
         {
@@ -27,6 +30,9 @@ const config: PlaywrightTestConfig = {
             url: "http://127.0.0.1:3000/healthcheck",
             reuseExistingServer: !process.env.CI,
             timeout: 120000,
+            stdout: 'pipe',
+            stderr: 'pipe'
+
         },
         {
             command: "npm --workspace=client run build && npm --workspace=client run preview -- --host 127.0.0.1 --port 4173",

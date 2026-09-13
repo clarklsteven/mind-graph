@@ -27,7 +27,7 @@ export class AppPage {
 
     async openNewGraphDialog() {
         await this.page.getByRole("button", { name: "New Graph" }).click();
-        return new NewGraphDialogPage(this.page);
+        return new NewGraphDialogPage(this.page.getByRole("dialog"));
     }
 
     async openLoadGraphDialog() {
@@ -37,7 +37,7 @@ export class AppPage {
 
     async controlPanel() {
         this.page.getByTestId("control-panel");
-        return new ControlPanel(this.page);
+        return new ControlPanel(this.page.getByTestId("control-panel"));
     }
 
 }
